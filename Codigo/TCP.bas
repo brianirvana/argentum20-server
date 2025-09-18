@@ -1152,7 +1152,7 @@ Dim LoopC                       As Byte
 10  On Error GoTo ResetUserSkinsSpells_Err
 
 20  With UserList(UserIndex)
-30      For LoopC = 1 To MAXUSERSKINHECHIZOS
+30      For LoopC = 1 To MAX_SKINSSPELLS_SLOTS
 40          .Stats.UserSkinsHechizos(LoopC) = 0
 50      Next LoopC
 60      Exit Sub
