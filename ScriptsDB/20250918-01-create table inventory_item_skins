@@ -1,0 +1,8 @@
+CREATE TABLE inventory_item_skins (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    type_skin INTEGER NOT NULL,
+    skin_id INTEGER NOT NULL,
+    skin_equipped BIT NOT NULL,
+    date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
