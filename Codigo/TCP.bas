@@ -1118,6 +1118,13 @@ ResetAccionesPendientes_Err:
     Call TraceError(Err.Number, Err.Description, "TCP.ResetAccionesPendientes", Erl)
 End Sub
 
+'---------------------------------------------------------------------------------------
+' Procedure : ResetUserSpells
+' Last Author : [/About] Brian Sabatier (brian.sabatier87@gmail.com - https://github.com/brianirvana/brianirvana)
+' Last Date : 18/9/2025
+' Purpose   :
+'---------------------------------------------------------------------------------------
+
 Sub ResetUserSpells(ByVal UserIndex As Integer)
     On Error GoTo ResetUserSpells_Err
     Dim LoopC As Long
@@ -1129,6 +1136,34 @@ Sub ResetUserSpells(ByVal UserIndex As Integer)
 ResetUserSpells_Err:
     Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSpells", Erl)
 End Sub
+
+
+'---------------------------------------------------------------------------------------
+' Procedure : ResetUserSpells
+' Last Author : [/About] Brian Sabatier (brian.sabatier87@gmail.com - https://github.com/brianirvana/brianirvana)
+' Last Date : 18/9/2025
+' Purpose   :
+'---------------------------------------------------------------------------------------
+
+Sub ResetUserSkinsSpells(ByVal UserIndex As Integer)
+
+Dim LoopC                       As Byte
+
+10  On Error GoTo ResetUserSkinsSpells_Err
+
+20  With UserList(UserIndex)
+30      For LoopC = 1 To MAXUSERSKINHECHIZOS
+40          .Stats.UserSkinsHechizos(l) = 0
+50      Next i
+60      Exit Sub
+70  End With
+
+ResetUserSkinsSpells_Err:
+80  Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSkinsSpells", Erl)
+
+End Sub
+
+
 
 Sub ResetUserSkills(ByVal UserIndex As Integer)
     On Error GoTo ResetUserSkills_Err
@@ -1242,7 +1277,8 @@ Sub ResetUserSlot(ByVal UserIndex As Integer)
     Call ReleaseUser(UserIndex)
     Exit Sub
 ResetUserSlot_Err:
-    Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSlot", Erl)
+610 Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSlot", Erl)
+
 End Sub
 
 Sub ClearAndSaveUser(ByVal UserIndex As Integer)
