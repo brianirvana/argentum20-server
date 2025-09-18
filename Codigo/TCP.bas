@@ -1153,8 +1153,8 @@ Dim LoopC                       As Byte
 
 20  With UserList(UserIndex)
 30      For LoopC = 1 To MAXUSERSKINHECHIZOS
-40          .Stats.UserSkinsHechizos(l) = 0
-50      Next i
+40          .Stats.UserSkinsHechizos(LoopC) = 0
+50      Next LoopC
 60      Exit Sub
 70  End With
 
