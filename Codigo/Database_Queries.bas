@@ -374,3 +374,31 @@ Private Sub ConstruirQuery_GuardarPersonaje()
     ' Limpio el constructor de querys
     Call QueryBuilder.Clear
 End Sub
+
+'---------------------------------------------------------------------------------------
+' Procedure : Exists
+' Last Author : [/About] Brian Sabatier (brian.sabatier87@gmail.com - https://github.com/brianirvana/brianirvana)
+' Last Date : 18/9/2025
+' Purpose   : Verificar si existe un registro de manera genérica.
+'---------------------------------------------------------------------------------------
+
+Function Exists(ByRef sTable As String, ByRef sField As String, ByRef sValue As String, Optional ByRef sExtraField = vbNullString, Optional ByRef sExtraValue = vbNullString) As Boolean
+
+Dim RS                          As ADODB.Recordset
+
+    If sExtraField <> vbNullString And sExtraValue <> vbNullString Then
+        Set RS = Query("SELECT " & sField & " FROM " & sTable & " WHERE " & sField & "='?' AND " & sExtraField & "='?'", sValue, sExtraValue)
+    Else
+        Set RS = Query("SELECT " & sField & " FROM " & sTable & " WHERE " & sField & "='?'", sValue)
+    End If
+
+    'ENCONTRO ALGUN sValue?
+    Exists = Not RS.EOF
+
+    Set RS = Nothing
+
+    On Error GoTo 0
+    Exit Function
+
+End Function
+
