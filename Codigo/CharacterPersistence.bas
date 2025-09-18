@@ -150,6 +150,144 @@ Public Function LoadCharacterInventory(ByVal UserIndex As Integer) As Boolean
     Exit Function
 LoadCharacterInventory_Err:
     Call LogDatabaseError("Error en LoadCharacterFromDB LoadCharacterInventory: " & UserList(UserIndex).name & ". " & Err.Number & " - " & Err.Description & ". Línea: " & Erl)
+
+End Function
+
+'---------------------------------------------------------------------------------------
+' Procedure : LoadSkinsInventory
+' Last Author : [/About] Brian Sabatier (brian.sabatier87@gmail.com - https://github.com/brianirvana/brianirvana)
+' Last Date : 18/9/2025
+' Purpose   :
+'---------------------------------------------------------------------------------------
+
+Function LoadSkinsInventory(ByVal UserIndex As Integer) As Boolean
+
+Dim bFixed                      As Boolean
+Dim i                           As Integer
+Dim tID                         As Long
+Dim sQuery                      As String
+Dim RS                          As ADODB.Recordset
+
+    On Error GoTo ErrHandler
+
+    With UserList(UserIndex)
+    
+        sQuery = "SELECT type_skin, skin_id, skin_equipped FROM inventory_item_skins WHERE user_id=" & .Id
+        Set RS = Query(sQuery, .Id)
+        
+        '@ Existe el Skins?
+        If RS.EOF Or RS.BOF Then
+            LoadSkinsInventory = False
+            Debug.Print "Error al cargar el Skins nuevo. No existe el personaje " & .name & " ID: " & .Id
+            'Set RS = Query("INSERT INTO inventory_item_skins (USER_ID) Values (" & .Id & ")")
+            Set RS = Nothing
+            Exit Function
+        End If
+
+        If RS.RecordCount > 0 Then
+            i = 1
+            Do While Not RS.EOF
+                If CInt(RS.Fields("skin_id")) > 0 Then
+                
+                    Select Case ObjData(.Invent_Skins.Object(i).ObjIndex).OBJType
+                        Case e_OBJType.otSkinsArmours
+                        
+                            .Invent_Skins.Object(i).ObjIndex = CInt(RS.Fields("skin_id"))
+                            '.Invent_Skins.Object(i).Equipped = CBool(RS.Fields("skin_equipped"))
+                            If CBool(RS.Fields("skin_equipped")) Then
+                                Call EquiparInvItem(UserIndex, i, True, True, RS.Fields("skin_type"))
+                            End If
+
+'                            If .Skins.Object(i).Equipped Then
+'                                TempArmoursCountEquipped = TempArmoursCountEquipped + 1
+'                                If TempArmoursCountEquipped > 1 Then
+'                                    .Skins.Object(i).Equipped = False
+'                                Else
+'                                    .Skins.ArmourEquipped = .Skins.Object(i).ObjIndex
+'                                End If
+'                            End If
+                            
+                        Case e_OBJType.otSkinsSpells
+                            If ObjData(.Invent_Skins.Object(i).ObjIndex).HechizoIndex > 0 And .Invent_Skins.Object(i).Equipped Then
+                                .Stats.UserSkinsHechizos(ObjData(.Invent_Skins.Object(i).ObjIndex).HechizoIndex) = ObjData(.Invent_Skins.Object(i).ObjIndex).CreaFX
+                            End If
+                            
+                    End Select
+
+                Else
+                    .Invent_Skins.Object(i).ObjIndex = 0
+                    .Invent_Skins.Object(i).Equipped = False
+                End If
+                i = i + 1
+                RS.MoveNext
+            Loop
+            .Invent_Skins.Count = RS.RecordCount
+        Else
+            .Invent_Skins.Count = 0
+        End If
+    End With
+
+    Set RS = Nothing
+    LoadSkinsInventory = True
+
+    Exit Function
+
+ErrHandler:
+
+    Set RS = Nothing
+    LoadSkinsInventory = False
+    Call Logging.TraceError(Err.Number, Err.Description, "CharacterPersistence.LoadSkinsInventory of Módulo", Erl())
+    
+End Function
+
+'---------------------------------------------------------------------------------------
+' Procedure : SaveInventorySkins
+' Last Author : [/About] Brian Sabatier (brian.sabatier87@gmail.com - https://github.com/brianirvana/brianirvana)
+' Last Date : 18/9/2025
+' Purpose   :
+'---------------------------------------------------------------------------------------
+
+Function SaveInventorySkins(ByVal UserIndex As Integer) As Boolean
+
+Dim i                           As Integer
+Dim sQuery                      As cStringBuilder    'About
+Dim RS                          As ADODB.Recordset
+
+10  On Error GoTo SaveInventorySkins_Error
+
+20  With UserList(UserIndex)
+30      If .Id > 0 Then
+
+40          Set sQuery = New cStringBuilder
+
+50          For i = 1 To .Invent_Skins.Count
+60              If .Invent_Skins.Object(i).ObjIndex > 0 Then
+70                  If Not Database_Queries.Exists("inventory_item_skins", "CHAR_ID", CStr(.Id), "SKIN_ID", .Invent_Skins.Object(i).ObjIndex) Then
+80                      sQuery.Append "INSERT INTO inventory_item_skins (CHAR_ID, SKIN_ID, TYPE_SKIN, SKIN_EQUIPPED) Values (" & .Id & "," & .Invent_Skins.Object(i).ObjIndex & "," & .Invent_Skins.Object(i).Type & "," & .Invent_Skins.Object(i).Equipped & ")"
+90                      Database.Execute sQuery.ToString
+100                     sQuery.Clear
+110                 Else
+120                     sQuery.Append "UPDATE inventory_item_skins SET SKIN_EQUIPPED=" & IIf(.Invent_Skins.Object(i).Equipped, "1", "0") & " WHERE CHAR_ID=" & .Id & " AND SKIN_ID=" & .Invent_Skins.Object(i).ObjIndex
+130                     Database.Execute sQuery.ToString
+140                     sQuery.Clear
+150                 End If
+160             End If
+170         Next i
+
+180         Set sQuery = Nothing
+190         SaveInventorySkins = True
+200     Else
+210         SaveInventorySkins = False
+220     End If
+230 End With
+
+240 On Error GoTo 0
+250 Exit Function
+
+SaveInventorySkins_Error:
+260 SaveInventorySkins = False
+270 Call Logging.TraceError(Err.Number, Err.Description, "CharacterPersistence.SaveInventorySkins", Erl())
+
 End Function
 
 Public Function LoadCharacterFromDB(ByVal UserIndex As Integer) As Boolean
@@ -200,6 +338,7 @@ Public Function LoadCharacterFromDB(ByVal UserIndex As Integer) As Boolean
         Call SetupUserQuestsDone(UserList(UserIndex))
         ' Load additional inventories.
         If Not LoadCharacterInventory(UserIndex) Then Exit Function
+        If Not LoadSkinsInventory(UserIndex) Then Exit Function
         If Not LoadCharacterBank(UserIndex) Then Exit Function
         Call RegisterUserName(.Id, .name)
         Call Execute("update account set last_ip = ? where id = ?", .ConnectionDetails.IP, .AccountID)
