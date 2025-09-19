@@ -193,12 +193,11 @@ Dim RS                          As ADODB.Recordset
             i = 1
             Do While Not RS.EOF
                 If CInt(RS.Fields("skin_id")) > 0 Then
-                
+                    .Invent_Skins.Object(i).ObjIndex = CInt(RS.Fields("skin_id"))
+                    
                     Select Case ObjData(.Invent_Skins.Object(i).ObjIndex).OBJType
                         Case e_OBJType.otSkinsArmours
                         
-                            .Invent_Skins.Object(i).ObjIndex = CInt(RS.Fields("skin_id"))
-                            '.Invent_Skins.Object(i).Equipped = CBool(RS.Fields("skin_equipped"))
                             If CBool(RS.Fields("skin_equipped")) Then
                                 Call EquiparInvItem(UserIndex, i, True, True, RS.Fields("skin_type"))
                             End If
