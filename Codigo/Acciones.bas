@@ -125,7 +125,11 @@ End Function
 Function LevelCanUseItem(ByVal UserIndex As Integer, ByRef Obj As t_ObjData) As Boolean
 
     With UserList(UserIndex)
-        LevelCanUseItem = .Stats.ELV >= Obj.MinELV And .Stats.ELV <= Obj.MaxLEV
+        If obj.MaxLEV <> 0 Then
+            LevelCanUseItem = .Stats.ELV >= obj.MinELV And .Stats.ELV <= obj.MaxLEV
+        Else
+            LevelCanUseItem = .Stats.ELV >= obj.MinELV
+        End If
     End With
     
 End Function
@@ -889,7 +893,7 @@ Sub Accion(ByVal UserIndex As Integer, _
                     
                 If PuntosTotales > 0 Then
                     UserList(UserIndex).flags.pregunta = 5
-                    Call WritePreguntaBox(userIndex, 1593, PuntosTotales & "¬" & _
+                    Call WritePreguntaBox(UserIndex, 1593, PuntosTotales & "¬" & _
                             PonerPuntos(OroTotal * 1.2)) 'Msg1593= Tienes un total de ¬1 puntos y ¬2 monedas de oro para reclamar, ñDeseas aceptar?
                 Else
 

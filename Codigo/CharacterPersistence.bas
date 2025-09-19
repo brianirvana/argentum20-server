@@ -217,7 +217,9 @@ Dim RS                          As ADODB.Recordset
                             End If
                             
                     End Select
-
+                    
+                    Call WriteChangeSkinSlot(UserIndex, ObjData(.Invent_Skins.Object(i).ObjIndex).OBJType, i)
+                    
                 Else
                     .Invent_Skins.Object(i).ObjIndex = 0
                     .Invent_Skins.Object(i).Equipped = False
