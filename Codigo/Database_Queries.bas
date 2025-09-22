@@ -382,23 +382,27 @@ End Sub
 ' Purpose   : Verificar si existe un registro de manera genérica.
 '---------------------------------------------------------------------------------------
 
-Function Exists(ByRef sTable As String, ByRef sField As String, ByRef sValue As String, Optional ByRef sExtraField = vbNullString, Optional ByRef sExtraValue = vbNullString) As Boolean
+Function Exists(ByRef sTable As String, ByRef sField As String, ByRef sValue As String, _
+                Optional ByRef sExtraField = vbNullString, Optional ByRef sExtraValue = vbNullString) As Boolean
 
-Dim RS                          As ADODB.Recordset
+    Dim RS As ADODB.Recordset
+    Dim SQL As String
 
     If sExtraField <> vbNullString And sExtraValue <> vbNullString Then
-        Set RS = Query("SELECT " & sField & " FROM " & sTable & " WHERE " & sField & "='?' AND " & sExtraField & "='?'", sValue, sExtraValue)
+        SQL = "SELECT " & sField & " FROM " & sTable & " WHERE " & sField & " = ? AND " & sExtraField & " = ?"
+        Set RS = Query(SQL, sValue, sExtraValue)
     Else
-        Set RS = Query("SELECT " & sField & " FROM " & sTable & " WHERE " & sField & "='?'", sValue)
+        SQL = "SELECT " & sField & " FROM " & sTable & " WHERE " & sField & " = ?"
+        Set RS = Query(SQL, sValue)
     End If
 
-    'ENCONTRO ALGUN sValue?
-    Exists = Not RS.EOF
+    If RS Is Nothing Then
+        Exists = False
+    Else
+        Exists = Not RS.EOF
+        RS.Close
+    End If
 
     Set RS = Nothing
-
-    On Error GoTo 0
-    Exit Function
-
 End Function
 

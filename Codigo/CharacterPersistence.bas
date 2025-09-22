@@ -199,7 +199,7 @@ Dim RS                          As ADODB.Recordset
                         Case e_OBJType.otSkinsArmours
                         
                             If CBool(RS.Fields("skin_equipped")) Then
-                                Call EquiparInvItem(UserIndex, i, True, True, RS.Fields("skin_type"))
+                                Call EquiparInvItem(UserIndex, i, True, True, RS.Fields("type_skin"))
                             End If
 
 '                            If .Skins.Object(i).Equipped Then
@@ -268,12 +268,12 @@ Dim RS                          As ADODB.Recordset
 
 50          For i = 1 To .Invent_Skins.Count
 60              If .Invent_Skins.Object(i).ObjIndex > 0 Then
-70                  If Not Database_Queries.Exists("inventory_item_skins", "CHAR_ID", CStr(.Id), "SKIN_ID", .Invent_Skins.Object(i).ObjIndex) Then
-80                      sQuery.Append "INSERT INTO inventory_item_skins (CHAR_ID, SKIN_ID, TYPE_SKIN, SKIN_EQUIPPED) Values (" & .Id & "," & .Invent_Skins.Object(i).ObjIndex & "," & .Invent_Skins.Object(i).Type & "," & .Invent_Skins.Object(i).Equipped & ")"
+70                  If Not Database_Queries.Exists("inventory_item_skins", "user_id", CStr(.Id), "skin_id", .Invent_Skins.Object(i).ObjIndex) Then
+80                      sQuery.Append "INSERT INTO inventory_item_skins (user_id, skin_id, type_skin, skin_equipped) Values (" & .Id & "," & .Invent_Skins.Object(i).ObjIndex & "," & ObjData(.Invent_Skins.Object(i).ObjIndex).OBJType & "," & .Invent_Skins.Object(i).Equipped & ")"
 90                      Database.Execute sQuery.ToString
 100                     sQuery.Clear
 110                 Else
-120                     sQuery.Append "UPDATE inventory_item_skins SET SKIN_EQUIPPED=" & IIf(.Invent_Skins.Object(i).Equipped, "1", "0") & " WHERE CHAR_ID=" & .Id & " AND SKIN_ID=" & .Invent_Skins.Object(i).ObjIndex
+120                     sQuery.Append "UPDATE inventory_item_skins SET SKIN_EQUIPPED=" & IIf(.Invent_Skins.Object(i).Equipped, "1", "0") & " WHERE USER_ID=" & .Id & " AND SKIN_ID=" & .Invent_Skins.Object(i).ObjIndex
 130                     Database.Execute sQuery.ToString
 140                     sQuery.Clear
 150                 End If
@@ -917,6 +917,8 @@ Public Sub SaveCharacterDB(ByVal userIndex As Integer)
 
 626                 Call Builder.Clear
                 End If
+                
+        Call SaveInventorySkins(UserIndex)
                 
         Call PerformTimeLimitCheck(PerformanceTimer, "save character id:" & .id, 50)
         End With
