@@ -27,18 +27,6 @@ Attribute VB_Name = "Acciones"
 '
 Option Explicit
 
-Public Function get_map_name(ByVal map As Long) As String
-
-    On Error GoTo get_map_name_Err
-
-    get_map_name = MapInfo(Map).map_name
-
-    Exit Function
-
-get_map_name_Err:
-    Call TraceError(Err.Number, Err.Description, "Acciones.get_map_name", Erl)
-End Function
-
 Public Function PuedeUsarObjeto(ByVal UserIndex As Integer, _
                                  ByVal ObjIndex As Integer, _
                                  Optional ByVal writeInConsole As Boolean = False) As Byte

@@ -29,18 +29,7 @@ Attribute VB_Name = "Extra"
 Option Explicit
 
 Public m_NameIndex As New Dictionary
-Public Function esCiudad(ByVal map As Integer) As Boolean
 
-    Dim i As Byte
-    
-    For i = 0 To UBound(TotalMapasCiudades)
-        If TotalMapasCiudades(i) = map Then
-            esCiudad = True
-            Exit Function
-        End If
-    Next i
-    
-End Function
 
 Public Sub AgregarAConsola(ByVal Text As String)
         On Error GoTo AgregarAConsola_Err
@@ -1432,7 +1421,7 @@ Sub LookatTile(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal X As Inte
                 Else
                     If UserList(UserIndex).flags.Muerto = 0 Then
                         estatus = PrepareStatusMsgsForNpcs(TempCharIndex, UserIndex, NpcStatusMask)
-                        Call WriteLocaleMsg(UserIndex, 1622, e_FontTypeNames.FONTTYPE_INFO, NpcList(TempCharIndex).Name & "¬" & NpcList(TempCharIndex).flags.ElementalTags & "¬" & estatus)  'Msg1622=NPC ¬1 ¬2
+                        Call WriteLocaleMsg(UserIndex, 1622, e_FontTypeNames.FONTTYPE_INFO, NpcList(TempCharIndex).name & "¬" & NpcList(TempCharIndex).flags.ElementalTags & "¬" & estatus)  'Msg1622=NPC ¬1 ¬2
                     End If
                 End If
                ' End If

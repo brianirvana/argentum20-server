@@ -52,16 +52,6 @@ Function ExpectObjectTypeAt(ByVal objectType As Integer, _
 
 End Function
 
-Function IsUserAtPos(ByVal map As Integer, ByVal X As Byte, ByVal y As Byte) As Boolean
-    IsUserAtPos = MapData(map, X, y).UserIndex > 0
-
-End Function
-
-Function IsNpcAtPos(ByVal map As Integer, ByVal X As Byte, ByVal y As Byte)
-    IsNpcAtPos = MapData(map, X, y).npcIndex > 0
-
-End Function
-
 Sub HandleFishingNet(ByVal UserIndex As Integer)
 
         On Error GoTo HandleFishingNet_Err:
