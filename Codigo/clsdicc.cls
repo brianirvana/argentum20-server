@@ -79,6 +79,7 @@ Public Function AtPut(ByVal clave As String, ByRef elem As Variant) As Boolean
     If p_cant = MAX_ELEM Then
         AtPut = False
     Else
+
         For i = 1 To p_cant
             If clave = p_elementos(i).clave Then
                 p_elementos(i).def = elem
@@ -86,6 +87,7 @@ Public Function AtPut(ByVal clave As String, ByRef elem As Variant) As Boolean
                 Exit For    ' epa ;)
             End If
         Next i
+
         If Not AtPut Then
             p_cant = p_cant + 1
             p_elementos(p_cant).def = elem
@@ -103,12 +105,14 @@ Public Function At(ByVal clave As String) As Variant
     Dim i As Integer
     clave = UCase$(clave)
     At = Null
+
     For i = 1 To p_cant
         If clave = p_elementos(i).clave Then
             At = p_elementos(i).def
             Exit Function
         End If
     Next i
+
     Exit Function
 At_Err:
     Call TraceError(Err.Number, Err.Description, "diccionario.At", Erl)
@@ -132,6 +136,7 @@ Public Function MayorValor(ByRef cant As Integer) As String
     max = -1
     cant = 0
     clave = vbNullString
+
     For i = 1 To p_cant
         If max <= CInt(p_elementos(i).def) Then
             cant = IIf(max = CInt(p_elementos(i).def), cant + 1, 1)
@@ -139,6 +144,7 @@ Public Function MayorValor(ByRef cant As Integer) As String
             max = CInt(p_elementos(i).def)
         End If
     Next i
+
     MayorValor = clave
     Exit Function
 MayorValor_Err:
@@ -148,10 +154,12 @@ End Function
 Public Sub DumpAll()
     On Error GoTo DumpAll_Err
     Dim i As Integer
+
     For i = 1 To MAX_ELEM
         p_elementos(i).clave = vbNullString
         p_elementos(i).def = Null
     Next i
+
     p_cant = 0
     Exit Sub
 DumpAll_Err:

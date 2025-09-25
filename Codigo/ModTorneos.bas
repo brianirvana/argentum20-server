@@ -79,11 +79,13 @@ Public Sub IniciarTorneo()
         ReDim Torneo.IndexParticipantes(1 To Torneo.cupos)
         Torneo.HayTorneoaActivo = True
     Else
+
         For i = 1 To Torneo.cupos
             If Torneo.IndexParticipantes(i) > 0 Then
                 inscriptos = inscriptos + 1
             End If
         Next i
+
     End If
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1674, Torneo.nombre & "¬" & Torneo.NivelMinimo & "¬" & Torneo.NivelMaximo & "¬" & inscriptos & "¬" & Torneo.cupos _
             & "¬" & PonerPuntos(Torneo.costo) & "¬" & Torneo.reglas, e_FontTypeNames.FONTTYPE_CITIZEN)) 'Msg1674=Evento> Están abiertas las inscripciones para: ¬1: características: Nivel entre: ¬2/¬3. Inscriptos: ¬4/¬5. Precio de inscripción: ¬6 monedas de oro. Reglas: ¬7.
@@ -109,12 +111,14 @@ End Sub
 Public Function BuscarIndexFreeTorneo() As Byte
     On Error GoTo BuscarIndexFreeTorneo_Err
     Dim i As Byte
+
     For i = 1 To Torneo.cupos
         If Torneo.IndexParticipantes(i) = 0 Then
             BuscarIndexFreeTorneo = i
             Exit For
         End If
     Next i
+
     Exit Function
 BuscarIndexFreeTorneo_Err:
     Call TraceError(Err.Number, Err.Description, "ModTorneos.BuscarIndexFreeTorneo", Erl)
@@ -123,12 +127,14 @@ End Function
 Public Sub BorrarIndexInTorneo(ByVal Index As Integer)
     On Error GoTo BorrarIndexInTorneo_Err
     Dim i As Byte
+
     For i = 1 To Torneo.cupos
         If Torneo.IndexParticipantes(i) = Index Then
             Torneo.IndexParticipantes(i) = 0
             Exit For
         End If
     Next i
+
     Torneo.participantes = Torneo.participantes - 1
     Exit Sub
 BorrarIndexInTorneo_Err:
@@ -140,6 +146,7 @@ Public Sub ComenzarTorneoOk()
     Dim nombres As String
     Dim x       As Byte
     Dim y       As Byte
+
     For i = 1 To Torneo.participantes
         nombres = nombres & UserList(Torneo.IndexParticipantes(i)).name & ", "
         x = Torneo.x
@@ -147,6 +154,7 @@ Public Sub ComenzarTorneoOk()
         Call FindLegalPos(Torneo.IndexParticipantes(i), Torneo.Mapa, x, y)
         Call WarpUserChar(Torneo.IndexParticipantes(i), Torneo.Mapa, x, y, True)
     Next i
+
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1676, nombres, e_FontTypeNames.FONTTYPE_CITIZEN)) 'Msg1676=Evento> Los elegidos para participar son: ¬1 damos inicio al evento.
     Exit Sub
 ComenzarTorneoOk_Err:
@@ -179,9 +187,11 @@ Public Sub ResetearTorneo()
     Torneo.y = 0
     Torneo.nombre = ""
     Torneo.reglas = 0
+
     For i = 1 To Torneo.participantes
         UserList(Torneo.IndexParticipantes(i)).flags.EnTorneo = False
     Next i
+
     Torneo.participantes = 0
     ReDim Torneo.IndexParticipantes(1 To 1)
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1677, vbNullString, e_FontTypeNames.FONTTYPE_CITIZEN)) 'Msg1677=Eventos> Evento Finalizado.

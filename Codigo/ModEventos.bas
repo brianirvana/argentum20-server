@@ -176,12 +176,14 @@ Public Sub CargarEventos()
     On Error GoTo CargarEventos_Err
     Dim i          As Byte
     Dim EventoStrg As String
+
     For i = 0 To 23
         EventoStrg = GetVar(IniPath & "Configuracion.ini", "EVENTOS", i)
         Evento(i).Tipo = val(ReadField(1, EventoStrg, Asc("-")))
         Evento(i).Duracion = val(ReadField(2, EventoStrg, Asc("-")))
         Evento(i).multiplicacion = val(ReadField(3, EventoStrg, Asc("-")))
     Next i
+
     ExpMultOld = ExpMult
     OroMultOld = OroMult
     DropMultOld = DropMult

@@ -356,6 +356,7 @@ Function AsciiValidos(ByVal cad As String) As Boolean
     Dim car As Byte
     Dim i   As Integer
     cad = LCase$(cad)
+
     For i = 1 To Len(cad)
         car = Asc(mid$(cad, i, 1))
         If (car < 97 Or car > 122) And (car <> 255) And (car <> 32) Then
@@ -363,6 +364,7 @@ Function AsciiValidos(ByVal cad As String) As Boolean
             Exit Function
         End If
     Next i
+
     AsciiValidos = True
     Exit Function
 AsciiValidos_Err:
@@ -374,6 +376,7 @@ Function Numeric(ByVal cad As String) As Boolean
     Dim car As Byte
     Dim i   As Integer
     cad = LCase$(cad)
+
     For i = 1 To Len(cad)
         car = Asc(mid$(cad, i, 1))
         If (car < 48 Or car > 57) Then
@@ -381,6 +384,7 @@ Function Numeric(ByVal cad As String) As Boolean
             Exit Function
         End If
     Next i
+
     Numeric = True
     Exit Function
 Numeric_Err:
@@ -390,12 +394,14 @@ End Function
 Function NombrePermitido(ByVal nombre As String) As Boolean
     On Error GoTo NombrePermitido_Err
     Dim i As Integer
+
     For i = 1 To UBound(ForbidenNames)
         If LCase$(nombre) = ForbidenNames(i) Then
             NombrePermitido = False
             Exit Function
         End If
     Next i
+
     NombrePermitido = True
     Exit Function
 NombrePermitido_Err:
@@ -405,12 +411,14 @@ End Function
 Function Validate_Skills(ByVal UserIndex As Integer) As Boolean
     On Error GoTo Validate_Skills_Err
     Dim LoopC As Integer
+
     For LoopC = 1 To NUMSKILLS
         If UserList(UserIndex).Stats.UserSkills(LoopC) < 0 Then
             Exit Function
             If UserList(UserIndex).Stats.UserSkills(LoopC) > 100 Then UserList(UserIndex).Stats.UserSkills(LoopC) = 100
         End If
     Next LoopC
+
     Validate_Skills = True
     Exit Function
 Validate_Skills_Err:
@@ -573,10 +581,12 @@ End Function
 Sub CloseSocket(ByVal UserIndex As Integer)
     On Error GoTo ErrHandler
     If UserIndex = LastUser Then
+
         Do Until UserList(LastUser).flags.UserLogged
             LastUser = LastUser - 1
             If LastUser < 1 Then Exit Do
         Loop
+
     End If
     With UserList(UserIndex)
         If .ConnectionDetails.ConnIDValida Then Call CloseSocketSL(UserIndex)
@@ -618,6 +628,7 @@ End Sub
 Function EstaPCarea(Index As Integer, Index2 As Integer) As Boolean
     On Error GoTo EstaPCarea_Err
     Dim x As Integer, y As Integer
+
     For y = UserList(Index).pos.y - MinYBorder + 1 To UserList(Index).pos.y + MinYBorder - 1
         For x = UserList(Index).pos.x - MinXBorder + 1 To UserList(Index).pos.x + MinXBorder - 1
             If MapData(UserList(Index).pos.Map, x, y).UserIndex = Index2 Then
@@ -626,6 +637,7 @@ Function EstaPCarea(Index As Integer, Index2 As Integer) As Boolean
             End If
         Next x
     Next y
+
     EstaPCarea = False
     Exit Function
 EstaPCarea_Err:
@@ -635,6 +647,7 @@ End Function
 Function HayPCarea(ByVal Map As Integer, ByVal x As Integer, ByVal y As Integer, ByVal ignoreUserMuerto As Boolean) As Boolean
     On Error GoTo HayPCarea_Err
     Dim tX As Integer, tY As Integer
+
     For tY = y - MinYBorder + 1 To y + MinYBorder - 1
         For tX = x - MinXBorder + 1 To x + MinXBorder - 1
             If InMapBounds(Map, tX, tY) Then
@@ -649,6 +662,7 @@ Function HayPCarea(ByVal Map As Integer, ByVal x As Integer, ByVal y As Integer,
             End If
         Next
     Next
+
     HayPCarea = False
     Exit Function
 HayPCarea_Err:
@@ -658,6 +672,7 @@ End Function
 Function HayOBJarea(pos As t_WorldPos, ObjIndex As Integer) As Boolean
     On Error GoTo HayOBJarea_Err
     Dim x As Integer, y As Integer
+
     For y = pos.y - MinYBorder + 1 To pos.y + MinYBorder - 1
         For x = pos.x - MinXBorder + 1 To pos.x + MinXBorder - 1
             If MapData(pos.Map, x, y).ObjInfo.ObjIndex = ObjIndex Then
@@ -666,6 +681,7 @@ Function HayOBJarea(pos As t_WorldPos, ObjIndex As Integer) As Boolean
             End If
         Next x
     Next y
+
     HayOBJarea = False
     Exit Function
 HayOBJarea_Err:
@@ -686,12 +702,14 @@ Function EntrarCuenta(ByVal UserIndex As Integer, ByVal CuentaEmail As String, B
     Dim laCuentaEsDeAdmin As Boolean
     If ServerSoloGMs > 0 Then
         laCuentaEsDeAdmin = False
+
         For adminIdx = 0 To AdministratorAccounts.count - 1
             ' Si el e-mail está declarado junto al nick de la cuenta donde esta el PJ GM en el Server.ini te dejo entrar.
             If UCase$(AdministratorAccounts.Items(adminIdx)) = UCase$(CuentaEmail) Then
                 laCuentaEsDeAdmin = True
             End If
         Next adminIdx
+
         If Not laCuentaEsDeAdmin Then
             Call WriteShowMessageBox(UserIndex, 1770, vbNullString) 'Msg1770=El servidor se encuentra habilitado solo para administradores por el momento.
             Exit Function
@@ -751,9 +769,11 @@ End Sub
 Sub SendMOTD(ByVal UserIndex As Integer)
     On Error GoTo SendMOTD_Err
     Dim j As Long
+
     For j = 1 To MaxLines
         Call WriteConsoleMsg(UserIndex, MOTD(j).texto, e_FontTypeNames.FONTTYPE_EXP)
     Next j
+
     Call SendWelcomeUptime(UserIndex)
     Exit Sub
 SendMOTD_Err:
@@ -946,9 +966,11 @@ Sub ResetBasicUserInfo(ByVal UserIndex As Integer)
         End With
         .NroMascotas = 0
         Dim i As Integer
+
         For i = LBound(.MascotasType) To UBound(.MascotasType)
             .MascotasType(i) = 0
         Next i
+
         .LastTransportNetwork.Map = -1
     End With
     Exit Sub
@@ -975,11 +997,13 @@ Sub ResetPacketRateData(ByVal UserIndex As Integer)
     On Error GoTo ResetPacketRateData_Err
     Dim i As Long
     With UserList(UserIndex)
+
         For i = 1 To MAX_PACKET_COUNTERS
             .MacroIterations(i) = 0
             .PacketTimers(i) = 0
             .PacketCounters(i) = 0
         Next i
+
     End With
     Exit Sub
 ResetPacketRateData_Err:
@@ -1041,7 +1065,6 @@ Sub ResetUserFlags(ByVal UserIndex As Integer)
         Call SetUserRef(.Candidato, 0)
         .UsandoMacro = False
         .pregunta = 0
-        .DivineBlood = 0
         .Subastando = False
         .Paraliza = 0
         .Envenena = 0
@@ -1079,9 +1102,11 @@ Sub ResetUserFlags(ByVal UserIndex As Integer)
         Call ClearUserRef(.LastHelpUser)
         .LastHelpByTime = 0
         Dim i As Integer
+
         For i = LBound(.ChatHistory) To UBound(.ChatHistory)
             .ChatHistory(i) = vbNullString
         Next
+
         .EnReto = False
         .SolicitudReto.Estado = e_SolicitudRetoEstado.Libre
         Call SetUserRef(.AceptoReto, 0)
@@ -1124,19 +1149,20 @@ End Sub
 ' Last Date : 18/9/2025
 ' Purpose   :
 '---------------------------------------------------------------------------------------
-
 Sub ResetUserSpells(ByVal UserIndex As Integer)
+    Dim LoopC As Byte
     On Error GoTo ResetUserSpells_Err
-    Dim LoopC As Long
-    For LoopC = 1 To MAXUSERHECHIZOS
-        UserList(UserIndex).Stats.UserHechizos(LoopC) = 0
-        ' UserList(UserIndex).Stats.UserHechizosInterval(LoopC) = 0
-    Next LoopC
-    Exit Sub
+    With UserList(UserIndex)
+
+        For LoopC = 1 To MAXUSERHECHIZOS
+            .Stats.UserHechizos(LoopC) = 0
+        Next LoopC
+
+        Exit Sub
+    End With
 ResetUserSpells_Err:
     Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSpells", Erl)
 End Sub
-
 
 '---------------------------------------------------------------------------------------
 ' Procedure : ResetUserSpells
@@ -1144,33 +1170,29 @@ End Sub
 ' Last Date : 18/9/2025
 ' Purpose   :
 '---------------------------------------------------------------------------------------
-
 Sub ResetUserSkinsSpells(ByVal UserIndex As Integer)
+    Dim LoopC As Byte
+    On Error GoTo ResetUserSkinsSpells_Err
+    With UserList(UserIndex)
 
-Dim LoopC                       As Byte
+        For LoopC = 1 To MAX_SKINSSPELLS_SLOTS
+            .Stats.UserSkinsHechizos(LoopC) = 0
+        Next LoopC
 
-10  On Error GoTo ResetUserSkinsSpells_Err
-
-20  With UserList(UserIndex)
-30      For LoopC = 1 To MAX_SKINSSPELLS_SLOTS
-40          .Stats.UserSkinsHechizos(LoopC) = 0
-50      Next LoopC
-60      Exit Sub
-70  End With
-
+        Exit Sub
+    End With
 ResetUserSkinsSpells_Err:
-80  Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSkinsSpells", Erl)
-
+    Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSkinsSpells", Erl)
 End Sub
-
-
 
 Sub ResetUserSkills(ByVal UserIndex As Integer)
     On Error GoTo ResetUserSkills_Err
     Dim LoopC As Long
+
     For LoopC = 1 To NUMSKILLS
         UserList(UserIndex).Stats.UserSkills(LoopC) = 0
     Next LoopC
+
     Exit Sub
 ResetUserSkills_Err:
     Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSkills", Erl)
@@ -1179,12 +1201,14 @@ End Sub
 Sub ResetUserBanco(ByVal UserIndex As Integer)
     On Error GoTo ResetUserBanco_Err
     Dim LoopC As Long
+
     For LoopC = 1 To MAX_BANCOINVENTORY_SLOTS
         UserList(UserIndex).BancoInvent.Object(LoopC).amount = 0
         UserList(UserIndex).BancoInvent.Object(LoopC).Equipped = 0
         UserList(UserIndex).BancoInvent.Object(LoopC).ObjIndex = 0
         UserList(UserIndex).BancoInvent.Object(LoopC).ElementalTags = 0
     Next LoopC
+
     UserList(UserIndex).BancoInvent.NroItems = 0
     Exit Sub
 ResetUserBanco_Err:
@@ -1195,9 +1219,11 @@ Sub ResetUserKeys(ByVal UserIndex As Integer)
     On Error GoTo ResetUserKeys_Err
     With UserList(UserIndex)
         Dim i As Integer
+
         For i = 1 To MAXKEYS
             .Keys(i) = 0
         Next
+
     End With
     Exit Sub
 ResetUserKeys_Err:
@@ -1260,7 +1286,9 @@ Sub ResetUserSlot(ByVal UserIndex As Integer)
     Call ResetUserFlags(UserIndex)
     Call ResetAccionesPendientes(UserIndex)
     Call LimpiarInventario(UserIndex)
+    Call ResetUserSkinsInventory(UserIndex)
     Call ResetUserSpells(UserIndex)
+    Call ResetUserSkinsSpells(UserIndex)
     Call ResetUserBanco(UserIndex)
     Call ResetUserSkills(UserIndex)
     Call ResetUserKeys(UserIndex)
@@ -1277,8 +1305,7 @@ Sub ResetUserSlot(ByVal UserIndex As Integer)
     Call ReleaseUser(UserIndex)
     Exit Sub
 ResetUserSlot_Err:
-610 Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSlot", Erl)
-
+    Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSlot", Erl)
 End Sub
 
 Sub ClearAndSaveUser(ByVal UserIndex As Integer)
@@ -1390,6 +1417,7 @@ Sub CloseUser(ByVal UserIndex As Integer)
         'Borrar el personaje
         Call EraseUserChar(UserIndex, True)
         errordesc = "ERROR AL BORRAR MASCOTAS"
+
         'Borrar mascotas
         For i = 1 To MAXMASCOTAS
             If IsValidNpcRef(.MascotasIndex(i)) Then
@@ -1397,6 +1425,7 @@ Sub CloseUser(ByVal UserIndex As Integer)
             End If
             Call ClearNpcRef(.MascotasIndex(i))
         Next i
+
         errordesc = "ERROR Update Map Users map: " & Map
         'Update Map Users
         MapInfo(Map).NumUsers = MapInfo(Map).NumUsers - 1
@@ -1421,6 +1450,7 @@ End Sub
 Public Sub EcharPjsNoPrivilegiados()
     On Error GoTo EcharPjsNoPrivilegiados_Err
     Dim LoopC As Long
+
     For LoopC = 1 To LastUser
         If UserList(LoopC).flags.UserLogged And UserList(LoopC).ConnectionDetails.ConnIDValida Then
             If UserList(LoopC).flags.Privilegios And e_PlayerType.User Then
@@ -1428,6 +1458,7 @@ Public Sub EcharPjsNoPrivilegiados()
             End If
         End If
     Next LoopC
+
     Exit Sub
 EcharPjsNoPrivilegiados_Err:
     Call TraceError(Err.Number, Err.Description, "TCP.EcharPjsNoPrivilegiados", Erl)
@@ -1473,6 +1504,7 @@ Function ValidarNombre(nombre As String) As Boolean
     Dim Temp As String
     Temp = UCase$(nombre)
     Dim i As Long, Char As Integer, LastChar As Integer
+
     For i = 1 To Len(Temp)
         Char = Asc(mid$(Temp, i, 1))
         If (Char < 65 Or Char > 90) And Char <> 32 Then
@@ -1482,6 +1514,7 @@ Function ValidarNombre(nombre As String) As Boolean
         End If
         LastChar = Char
     Next
+
     If Asc(mid$(Temp, 1, 1)) = 32 Or Asc(mid$(Temp, Len(Temp), 1)) = 32 Then
         Exit Function
     End If
@@ -1490,27 +1523,33 @@ End Function
 
 Function ContarUsuariosMismaCuenta(ByVal AccountID As Long) As Integer
     Dim i As Integer
+
     For i = 1 To LastUser
         If UserList(i).flags.UserLogged And UserList(i).AccountID = AccountID Then
             ContarUsuariosMismaCuenta = ContarUsuariosMismaCuenta + 1
         End If
     Next
+
 End Function
 
 Sub ResetCd(ByRef User As t_User)
     Dim i As Integer
+
     For i = 0 To e_CdTypes.CDCount - 1
         User.CdTimes(i) = 0
     Next i
+
 End Sub
 
 Sub VaciarInventario(ByVal UserIndex As Integer)
     Dim i As Long
     With UserList(UserIndex)
+
         For i = 1 To MAX_INVENTORY_SLOTS
             .invent.Object(i).amount = 0
             .invent.Object(i).Equipped = 0
             .invent.Object(i).ObjIndex = 0
         Next i
+
     End With
 End Sub

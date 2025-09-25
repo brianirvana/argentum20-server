@@ -56,12 +56,15 @@ Public Sub InitializePools()
         InitialSize = INITIAL_POOL_SIZE
     End If
     ReDim EffectPools(1 To e_EffectOverTimeType.EffectTypeCount - 1) As t_EffectOverTimeList
+
     For i = 1 To e_EffectOverTimeType.EffectTypeCount - 1
         ReDim EffectPools(i).EffectList(InitialSize) As IBaseEffectOverTime
+
         For j = 0 To InitialSize
             Call AddEffect(EffectPools(i), InstantiateEOT(i))
         Next j
     Next i
+
     Exit Sub
 InitializePools_Err:
     Call TraceError(Err.Number, Err.Description, "EffectsOverTime.InitializePools", Erl)
@@ -79,11 +82,13 @@ Public Sub UpdateEffectOverTime()
     End If
     LastUpdateTime = CurrTime
     Dim i As Integer
+
     Do While i < ActiveEffects.EffectCount
         If UpdateEffect(i, ElapsedTime) Then
             i = i + 1
         End If
     Loop
+
     Exit Sub
 Update_Err:
     Call TraceError(Err.Number, Err.Description, "EffectsOverTime.Update", Erl)
@@ -447,12 +452,14 @@ End Sub
 Public Sub RemoveEffect(ByRef EffectList As t_EffectOverTimeList, ByRef Effect As IBaseEffectOverTime, Optional ByVal CallRemove As Boolean = True)
     On Error GoTo RemoveEffect_Err
     Dim i As Integer
+
     For i = 0 To EffectList.EffectCount - 1
         If EffectList.EffectList(i).UniqueId() = Effect.UniqueId() Then
             Call RemoveEffectAtPos(EffectList, i, CallRemove)
             Exit Sub
         End If
     Next i
+
     Exit Sub
 RemoveEffect_Err:
     Call TraceError(Err.Number, Err.Description, "EffectsOverTime.RemoveEffect", Erl)
@@ -462,12 +469,14 @@ Public Function FindEffectOfTypeOnTarget(ByRef EffectList As t_EffectOverTimeLis
     On Error GoTo FindEffectOfTypeOnTarget_Err
     Set FindEffectOfTypeOnTarget = Nothing
     Dim i As Integer
+
     For i = 0 To EffectList.EffectCount - 1
         If EffectList.EffectList(i).EffectType = TargetType Then
             Set FindEffectOfTypeOnTarget = EffectList.EffectList(i)
             Exit Function
         End If
     Next i
+
     Exit Function
 FindEffectOfTypeOnTarget_Err:
     Call TraceError(Err.Number, Err.Description, "EffectsOverTime.FindEffectOnTarget", Erl)
@@ -482,6 +491,7 @@ Public Function FindEffectOnTarget(ByVal CasterIndex As Integer, ByRef EffectLis
     If EffectLimit = e_EOTTargetLimit.eAny Then
         Exit Function
     End If
+
     For i = 0 To EffectList.EffectCount - 1
         If EffectLimit = eSingle Or EffectLimit = eSingleByCaster Then
             If EffectList.EffectList(i).EotId = EffectId Then
@@ -514,6 +524,7 @@ Public Function FindEffectOnTarget(ByVal CasterIndex As Integer, ByRef EffectLis
             End If
         End If
     Next i
+
     Exit Function
 FindEffectOnTarget_Err:
     Call TraceError(Err.Number, Err.Description, "EffectsOverTime.FindEffectOnTarget", Erl)
@@ -522,6 +533,7 @@ End Function
 Public Sub ClearEffectList(ByRef EffectList As t_EffectOverTimeList, Optional ByVal Filter As e_EffectType = e_EffectType.eAny, Optional ByVal ClearForDeath As Boolean = False)
     On Error GoTo ClearEffectList_Err
     Dim i As Integer
+
     Do While i < EffectList.EffectCount
         If (Filter = e_EffectType.eAny Or Filter = EffectList.EffectList(i).EffectType) And Not (ClearForDeath And EffectList.EffectList(i).KeepAfterDead()) Then
             EffectList.EffectList(i).RemoveMe = True
@@ -530,6 +542,7 @@ Public Sub ClearEffectList(ByRef EffectList As t_EffectOverTimeList, Optional By
             i = i + 1
         End If
     Loop
+
     Exit Sub
 ClearEffectList_Err:
     Call TraceError(Err.Number, Err.Description, "EffectsOverTime.ClearEffectList", Erl)
@@ -541,16 +554,20 @@ Public Sub RemoveEffectAtPos(ByRef EffectList As t_EffectOverTimeList, ByVal Pos
     RegenerateMask = EffectList.EffectList(Position).CallBacksMask > 0
     If CallRemove Then Call EffectList.EffectList(Position).OnRemove
     Dim i As Integer
+
     For i = Position To EffectList.EffectCount - 1
         Set EffectList.EffectList(i) = EffectList.EffectList(i + 1)
     Next i
+
     Set EffectList.EffectList(EffectList.EffectCount - 1) = Nothing
     EffectList.EffectCount = EffectList.EffectCount - 1
     If RegenerateMask Then
         EffectList.CallbaclMask = 0
+
         For i = 0 To EffectList.EffectCount - 1
             Call SetMask(EffectList.CallbaclMask, EffectList.EffectList(i).CallBacksMask)
         Next i
+
     End If
     Exit Sub
 RemoveEffectAtPos_Err:
@@ -560,33 +577,41 @@ End Sub
 Public Sub TargetUseMagic(ByRef EffectList As t_EffectOverTimeList, ByVal TargetUserId As Integer, ByVal SourceType As e_ReferenceType, ByVal MagicId As Integer)
     If Not IsSet(EffectList.CallbaclMask, e_EffectCallbackMask.eTargetUseMagic) Then Exit Sub
     Dim i As Integer
+
     For i = 0 To EffectList.EffectCount - 1
         Call EffectList.EffectList(i).TargetUseMagic(TargetUserId, SourceType, MagicId)
     Next i
+
 End Sub
 
 Public Sub TartgetWillAtack(ByRef EffectList As t_EffectOverTimeList, ByVal TargetUserId As Integer, ByVal SourceType As e_ReferenceType, ByVal AttackType As e_DamageSourceType)
     If Not IsSet(EffectList.CallbaclMask, e_EffectCallbackMask.eTartgetWillAtack) Then Exit Sub
     Dim i As Integer
+
     For i = 0 To EffectList.EffectCount - 1
         Call EffectList.EffectList(i).TartgetWillAtack(TargetUserId, SourceType, AttackType)
     Next i
+
 End Sub
 
 Public Sub TartgetDidHit(ByRef EffectList As t_EffectOverTimeList, ByVal TargetUserId As Integer, ByVal SourceType As e_ReferenceType, ByVal AttackType As e_DamageSourceType)
     If Not IsSet(EffectList.CallbaclMask, e_EffectCallbackMask.eTartgetDidHit) Then Exit Sub
     Dim i As Integer
+
     For i = 0 To EffectList.EffectCount - 1
         Call EffectList.EffectList(i).TartgetDidHit(TargetUserId, SourceType, AttackType)
     Next i
+
 End Sub
 
 Public Sub TargetFailedAttack(ByRef EffectList As t_EffectOverTimeList, ByVal TargetUserId As Integer, ByVal SourceType As e_ReferenceType, ByVal AttackType As e_DamageSourceType)
     If Not IsSet(EffectList.CallbaclMask, e_EffectCallbackMask.eTargetFailedAttack) Then Exit Sub
     Dim i As Integer
+
     For i = 0 To EffectList.EffectCount - 1
         Call EffectList.EffectList(i).TargetFailedAttack(TargetUserId, SourceType, AttackType)
     Next i
+
 End Sub
 
 Public Function TargetApplyDamageReduction(ByRef EffectList As t_EffectOverTimeList, _
@@ -599,37 +624,45 @@ Public Function TargetApplyDamageReduction(ByRef EffectList As t_EffectOverTimeL
         Exit Function
     End If
     Dim i As Integer
+
     For i = 0 To EffectList.EffectCount - 1
         Damage = EffectList.EffectList(i).ApplyDamageReduction(Damage, SourceUserId, SourceType, AttackType)
         If Damage >= 0 Then
             Exit Function
         End If
     Next i
+
     TargetApplyDamageReduction = Damage
 End Function
 
 Public Sub TargetWasDamaged(ByRef EffectList As t_EffectOverTimeList, ByVal SourceUserId As Integer, ByVal SourceType As e_ReferenceType, ByVal AttackType As e_DamageSourceType)
     If Not IsSet(EffectList.CallbaclMask, e_EffectCallbackMask.eTargetWasDamaged) Then Exit Sub
     Dim i As Integer
+
     For i = 0 To EffectList.EffectCount - 1
         Call EffectList.EffectList(i).TargetWasDamaged(SourceUserId, SourceType, AttackType)
     Next i
+
 End Sub
 
 Public Sub TargetWillAttackPosition(ByRef EffectList As t_EffectOverTimeList, ByRef Position As t_WorldPos)
     If Not IsSet(EffectList.CallbaclMask, e_EffectCallbackMask.eTargetWillAttackPosition) Then Exit Sub
     Dim i As Integer
+
     For i = 0 To EffectList.EffectCount - 1
         Call EffectList.EffectList(i).TargetWillAttackPosition(Position.Map, Position.x, Position.y)
     Next i
+
 End Sub
 
 Public Sub TargetUpdateTerrain(ByRef EffectList As t_EffectOverTimeList)
     If Not IsSet(EffectList.CallbaclMask, e_EffectCallbackMask.eTargetChangeTerrain) Then Exit Sub
     Dim i As Integer
+
     For i = 0 To EffectList.EffectCount - 1
         Call EffectList.EffectList(i).TargetChangeTerrain
     Next i
+
 End Sub
 
 Public Sub ChangeOwner(ByVal CurrentOwner As Integer, _

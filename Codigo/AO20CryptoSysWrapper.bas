@@ -65,23 +65,29 @@ Public Sub Str2ByteArr(ByVal str As String, ByRef arr() As Byte, Optional ByVal 
     Dim asd As String
     If length = 0 Then
         ReDim arr(0 To (Len(str) - 1))
+
         For i = 0 To (Len(str) - 1)
             arr(i) = Asc(mid$(str, i + 1, 1))
         Next i
+
     Else
         ReDim arr(0 To (length - 1)) As Byte
+
         For i = 0 To (length - 1)
             arr(i) = Asc(mid$(str, i + 1, 1))
         Next i
+
     End If
 End Sub
 
 Public Function ByteArr2String(ByRef arr() As Byte) As String
     Dim str As String
     Dim i   As Long
+
     For i = 0 To UBound(arr)
         str = str + Chr(arr(i))
     Next i
+
     ByteArr2String = str
 End Function
 
@@ -102,16 +108,20 @@ End Function
 
 Public Sub CopyBytes(ByRef src() As Byte, ByRef dst() As Byte, ByVal Size As Long, Optional ByVal offset As Long = 0)
     Dim i As Long
+
     For i = 0 To (Size - 1)
         dst(i + offset) = src(i)
     Next i
+
 End Sub
 
 Public Function ByteArrayToHex(ByRef ByteArray() As Byte) As String
     Dim l As Long, strRet As String
+
     For l = LBound(ByteArray) To UBound(ByteArray)
         strRet = strRet & Hex$(ByteArray(l)) & " "
     Next l
+
     'Remove last space at end.
     ByteArrayToHex = Left$(strRet, Len(strRet) - 1)
 End Function
@@ -188,19 +198,23 @@ Public Function IsBase64(ByVal str As String) As Boolean
     Dim i          As Long, j As Long
     Dim isInStr    As Boolean
     Dim token_char As String
+
     For i = 1 To Len(str)
         isInStr = False
         token_char = mid$(str, i, 1)
+
         For j = 1 To UBound(base64_chars)
             If token_char = base64_chars(j) Then
                 isInStr = True
                 Exit For
             End If
         Next j
+
         If Not isInStr Then
             IsBase64 = False
             Exit Function
         End If
     Next i
+
     IsBase64 = True
 End Function

@@ -30,12 +30,14 @@ Public m_NameIndex As New Dictionary
 
 Public Function esCiudad(ByVal Map As Integer) As Boolean
     Dim i As Byte
+
     For i = 0 To UBound(TotalMapasCiudades)
         If TotalMapasCiudades(i) = Map Then
             esCiudad = True
             Exit Function
         End If
     Next i
+
 End Function
 
 Public Sub AgregarAConsola(ByVal Text As String)
@@ -76,6 +78,7 @@ Public Sub FindLegalPos(ByVal UserIndex As Integer, ByVal Map As Integer, ByRef 
         Dim tY             As Long
         Dim Rango          As Long
         Dim OtherUserIndex As Integer
+
         For Rango = 0 To 5
             For tY = y - Rango To y + Rango
                 For tX = x - Rango To x + Rango
@@ -85,10 +88,13 @@ Public Sub FindLegalPos(ByVal UserIndex As Integer, ByVal Map As Integer, ByRef 
                         Exit For
                     End If
                 Next tX
+
                 If FoundPlace Then Exit For
             Next tY
+
             If FoundPlace Then Exit For
         Next Rango
+
         If FoundPlace Then 'Si encontramos un lugar, listo, nos quedamos ahi
             x = tX
             y = tY
@@ -287,21 +293,25 @@ End Function
 Public Function GetTransportNextIndex(ByVal Map As Integer, ByVal PosX As Byte, ByVal PosY As Byte) As Integer
     Dim i As Integer
     With MapInfo(Map)
+
         For i = 0 To UBound(.TransportNetwork)
             If .TransportNetwork(i).TileX = PosX And .TransportNetwork(i).TileY = PosY Then
                 GetTransportNextIndex = i
                 Exit Function
             End If
         Next i
+
     End With
     GetTransportNextIndex = -1
 End Function
 
 Public Function GetExitTransport(ByVal Map As Integer, ByVal ExcludeIndex As Integer) As Integer
     Dim Output As Integer
+
     Do
         Output = RandomNumber(0, UBound(MapInfo(Map).TransportNetwork))
     Loop While Output = ExcludeIndex
+
     GetExitTransport = Output
 End Function
 
@@ -486,33 +496,43 @@ Function ClosestLegalPosNPC(ByVal NpcIndex As Integer, ByVal MaxRange As Integer
     Dim tX    As Integer
     Dim tY    As Integer
     With NpcList(NpcIndex)
+
         Do
             tY = .pos.y - LoopC
+
             For tX = .pos.x - LoopC To .pos.x + LoopC
                 If ValidNPCSpawnPos(ClosestLegalPosNPC, .pos.Map, tX, tY, .flags.AguaValida = 1, .flags.TierraInvalida = 0, IgnoreUsers, IgnoreDeadUsers) Then
                     Exit Function
                 End If
             Next
+
             tX = .pos.x - LoopC
+
             For tY = .pos.y - LoopC + 1 To .pos.y + LoopC - 1
                 If ValidNPCSpawnPos(ClosestLegalPosNPC, .pos.Map, tX, tY, .flags.AguaValida = 1, .flags.TierraInvalida = 0, IgnoreUsers, IgnoreDeadUsers) Then
                     Exit Function
                 End If
             Next
+
             tX = .pos.x + LoopC
+
             For tY = .pos.y - LoopC + 1 To .pos.y + LoopC - 1
                 If ValidNPCSpawnPos(ClosestLegalPosNPC, .pos.Map, tX, tY, .flags.AguaValida = 1, .flags.TierraInvalida = 0, IgnoreUsers, IgnoreDeadUsers) Then
                     Exit Function
                 End If
             Next
+
             tY = .pos.y + LoopC
+
             For tX = .pos.x - LoopC To .pos.x + LoopC
                 If ValidNPCSpawnPos(ClosestLegalPosNPC, .pos.Map, tX, tY, .flags.AguaValida = 1, .flags.TierraInvalida = 0, IgnoreUsers, IgnoreDeadUsers) Then
                     Exit Function
                 End If
             Next
+
             LoopC = LoopC + 1
         Loop While LoopC <= MaxRange
+
     End With
     Exit Function
 ErrHandler:
@@ -552,11 +572,13 @@ Sub ClosestLegalPos(pos As t_WorldPos, ByRef nPos As t_WorldPos, Optional ByVal 
     Dim tX       As Integer
     Dim tY       As Integer
     nPos.Map = pos.Map
+
     Do While Not LegalPos(pos.Map, nPos.x, nPos.y, PuedeAgua, PuedeTierra, , False)
         If LoopC > 12 Then
             Notfound = True
             Exit Do
         End If
+
         For tY = pos.y - LoopC To pos.y + LoopC
             For tX = pos.x - LoopC To pos.x + LoopC
                 If LegalPos(nPos.Map, tX, tY, PuedeAgua, PuedeTierra, , False) Then
@@ -566,8 +588,10 @@ Sub ClosestLegalPos(pos As t_WorldPos, ByRef nPos As t_WorldPos, Optional ByVal 
                 End If
             Next tX
         Next tY
+
         LoopC = LoopC + 1
     Loop
+
     If Notfound = True Then
         nPos.x = 0
         nPos.y = 0
@@ -587,11 +611,13 @@ Sub ClosestStablePos(pos As t_WorldPos, ByRef nPos As t_WorldPos)
     Dim tX       As Integer
     Dim tY       As Integer
     nPos.Map = pos.Map
+
     Do While Not LegalPos(pos.Map, nPos.x, nPos.y)
         If LoopC > 12 Then
             Notfound = True
             Exit Do
         End If
+
         For tY = pos.y - LoopC To pos.y + LoopC
             For tX = pos.x - LoopC To pos.x + LoopC
                 If LegalPos(nPos.Map, tX, tY) And MapData(nPos.Map, tX, tY).TileExit.Map = 0 Then
@@ -603,8 +629,10 @@ Sub ClosestStablePos(pos As t_WorldPos, ByRef nPos As t_WorldPos)
                 End If
             Next tX
         Next tY
+
         LoopC = LoopC + 1
     Loop
+
     If Notfound = True Then
         nPos.x = 0
         nPos.y = 0
@@ -623,6 +651,7 @@ Function IP_Index(ByVal inIP As String) As Integer
         Exit Function
     End If
     UserIndex = 1
+
     Do Until UserList(UserIndex).ConnectionDetails.IP = inIP
         UserIndex = UserIndex + 1
         If UserIndex > MaxUsers Then
@@ -630,6 +659,7 @@ Function IP_Index(ByVal inIP As String) As Integer
             Exit Function
         End If
     Loop
+
     IP_Index = UserIndex
     Exit Function
     Exit Function
@@ -930,9 +960,11 @@ Sub SendHelp(ByVal Index As Integer)
     Dim NumHelpLines As Integer
     Dim LoopC        As Integer
     NumHelpLines = val(GetVar(DatPath & "Help.dat", "INIT", "NumLines"))
+
     For LoopC = 1 To NumHelpLines
         Call WriteConsoleMsg(Index, GetVar(DatPath & "Help.dat", "Help", "Line" & LoopC), e_FontTypeNames.FONTTYPE_INFO)
     Next LoopC
+
     Exit Sub
 SendHelp_Err:
     Call TraceError(Err.Number, Err.Description, "Extra.SendHelp", Erl)
@@ -1133,10 +1165,12 @@ Sub LookatTile(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal x As Inte
             Call SetUserRef(UserList(UserIndex).flags.TargetUser, 0)
             UserList(UserIndex).flags.TargetObj = 0
             Dim i As Long, j As Long
+
             For i = 1 To MAXUSERQUESTS
                 With UserList(UserIndex).QuestStats.Quests(i)
                     If .QuestIndex Then
                         If QuestList(.QuestIndex).RequiredTargetNPCs Then
+
                             For j = 1 To QuestList(.QuestIndex).RequiredTargetNPCs
                                 If QuestList(.QuestIndex).RequiredTargetNPC(j).NpcIndex = NpcList(TempCharIndex).Numero Then
                                     If QuestList(.QuestIndex).RequiredTargetNPC(j).amount > .NPCsTarget(j) Then
@@ -1151,10 +1185,12 @@ Sub LookatTile(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal x As Inte
                                     End If
                                 End If
                             Next j
+
                         End If
                     End If
                 End With
             Next i
+
         End If
         If FoundChar = 0 Then
             Call ClearNpcRef(UserList(UserIndex).flags.TargetNPC)
@@ -1300,27 +1336,33 @@ Public Sub CargarMapasEspeciales()
     Dim i As Integer
     If Cantidad > 0 Then
         ReDim MapasInterdimensionales(1 To Cantidad)
+
         For i = 1 To Cantidad
             MapasInterdimensionales(i) = val(File.GetValue("MapasInterdimensionales", "Mapa" & i))
         Next
+
     Else
         ReDim MapasInterdimensionales(0)
     End If
     Cantidad = val(File.GetValue("MapasEventos", "Cantidad"))
     If Cantidad > 0 Then
         ReDim MapasEventos(1 To Cantidad)
+
         For i = 1 To Cantidad
             MapasEventos(i) = val(File.GetValue("MapasEventos", "Mapa" & i))
         Next
+
     Else
         ReDim MapasEventos(0)
     End If
     Cantidad = val(File.GetValue("MapasNoDrop", "Cantidad"))
     If Cantidad > 0 Then
         ReDim MapasNoDrop(1 To Cantidad)
+
         For i = 1 To Cantidad
             MapasNoDrop(i) = val(File.GetValue("MapasNoDrop", "Mapa" & i))
         Next
+
     Else
         ReDim MapasNoDrop(0)
     End If
@@ -1329,23 +1371,27 @@ End Sub
 
 Public Function EsMapaEvento(ByVal destMap As Long) As Boolean
     Dim i As Long
+
     For i = 1 To UBound(MapasEventos)
         If MapasEventos(i) = destMap Then
             EsMapaEvento = True
             Exit Function
         End If
     Next i
+
     EsMapaEvento = False
 End Function
 
 Public Function EsMapaNoDrop(ByVal destMap As Long) As Boolean
     Dim i As Long
+
     For i = 1 To UBound(MapasNoDrop)
         If MapasNoDrop(i) = destMap Then
             EsMapaNoDrop = True
             Exit Function
         End If
     Next i
+
     EsMapaNoDrop = False
 End Function
 
@@ -1361,9 +1407,11 @@ Public Sub resetPj(ByVal UserIndex As Integer, Optional ByVal borrarHechizos As 
         Call DarCuerpo(UserIndex) 'Ladder REVISAR
         .OrigChar = .Char
         Dim i As Long
+
         For i = 1 To NUMSKILLS
             .Stats.UserSkills(i) = 100
         Next i
+
         .Char.WeaponAnim = NingunArma
         .Char.ShieldAnim = NingunEscudo
         .Char.CascoAnim = NingunCasco
@@ -1392,9 +1440,11 @@ Public Sub resetPj(ByVal UserIndex As Integer, Optional ByVal borrarHechizos As 
         .Stats.GLD = 0
         .Stats.Banco = 0
         If .flags.TomoPocion Then
+
             For i = 1 To 4
                 .Stats.UserAtributos(i) = .Stats.UserAtributosBackUP(i)
             Next i
+
             Call WriteFYA(UserIndex)
         End If
         .flags.DuracionEfecto = 0
@@ -1403,18 +1453,21 @@ Public Sub resetPj(ByVal UserIndex As Integer, Optional ByVal borrarHechizos As 
         Call RellenarInventario(UserIndex)
         'Agrego la poción
         Dim slot_libre As Byte
+
         For i = 1 To MAX_INVENTORY_SLOTS
             If .invent.Object(i).amount = 0 Then
                 slot_libre = i
                 Exit For
             End If
         Next i
+
         For i = 1 To MAX_BANCOINVENTORY_SLOTS
             .BancoInvent.Object(i).amount = 0
             .BancoInvent.Object(i).Equipped = 0
             .BancoInvent.Object(i).ObjIndex = 0
             .BancoInvent.Object(i).ElementalTags = 0
         Next i
+
         .invent.Object(slot_libre).ObjIndex = POCION_RESET
         .invent.Object(slot_libre).amount = 1
         'Valores Default de facciones al Activar nuevo usuario
@@ -1463,9 +1516,11 @@ End Sub
 Public Function ByteArr2String(ByRef arr() As Byte) As String
     Dim str As String
     Dim i   As Long
+
     For i = 0 To UBound(arr)
         str = str + Chr$(arr(i))
     Next i
+
     ByteArr2String = str
 End Function
 
@@ -1524,6 +1579,7 @@ End Function
 
 Public Sub TimerQuestOrco()
     Dim UserIndex As Integer
+
     For UserIndex = 1 To LastUser
         If UserIndex > 0 Then
             With UserList(UserIndex)
@@ -1541,6 +1597,7 @@ Public Sub TimerQuestOrco()
             End With
         End If
     Next UserIndex
+
     Call SendData(SendTarget.ToAll, 0, PrepareMessagePlayWave(156, NO_3D_SOUND, NO_3D_SOUND))
 End Sub
 

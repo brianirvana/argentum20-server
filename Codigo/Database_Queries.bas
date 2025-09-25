@@ -169,9 +169,11 @@ Private Sub ConstruirQuery_CrearPersonaje()
     QueryBuilder.Append "is_naked, "
     QueryBuilder.Append "status) VALUES ( "
     Dim i As Long
+
     For i = 0 To 25
         QueryBuilder.Append "?,"
     Next i
+
     QueryBuilder.Append "?)"
     ' Guardo la query ensamblada
     QUERY_SAVE_MAINPJ = QueryBuilder.ToString
@@ -179,60 +181,70 @@ Private Sub ConstruirQuery_CrearPersonaje()
     Call QueryBuilder.Clear
     ' ************************** User spells ************************************
     QueryBuilder.Append "INSERT INTO spell (user_id, number, spell_id) VALUES "
+
     For LoopC = 1 To MAXUSERHECHIZOS
         QueryBuilder.Append "(?, ?, ?)"
         If LoopC < MAXUSERHECHIZOS Then
             QueryBuilder.Append ", "
         End If
     Next LoopC
+
     ' Guardo la query ensamblada
     QUERY_SAVE_SPELLS = QueryBuilder.ToString
     ' Limpio el constructor de querys
     Call QueryBuilder.Clear
     ' ******************* INVENTORY *******************
     QueryBuilder.Append "INSERT INTO inventory_item (user_id, number, item_id, Amount, is_equipped, elemental_tags) VALUES "
+
     For LoopC = 1 To MAX_INVENTORY_SLOTS
         QueryBuilder.Append "(?, ?, ?, ?, ?, ?)"
         If LoopC < MAX_INVENTORY_SLOTS Then
             QueryBuilder.Append ", "
         End If
     Next LoopC
+
     ' Guardo la query ensamblada
     QUERY_SAVE_INVENTORY = QueryBuilder.ToString
     ' Limpio el constructor de querys
     Call QueryBuilder.Clear
     ' ************************** User skills ************************************
     QueryBuilder.Append "INSERT INTO skillpoint (user_id, number, value) VALUES "
+
     For LoopC = 1 To NUMSKILLS
         QueryBuilder.Append "(?, ?, ?)"
         If LoopC < NUMSKILLS Then
             QueryBuilder.Append ", "
         End If
     Next LoopC
+
     ' Guardo la query ensamblada
     QUERY_SAVE_SKILLS = QueryBuilder.ToString
     ' Limpio el constructor de querys
     Call QueryBuilder.Clear
     ' ************************** User quests ************************************
     QueryBuilder.Append "INSERT INTO quest (user_id, number) VALUES "
+
     For LoopC = 1 To MAXUSERQUESTS
         QueryBuilder.Append "(?, ?)"
         If LoopC < MAXUSERQUESTS Then
             QueryBuilder.Append ", "
         End If
     Next LoopC
+
     ' Guardo la query ensamblada
     QUERY_SAVE_QUESTS = QueryBuilder.ToString
     ' Limpio el constructor de querys
     Call QueryBuilder.Clear
     ' ************************** User pets **************************************
     QueryBuilder.Append "INSERT INTO pet (user_id, number, pet_id) VALUES "
+
     For LoopC = 1 To MAXMASCOTAS
         QueryBuilder.Append "(?, ?, ?)"
         If LoopC < MAXMASCOTAS Then
             QueryBuilder.Append ", "
         End If
     Next LoopC
+
     ' Guardo la query ensamblada
     QUERY_SAVE_PETS = QueryBuilder.ToString
     ' Limpio el constructor de querys
@@ -315,60 +327,70 @@ Private Sub ConstruirQuery_GuardarPersonaje()
     Call QueryBuilder.Clear
     ' ************************** User bank inventory **************************************
     QueryBuilder.Append "REPLACE INTO bank_item (user_id, number, item_id, amount, elemental_tags) VALUES "
+
     For LoopC = 1 To MAX_BANCOINVENTORY_SLOTS
         QueryBuilder.Append "(?, ?, ?, ?, ?)"
         If LoopC < MAX_BANCOINVENTORY_SLOTS Then
             QueryBuilder.Append ", "
         End If
     Next LoopC
+
     ' Guardo la query ensamblada
     QUERY_SAVE_BANCOINV = QueryBuilder.ToString
     ' Limpio el constructor de querys
     Call QueryBuilder.Clear
     ' ************************** User spells ************************************
     QueryBuilder.Append "REPLACE INTO spell (user_id, number, spell_id) VALUES "
+
     For LoopC = 1 To MAXUSERHECHIZOS
         QueryBuilder.Append "(?, ?, ?)"
         If LoopC < MAXUSERHECHIZOS Then
             QueryBuilder.Append ", "
         End If
     Next LoopC
+
     ' Guardo la query ensamblada
     QUERY_UPSERT_SPELLS = QueryBuilder.ToString
     ' Limpio el constructor de querys
     Call QueryBuilder.Clear
     ' ******************* INVENTORY *******************
     QueryBuilder.Append "REPLACE INTO inventory_item (user_id, number, item_id, Amount, is_equipped, elemental_tags) VALUES "
+
     For LoopC = 1 To MAX_INVENTORY_SLOTS
         QueryBuilder.Append "(?, ?, ?, ?, ?, ?)"
         If LoopC < MAX_INVENTORY_SLOTS Then
             QueryBuilder.Append ", "
         End If
     Next LoopC
+
     ' Guardo la query ensamblada
     QUERY_UPSERT_INVENTORY = QueryBuilder.ToString
     ' Limpio el constructor de querys
     Call QueryBuilder.Clear
     ' ************************** User skills ************************************
     QueryBuilder.Append "REPLACE INTO skillpoint (user_id, number, value) VALUES "
+
     For LoopC = 1 To NUMSKILLS
         QueryBuilder.Append "(?, ?, ?)"
         If LoopC < NUMSKILLS Then
             QueryBuilder.Append ", "
         End If
     Next LoopC
+
     ' Guardo la query ensamblada
     QUERY_UPSERT_SKILLS = QueryBuilder.ToString
     ' Limpio el constructor de querys
     Call QueryBuilder.Clear
     ' ************************** User pets **************************************
     QueryBuilder.Append "REPLACE INTO pet (user_id, number, pet_id) VALUES "
+
     For LoopC = 1 To MAXMASCOTAS
         QueryBuilder.Append "(?, ?, ?)"
         If LoopC < MAXMASCOTAS Then
             QueryBuilder.Append ", "
         End If
     Next LoopC
+
     ' Guardo la query ensamblada
     QUERY_UPSERT_PETS = QueryBuilder.ToString
     ' Limpio el constructor de querys
@@ -381,13 +403,13 @@ End Sub
 ' Last Date : 18/9/2025
 ' Purpose   : Verificar si existe un registro de manera genérica.
 '---------------------------------------------------------------------------------------
-
-Function Exists(ByRef sTable As String, ByRef sField As String, ByRef sValue As String, _
-                Optional ByRef sExtraField = vbNullString, Optional ByRef sExtraValue = vbNullString) As Boolean
-
-    Dim RS As ADODB.Recordset
+Function Exists(ByRef sTable As String, _
+                ByRef sField As String, _
+                ByRef sValue As String, _
+                Optional ByRef sExtraField = vbNullString, _
+                Optional ByRef sExtraValue = vbNullString) As Boolean
+    Dim RS  As ADODB.Recordset
     Dim SQL As String
-
     If sExtraField <> vbNullString And sExtraValue <> vbNullString Then
         SQL = "SELECT " & sField & " FROM " & sTable & " WHERE " & sField & " = ? AND " & sExtraField & " = ?"
         Set RS = Query(SQL, sValue, sExtraValue)
@@ -395,14 +417,11 @@ Function Exists(ByRef sTable As String, ByRef sField As String, ByRef sValue As 
         SQL = "SELECT " & sField & " FROM " & sTable & " WHERE " & sField & " = ?"
         Set RS = Query(SQL, sValue)
     End If
-
     If RS Is Nothing Then
         Exists = False
     Else
         Exists = Not RS.EOF
         RS.Close
     End If
-
     Set RS = Nothing
 End Function
-

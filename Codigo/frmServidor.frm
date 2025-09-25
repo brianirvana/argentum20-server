@@ -591,11 +591,13 @@ Private Sub Command15_Click()
         If FileExist(Fn, vbNormal) Then
             n = FreeFile
             Open Fn For Input Shared As #n
+
             Do While Not EOF(n)
                 K = K + 1
                 Input #n, cad$
                 Call UnBan(cad$)
             Loop
+
             Close #n
             MsgBox "Se han habilitado " & K & " personajes."
             Kill Fn
@@ -648,9 +650,11 @@ Private Sub Command20_Click()
     Dim LoopC As Long
     If MsgBox("Esta seguro que desea reiniciar los sockets ? Se cerrarán todas las conexiones activas.", vbYesNo, "Reiniciar Sockets") = vbYes Then
         Call modNetwork.Disconnect
+
         For LoopC = 1 To MaxUsers
             Call CloseSocket(LoopC)
         Next
+
         Call modNetwork.Listen(MaxUsers, ListenIp, CStr(Puerto))
     End If
     Exit Sub
@@ -752,9 +756,11 @@ Private Sub Command5_Click()
     If FileExist(App.Path & "\logs\Resurrecciones.log", vbNormal) Then Kill App.Path & "\logs\Resurrecciones.log"
     If FileExist(App.Path & "\logs\Teleports.Log", vbNormal) Then Kill App.Path & "\logs\Teleports.Log"
     Dim LoopC As Integer
+
     For LoopC = 1 To MaxUsers
         Call CloseSocket(LoopC)
     Next
+
     Call modNetwork.Disconnect
     LastUser = 0
     NumUsers = 0

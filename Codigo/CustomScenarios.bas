@@ -55,9 +55,11 @@ Private Sub InitializeUpdateStacks()
     ReDim AvailableUpdateSlots.IndexInfo(InitialUpdateSize)
     ReDim ActiveUpdateSlots.IndexInfo(InitialUpdateSize)
     Dim i As Integer
+
     For i = 1 To InitialUpdateSize
         AvailableUpdateSlots.IndexInfo(i) = InitialUpdateSize - (i - 1)
     Next i
+
     AvailableUpdateSlots.currentIndex = InitialUpdateSize
     ActiveUpdateSlots.currentIndex = 0
 End Sub
@@ -69,9 +71,11 @@ Private Sub IncreaseArraySize(ByVal ExtraSlots As Integer)
     ReDim Preserve AvailableUpdateSlots.IndexInfo(NewSize)
     ReDim Preserve ActiveUpdateSlots.IndexInfo(NewSize)
     Dim i As Integer
+
     For i = 1 To ExtraSlots
         AvailableUpdateSlots.IndexInfo(i) = NewSize - (i - 1)
     Next i
+
     AvailableUpdateSlots.currentIndex = ExtraSlots
 End Sub
 
@@ -118,6 +122,7 @@ Public Sub RemoveUpdateScenario(ByRef Index As Integer)
     Debug.Assert Index < UBound(ScenarioUpdateList)
     Set ScenarioUpdateList(Index) = Nothing
     Dim i As Integer
+
     For i = 0 To ActiveUpdateSlots.currentIndex - 1
         If ActiveUpdateSlots.IndexInfo(i) = Index Then
             ActiveUpdateSlots.IndexInfo(i) = ActiveUpdateSlots.IndexInfo(ActiveUpdateSlots.currentIndex - 1)
@@ -126,16 +131,19 @@ Public Sub RemoveUpdateScenario(ByRef Index As Integer)
             AvailableUpdateSlots.IndexInfo(AvailableUpdateSlots.currentIndex) = Index
         End If
     Next
+
 End Sub
 
 Public Sub UpdateAll()
     On Error GoTo UpdateAll_Err:
     Dim i As Integer
+
     For i = 0 To ActiveUpdateSlots.currentIndex - 1
         If Not ScenarioUpdateList(ActiveUpdateSlots.IndexInfo(i)) Is Nothing Then
             Call ScenarioUpdateList(ActiveUpdateSlots.IndexInfo(i)).Update
         End If
     Next
+
     Exit Sub
 UpdateAll_Err:
     Call TraceError(Err.Number, Err.Description, "CustomScenarios.UpdateAll", Erl)
@@ -322,6 +330,7 @@ Public Sub ClearMap(ByVal MapNumber As Integer)
     On Error GoTo ClearMap_Err:
     Dim x As Long
     Dim y As Long
+
     For y = 1 To 99
         For x = 1 To 99
             If MapData(MapNumber, x, y).ObjInfo.ObjIndex > 0 Then
@@ -331,6 +340,7 @@ Public Sub ClearMap(ByVal MapNumber As Integer)
             End If
         Next x
     Next y
+
     Exit Sub
 ClearMap_Err:
     Call TraceError(Err.Number, Err.Description, "CustomScenarios.ClearMap", Erl)

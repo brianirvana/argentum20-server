@@ -46,11 +46,13 @@ Private Declare Sub MoveMemory Lib "Kernel32" Alias "RtlMoveMemory" (pDest As An
 Public Sub InitPathFinding()
     On Error GoTo InitPathFinding_Err
     Dim Heading As e_Heading, DirH As Integer
+
     For Heading = e_Heading.NORTH To e_Heading.WEST
         DirOffset(Heading).x = (2 - DirH) * (DirH Mod 2)
         DirOffset(Heading).y = (DirH - 1) * (1 - (DirH Mod 2))
         DirH = DirH + 1
     Next
+
     Exit Sub
 InitPathFinding_Err:
     Call TraceError(Err.Number, Err.Description, "PathFinding.InitPathFinding", Erl)
@@ -221,9 +223,11 @@ Public Function SeekPath(ByVal NpcIndex As Integer, Optional ByVal Closest As Bo
     Dim max_steps As Integer
     max_steps = SvrConfig.GetValue("NPC_PATHFINDING_MAX_STEPS")
     Debug.Assert max_steps < MAX_PATH_LENGTH
+
     Do While (VertexCount > 0 And pasos < max_steps)
         pasos = pasos + 1
         MinTotalDistance = MAX_INTEGER
+
         ' Buscamos en la cola la posición con menor distancia total
         For Index = 0 To VertexCount - 1
             With OpenVertices(Index)
@@ -233,6 +237,7 @@ Public Function SeekPath(ByVal NpcIndex As Integer, Optional ByVal Closest As Bo
                 End If
             End With
         Next
+
         Vertex = OpenVertices(BestVertexIndex)
         With Vertex
             ' Si es la posición objetivo
@@ -249,13 +254,16 @@ Public Function SeekPath(ByVal NpcIndex As Integer, Optional ByVal Closest As Bo
             Table(.x, .y).Closed = True
             ' Si aún podemos seguir procesando más lejos
             If Table(.x, .y).Distance < MaxDistance Then
+
                 ' Procesamos adyacentes
                 For Heading = e_Heading.NORTH To e_Heading.WEST
                     Call ProcessAdjacent(NpcIndex, .x, .y, Heading, PosTarget)
                 Next
+
             End If
         End With
     Loop
+
     ' No hay más nodos por procesar. O bien no existe un camino válido o el NPC no es suficientemente inteligente.
     ' Si debemos retornar la posición más cercana al objetivo
     If Closest Then
@@ -280,6 +288,7 @@ Private Sub MakePath(ByVal NpcIndex As Integer, ByVal x As Integer, ByVal y As I
         ' Obtenemos la distancia total del camino
         .pathFindingInfo.PathLength = Table(x, y).Distance
         Dim step As Integer
+
         ' Asignamos las coordenadas del resto camino, el final queda al inicio del array
         For step = 1 To UBound(.pathFindingInfo.Path) ' .pathFindingInfo.PathLength TODO
             With .pathFindingInfo.Path(step)
@@ -293,6 +302,7 @@ Private Sub MakePath(ByVal NpcIndex As Integer, ByVal x As Integer, ByVal y As I
                 End With
             End If
         Next
+
     End With
     Exit Sub
 MakePath_Err:
@@ -304,6 +314,7 @@ Private Sub InitializeTable(ByRef Table() As t_IntermidiateWork, ByRef PosNPC As
     ' Solo limpiamos el campo de visión del NPC.
     On Error GoTo InitializeTable_Err
     Dim x As Integer, y As Integer
+
     For y = PosNPC.y - RangoVision To PosNPC.y + RangoVision
         For x = PosNPC.x - RangoVision To PosNPC.x + RangoVision
             If InsideLimits(x, y) Then
@@ -312,6 +323,7 @@ Private Sub InitializeTable(ByRef Table() As t_IntermidiateWork, ByRef PosNPC As
             End If
         Next
     Next
+
     Exit Sub
 InitializeTable_Err:
     Call TraceError(Err.Number, Err.Description, "PathFinding.InitializeTable", Erl)

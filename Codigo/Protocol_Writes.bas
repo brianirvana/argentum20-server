@@ -17,7 +17,7 @@ Attribute VB_Name = "Protocol_Writes"
 '    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '
 '    This program was based on Argentum Online 0.11.6
-'    Copyright (C) 2002 Márquez Pablo Ignacio
+'    Copyright (C) 2002 Mï¿½rquez Pablo Ignacio
 '
 '    Argentum Online is based on Baronsoft's VB6 Online RPG
 '    You can contact the original creator of ORE at aaron@baronsoft.com
@@ -47,6 +47,7 @@ End Function
         Call Writer.WriteInt16(ServerPacketID.eAccountCharacterList)
         Call Writer.WriteInt(count)
         Dim i As Long
+
         For i = 1 To count
             With Personajes(i)
                 Call Writer.WriteString8(.nombre)
@@ -64,7 +65,8 @@ End Function
                 Call Writer.WriteInt(.BackPack)
             End With
         Next i
-        Call modSendData.SendData(ToIndex, UserIndex)
+
+        Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
         Exit Sub
 WriteAccountCharacterList_Err:
         Call Writer.Clear
@@ -79,9 +81,11 @@ Public Function PrepareConnected()
     #If DEBUGGING = 1 Then
         Dim i               As Integer
         Dim values(1 To 10) As Byte
+
         For i = LBound(values) To UBound(values)
             values(i) = i
         Next i
+
         Writer.WriteSafeArrayInt8 values
     #End If
     Exit Function
@@ -99,7 +103,7 @@ Public Sub WriteLoggedMessage(ByVal UserIndex As Integer, Optional ByVal newUser
     On Error GoTo WriteLoggedMessage_Err
     Call Writer.WriteInt16(ServerPacketID.elogged)
     Call Writer.WriteBool(newUser)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteLoggedMessage_Err:
     Call Writer.Clear
@@ -108,7 +112,7 @@ End Sub
 
 Public Sub WriteHora(ByVal UserIndex As Integer)
     On Error GoTo WriteHora_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageHora())
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageHora())
     Exit Sub
 WriteHora_Err:
     Call Writer.Clear
@@ -123,7 +127,7 @@ End Sub
 Public Sub WriteRemoveAllDialogs(ByVal UserIndex As Integer)
     On Error GoTo WriteRemoveAllDialogs_Err
     Call Writer.WriteInt16(ServerPacketID.eRemoveDialogs)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteRemoveAllDialogs_Err:
     Call Writer.Clear
@@ -138,7 +142,7 @@ End Sub
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 Public Sub WriteRemoveCharDialog(ByVal UserIndex As Integer, ByVal charindex As Integer)
     On Error GoTo WriteRemoveCharDialog_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageRemoveCharDialog(charindex))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageRemoveCharDialog(charindex))
     Exit Sub
 WriteRemoveCharDialog_Err:
     Call Writer.Clear
@@ -153,7 +157,7 @@ Public Sub WriteNavigateToggle(ByVal UserIndex As Integer, ByVal NewState As Boo
     On Error GoTo WriteNavigateToggle_Err
     Call Writer.WriteInt16(ServerPacketID.eNavigateToggle)
     Call Writer.WriteBool(NewState)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteNavigateToggle_Err:
     Call Writer.Clear
@@ -165,7 +169,7 @@ Public Sub WriteNadarToggle(ByVal UserIndex As Integer, ByVal Puede As Boolean, 
     Call Writer.WriteInt16(ServerPacketID.eNadarToggle)
     Call Writer.WriteBool(Puede)
     Call Writer.WriteBool(esTrajeCaucho)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteNadarToggle_Err:
     Call Writer.Clear
@@ -175,7 +179,7 @@ End Sub
 Public Sub WriteEquiteToggle(ByVal UserIndex As Integer)
     On Error GoTo WriteEquiteToggle_Err
     Call Writer.WriteInt16(ServerPacketID.eEquiteToggle)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteEquiteToggle_Err:
     Call Writer.Clear
@@ -186,7 +190,7 @@ Public Sub WriteVelocidadToggle(ByVal UserIndex As Integer)
     On Error GoTo WriteVelocidadToggle_Err
     Call Writer.WriteInt16(ServerPacketID.eVelocidadToggle)
     Call Writer.WriteReal32(UserList(UserIndex).Char.speeding)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteVelocidadToggle_Err:
     Call Writer.Clear
@@ -210,7 +214,7 @@ Public Sub WriteMacroTrabajoToggle(ByVal UserIndex As Integer, ByVal Activar As 
     End If
     Call Writer.WriteInt16(ServerPacketID.eMacroTrabajoToggle)
     Call Writer.WriteBool(Activar)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteMacroTrabajoToggle_Err:
     Call Writer.Clear
@@ -228,7 +232,7 @@ Public Sub WriteDisconnect(ByVal UserIndex As Integer, Optional ByVal FullLogout
     UserList(UserIndex).flags.YaGuardo = True
     Call Writer.WriteInt16(ServerPacketID.eDisconnect)
     Call Writer.WriteBool(FullLogout)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteDisconnect_Err:
     Call Writer.Clear
@@ -243,7 +247,7 @@ End Sub
 Public Sub WriteCommerceEnd(ByVal UserIndex As Integer)
     On Error GoTo WriteCommerceEnd_Err
     Call Writer.WriteInt16(ServerPacketID.eCommerceEnd)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteCommerceEnd_Err:
     Call Writer.Clear
@@ -258,7 +262,7 @@ End Sub
 Public Sub WriteBankEnd(ByVal UserIndex As Integer)
     On Error GoTo WriteBankEnd_Err
     Call Writer.WriteInt16(ServerPacketID.eBankEnd)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteBankEnd_Err:
     Call Writer.Clear
@@ -274,7 +278,7 @@ Public Sub WriteCommerceInit(ByVal UserIndex As Integer)
     On Error GoTo WriteCommerceInit_Err
     Call Writer.WriteInt16(ServerPacketID.eCommerceInit)
     Call Writer.WriteString8(NpcList(UserList(UserIndex).flags.TargetNPC.ArrayIndex).name)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteCommerceInit_Err:
     Call Writer.Clear
@@ -289,7 +293,7 @@ End Sub
 Public Sub WriteBankInit(ByVal UserIndex As Integer)
     On Error GoTo WriteBankInit_Err
     Call Writer.WriteInt16(ServerPacketID.eBankInit)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteBankInit_Err:
     Call Writer.Clear
@@ -304,7 +308,7 @@ End Sub
 Public Sub WriteUserCommerceInit(ByVal UserIndex As Integer)
     On Error GoTo WriteUserCommerceInit_Err
     Call Writer.WriteInt16(ServerPacketID.eUserCommerceInit)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUserCommerceInit_Err:
     Call Writer.Clear
@@ -319,7 +323,7 @@ End Sub
 Public Sub WriteUserCommerceEnd(ByVal UserIndex As Integer)
     On Error GoTo WriteUserCommerceEnd_Err
     Call Writer.WriteInt16(ServerPacketID.eUserCommerceEnd)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUserCommerceEnd_Err:
     Call Writer.Clear
@@ -334,7 +338,7 @@ End Sub
 Public Sub WriteShowBlacksmithForm(ByVal UserIndex As Integer)
     On Error GoTo WriteShowBlacksmithForm_Err
     Call Writer.WriteInt16(ServerPacketID.eShowBlacksmithForm)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowBlacksmithForm_Err:
     Call Writer.Clear
@@ -349,7 +353,7 @@ End Sub
 Public Sub WriteShowCarpenterForm(ByVal UserIndex As Integer)
     On Error GoTo WriteShowCarpenterForm_Err
     Call Writer.WriteInt16(ServerPacketID.eShowCarpenterForm)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowCarpenterForm_Err:
     Call Writer.Clear
@@ -359,7 +363,7 @@ End Sub
 Public Sub WriteShowAlquimiaForm(ByVal UserIndex As Integer)
     On Error GoTo WriteShowAlquimiaForm_Err
     Call Writer.WriteInt16(ServerPacketID.eShowAlquimiaForm)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowAlquimiaForm_Err:
     Call Writer.Clear
@@ -369,7 +373,7 @@ End Sub
 Public Sub WriteShowSastreForm(ByVal UserIndex As Integer)
     On Error GoTo WriteShowSastreForm_Err
     Call Writer.WriteInt16(ServerPacketID.eShowSastreForm)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowSastreForm_Err:
     Call Writer.Clear
@@ -384,7 +388,7 @@ End Sub
 Public Sub WriteNPCKillUser(ByVal UserIndex As Integer)
     On Error GoTo WriteNPCKillUser_Err
     Call Writer.WriteInt16(ServerPacketID.eNPCKillUser)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteNPCKillUser_Err:
     Call Writer.Clear
@@ -399,7 +403,7 @@ End Sub
 Public Sub Write_BlockedWithShieldUser(ByVal UserIndex As Integer)
     On Error GoTo Write_BlockedWithShieldUser_Err
     Call Writer.WriteInt16(ServerPacketID.eBlockedWithShieldUser)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 Write_BlockedWithShieldUser_Err:
     Call Writer.Clear
@@ -414,7 +418,7 @@ End Sub
 Public Sub Write_BlockedWithShieldOther(ByVal UserIndex As Integer)
     On Error GoTo Write_BlockedWithShieldOther_Err
     Call Writer.WriteInt16(ServerPacketID.eBlockedWithShieldOther)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 Write_BlockedWithShieldOther_Err:
     Call Writer.Clear
@@ -429,7 +433,7 @@ End Sub
 Public Sub WriteSafeModeOn(ByVal UserIndex As Integer)
     On Error GoTo WriteSafeModeOn_Err
     Call Writer.WriteInt16(ServerPacketID.eSafeModeOn)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteSafeModeOn_Err:
     Call Writer.Clear
@@ -444,7 +448,7 @@ End Sub
 Public Sub WriteSafeModeOff(ByVal UserIndex As Integer)
     On Error GoTo WriteSafeModeOff_Err
     Call Writer.WriteInt16(ServerPacketID.eSafeModeOff)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteSafeModeOff_Err:
     Call Writer.Clear
@@ -459,7 +463,7 @@ End Sub
 Public Sub WritePartySafeOn(ByVal UserIndex As Integer)
     On Error GoTo WritePartySafeOn_Err
     Call Writer.WriteInt16(ServerPacketID.ePartySafeOn)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WritePartySafeOn_Err:
     Call Writer.Clear
@@ -474,7 +478,7 @@ End Sub
 Public Sub WritePartySafeOff(ByVal UserIndex As Integer)
     On Error GoTo WritePartySafeOff_Err
     Call Writer.WriteInt16(ServerPacketID.ePartySafeOff)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WritePartySafeOff_Err:
     Call Writer.Clear
@@ -485,7 +489,7 @@ Public Sub WriteClanSeguro(ByVal UserIndex As Integer, ByVal Estado As Boolean)
     On Error GoTo WriteClanSeguro_Err
     Call Writer.WriteInt16(ServerPacketID.eClanSeguro)
     Call Writer.WriteBool(Estado)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteClanSeguro_Err:
     Call Writer.Clear
@@ -496,7 +500,7 @@ Public Sub WriteSeguroResu(ByVal UserIndex As Integer, ByVal Estado As Boolean)
     On Error GoTo WriteSeguroResu_Err
     Call Writer.WriteInt16(ServerPacketID.eSeguroResu)
     Call Writer.WriteBool(Estado)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteSeguroResu_Err:
     Call Writer.Clear
@@ -507,7 +511,7 @@ Public Sub WriteLegionarySecure(ByVal UserIndex As Integer, ByVal Estado As Bool
     On Error GoTo WriteLegionarySecure_Err
     Call Writer.WriteInt16(ServerPacketID.eLegionarySecure)
     Call Writer.WriteBool(Estado)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteLegionarySecure_Err:
     Call Writer.Clear
@@ -522,7 +526,7 @@ End Sub
 Public Sub WriteCantUseWhileMeditating(ByVal UserIndex As Integer)
     On Error GoTo WriteCantUseWhileMeditating_Err
     Call Writer.WriteInt16(ServerPacketID.eCantUseWhileMeditating)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteCantUseWhileMeditating_Err:
     Call Writer.Clear
@@ -538,7 +542,7 @@ Public Sub WriteUpdateSta(ByVal UserIndex As Integer)
     On Error GoTo WriteUpdateSta_Err
     Call Writer.WriteInt16(ServerPacketID.eUpdateSta)
     Call Writer.WriteInt16(UserList(UserIndex).Stats.MinSta)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateSta_Err:
     Call Writer.Clear
@@ -556,7 +560,7 @@ Public Sub WriteUpdateMana(ByVal UserIndex As Integer)
     Call SendData(SendTarget.ToClanArea, UserList(UserIndex).GuildIndex, PrepareMessageCharUpdateMAN(UserIndex))
     Call Writer.WriteInt16(ServerPacketID.eUpdateMana)
     Call Writer.WriteInt16(UserList(UserIndex).Stats.MinMAN)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateMana_Err:
     Call Writer.Clear
@@ -577,7 +581,7 @@ Public Sub WriteUpdateHP(ByVal UserIndex As Integer)
     Call Writer.WriteInt16(ServerPacketID.eUpdateHP)
     Call Writer.WriteInt16(UserList(UserIndex).Stats.MinHp)
     Call Writer.WriteInt32(UserList(UserIndex).Stats.shield)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateHP_Err:
     Call Writer.Clear
@@ -594,7 +598,7 @@ Public Sub WriteUpdateGold(ByVal UserIndex As Integer)
     Call Writer.WriteInt16(ServerPacketID.eUpdateGold)
     Call Writer.WriteInt32(UserList(UserIndex).Stats.GLD)
     Call Writer.WriteInt32(SvrConfig.GetValue("OroPorNivelBilletera"))
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateGold_Err:
     Call Writer.Clear
@@ -610,7 +614,7 @@ Public Sub WriteUpdateExp(ByVal UserIndex As Integer)
     On Error GoTo WriteUpdateExp_Err
     Call Writer.WriteInt16(ServerPacketID.eUpdateExp)
     Call Writer.WriteInt32(UserList(UserIndex).Stats.Exp)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateExp_Err:
     Call Writer.Clear
@@ -629,7 +633,7 @@ Public Sub WriteChangeMap(ByVal UserIndex As Integer, ByVal Map As Integer)
     Call Writer.WriteInt16(ServerPacketID.eChangeMap)
     Call Writer.WriteInt16(Map)
     Call Writer.WriteInt16(MapInfo(Map).MapResource)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteChangeMap_Err:
     Call Writer.Clear
@@ -646,7 +650,7 @@ Public Sub WritePosUpdate(ByVal UserIndex As Integer)
     Call Writer.WriteInt16(ServerPacketID.ePosUpdate)
     Call Writer.WriteInt8(UserList(UserIndex).pos.x)
     Call Writer.WriteInt8(UserList(UserIndex).pos.y)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     If IsValidUserRef(UserList(UserIndex).flags.GMMeSigue) Then
         Call WritePosUpdateCharIndex(UserList(UserIndex).flags.GMMeSigue.ArrayIndex, UserList(UserIndex).pos.x, UserList(UserIndex).pos.y, UserList(UserIndex).Char.charindex)
     End If
@@ -667,7 +671,7 @@ Public Sub WritePosUpdateCharIndex(ByVal UserIndex As Integer, ByVal x As Byte, 
     Call Writer.WriteInt8(x)
     Call Writer.WriteInt8(y)
     Call Writer.WriteInt16(charindex)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WritePosUpdateCharIndex_Err:
     Call Writer.Clear
@@ -685,7 +689,7 @@ Public Sub WritePosUpdateChar(ByVal UserIndex As Integer, ByVal x As Byte, ByVal
     Call Writer.WriteInt16(charindex)
     Call Writer.WriteInt8(x)
     Call Writer.WriteInt8(y)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WritePosUpdateChar_Err:
     Call Writer.Clear
@@ -704,7 +708,7 @@ Public Sub WriteNPCHitUser(ByVal UserIndex As Integer, ByVal Target As e_PartesC
     Call Writer.WriteInt16(ServerPacketID.eNPCHitUser)
     Call Writer.WriteInt8(Target)
     Call Writer.WriteInt16(Damage)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteNPCHitUser_Err:
     Call Writer.Clear
@@ -725,7 +729,7 @@ Public Sub WriteUserHittedByUser(ByVal UserIndex As Integer, ByVal Target As e_P
     Call Writer.WriteInt16(attackerChar)
     Call Writer.WriteInt8(Target)
     Call Writer.WriteInt16(Damage)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUserHittedByUser_Err:
     Call Writer.Clear
@@ -746,7 +750,7 @@ Public Sub WriteUserHittedUser(ByVal UserIndex As Integer, ByVal Target As e_Par
     Call Writer.WriteInt16(attackedChar)
     Call Writer.WriteInt8(Target)
     Call Writer.WriteInt16(Damage)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUserHittedUser_Err:
     Call Writer.Clear
@@ -763,7 +767,7 @@ End Sub
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 Public Sub WriteChatOverHead(ByVal UserIndex As Integer, ByVal chat As String, ByVal charindex As Integer, ByVal Color As Long)
     On Error GoTo WriteChatOverHead_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageChatOverHead(chat, charindex, Color, , UserList(UserIndex).pos.x, UserList(UserIndex).pos.y))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageChatOverHead(chat, charindex, Color, , UserList(UserIndex).pos.x, UserList(UserIndex).pos.y))
     Exit Sub
 WriteChatOverHead_Err:
     Call Writer.Clear
@@ -780,7 +784,7 @@ End Sub
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 Public Sub WriteLocaleChatOverHead(ByVal UserIndex As Integer, ByVal ChatId As Integer, ByVal Params As String, ByVal charindex As Integer, ByVal Color As Long)
     On Error GoTo WriteLocaleChatOverHead_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareLocaleChatOverHead(ChatId, Params, charindex, Color, , UserList(UserIndex).pos.x, UserList(UserIndex).pos.y))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareLocaleChatOverHead(ChatId, Params, charindex, Color, , UserList(UserIndex).pos.x, UserList(UserIndex).pos.y))
     Exit Sub
 WriteLocaleChatOverHead_Err:
     Call Writer.Clear
@@ -791,16 +795,18 @@ Public Function PrepareLocalizedChatOverHead(ByVal MsgID As Integer, ByVal chari
     Dim finalText As String
     Dim i         As Long
     finalText = "LOCMSG*" & MsgID & "*"
+
     For i = LBound(Args) To UBound(Args)
-        If i > LBound(Args) Then finalText = finalText & "¬"
+        If i > LBound(Args) Then finalText = finalText & "ï¿½"
         finalText = finalText & CStr(Args(i))
     Next
+
     PrepareLocalizedChatOverHead = PrepareMessageChatOverHead(finalText, charindex, Color)
 End Function
 
 Public Sub WriteTextOverChar(ByVal UserIndex As Integer, ByVal chat As String, ByVal charindex As Integer, ByVal Color As Long)
     On Error GoTo WriteTextOverChar_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageTextOverChar(chat, charindex, Color))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageTextOverChar(chat, charindex, Color))
     Exit Sub
 WriteTextOverChar_Err:
     Call Writer.Clear
@@ -809,7 +815,7 @@ End Sub
 
 Public Sub WriteTextOverTile(ByVal UserIndex As Integer, ByVal chat As String, ByVal x As Integer, ByVal y As Integer, ByVal Color As Long)
     On Error GoTo WriteTextOverTile_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageTextOverTile(chat, x, y, Color))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageTextOverTile(chat, x, y, Color))
     Exit Sub
 WriteTextOverTile_Err:
     Call Writer.Clear
@@ -818,7 +824,7 @@ End Sub
 
 Public Sub WriteTextCharDrop(ByVal UserIndex As Integer, ByVal chat As String, ByVal charindex As Integer, ByVal Color As Long)
     On Error GoTo WriteTextCharDrop_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageTextCharDrop(chat, charindex, Color))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageTextCharDrop(chat, charindex, Color))
     Exit Sub
 WriteTextCharDrop_Err:
     Call Writer.Clear
@@ -834,7 +840,7 @@ End Sub
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 Public Sub WriteConsoleMsg(ByVal UserIndex As Integer, ByVal chat As String, Optional ByVal FontIndex As e_FontTypeNames = FONTTYPE_INFO)
     On Error GoTo WriteConsoleMsg_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageConsoleMsg(chat, FontIndex))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageConsoleMsg(chat, FontIndex))
     Exit Sub
 WriteConsoleMsg_Err:
     Call Writer.Clear
@@ -843,7 +849,7 @@ End Sub
 
 Public Sub WriteLocaleMsg(ByVal UserIndex As Integer, ByVal Id As Integer, ByVal FontIndex As e_FontTypeNames, Optional ByVal strExtra As String = vbNullString)
     On Error GoTo WriteLocaleMsg_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageLocaleMsg(Id, strExtra, FontIndex))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageLocaleMsg(Id, strExtra, FontIndex))
     Exit Sub
 WriteLocaleMsg_Err:
     Call Writer.Clear
@@ -858,7 +864,7 @@ End Sub
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 Public Sub WriteGuildChat(ByVal UserIndex As Integer, ByVal chat As String, ByVal Status As Byte)
     On Error GoTo WriteGuildChat_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageGuildChat(chat, Status))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageGuildChat(chat, Status))
     Exit Sub
 WriteGuildChat_Err:
     Call Writer.Clear
@@ -875,8 +881,8 @@ Public Sub WriteShowMessageBox(ByVal UserIndex As Integer, ByVal MessageId As In
     On Error GoTo WriteShowMessageBox_Err
     Call Writer.WriteInt16(ServerPacketID.eShowMessageBox)
     Call Writer.WriteInt16(MessageId)
-    Call Writer.WriteString8(strExtra) ' Enviás los valores dinámicos si hay
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call Writer.WriteString8(strExtra) ' Enviï¿½s los valores dinï¿½micos si hay
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowMessageBox_Err:
     Call Writer.Clear
@@ -897,7 +903,7 @@ End Function
 Public Sub WriteMostrarCuenta(ByVal UserIndex As Integer)
     On Error GoTo WriteMostrarCuenta_Err
     Call Writer.WriteInt16(ServerPacketID.eMostrarCuenta)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteMostrarCuenta_Err:
     Call Writer.Clear
@@ -913,7 +919,7 @@ Public Sub WriteUserIndexInServer(ByVal UserIndex As Integer)
     On Error GoTo WriteUserIndexInServer_Err
     Call Writer.WriteInt16(ServerPacketID.eUserIndexInServer)
     Call Writer.WriteInt16(UserIndex)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUserIndexInServer_Err:
     Call Writer.Clear
@@ -929,7 +935,7 @@ Public Sub WriteUserCharIndexInServer(ByVal UserIndex As Integer)
     On Error GoTo WriteUserCharIndexInServer_Err
     Call Writer.WriteInt16(ServerPacketID.eUserCharIndexInServer)
     Call Writer.WriteInt16(UserList(UserIndex).Char.charindex)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUserCharIndexInServer_Err:
     Call Writer.Clear
@@ -982,9 +988,9 @@ Public Sub WriteCharacterCreate(ByVal UserIndex As Integer, _
                                 ByVal Otra_Aura As String, _
                                 ByVal Escudo_Aura As String, ByVal speeding As Single, ByVal EsNPC As Byte, ByVal appear As Byte, ByVal group_index As Integer, ByVal clan_index As Integer, ByVal clan_nivel As Byte, ByVal UserMinHp As Long, ByVal UserMaxHp As Long, ByVal UserMinMAN As Long, ByVal UserMaxMAN As Long, ByVal Simbolo As Byte, Optional ByVal Idle As Boolean = False, Optional ByVal Navegando As Boolean = False, Optional ByVal tipoUsuario As e_TipoUsuario = 0, Optional ByVal TeamCaptura As Byte = 0, Optional ByVal TieneBandera As Byte = 0, Optional ByVal AnimAtaque1 As Integer = 0)
     On Error GoTo WriteCharacterCreate_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageCharacterCreate(body, head, Heading, charindex, x, y, weapon, shield, Cart, BackPack, FX, FXLoops, helmet, name, _
-            Status, privileges, ParticulaFx, Head_Aura, Arma_Aura, Body_Aura, DM_Aura, RM_Aura, Otra_Aura, Escudo_Aura, speeding, EsNPC, appear, group_index, clan_index, _
-            clan_nivel, UserMinHp, UserMaxHp, UserMinMAN, UserMaxMAN, Simbolo, Idle, Navegando, tipoUsuario, TeamCaptura, TieneBandera, AnimAtaque1))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageCharacterCreate(body, head, Heading, charindex, x, y, weapon, shield, Cart, BackPack, FX, FXLoops, _
+            helmet, name, Status, privileges, ParticulaFx, Head_Aura, Arma_Aura, Body_Aura, DM_Aura, RM_Aura, Otra_Aura, Escudo_Aura, speeding, EsNPC, appear, group_index, _
+            clan_index, clan_nivel, UserMinHp, UserMaxHp, UserMinMAN, UserMaxMAN, Simbolo, Idle, Navegando, tipoUsuario, TeamCaptura, TieneBandera, AnimAtaque1))
     Exit Sub
 WriteCharacterCreate_Err:
     Call Writer.Clear
@@ -993,7 +999,7 @@ End Sub
 
 Public Sub WriteCharacterUpdateFlag(ByVal UserIndex As Integer, ByVal Flag As Byte, ByVal charindex As Integer)
     On Error GoTo WriteCharacterUpdateFlag_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageUpdateFlag(Flag, charindex))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageUpdateFlag(Flag, charindex))
     Exit Sub
 WriteCharacterUpdateFlag_Err:
     Call Writer.Clear
@@ -1002,7 +1008,7 @@ End Sub
 
 Public Sub WriteForceCharMove(ByVal UserIndex As Integer, ByVal Direccion As e_Heading)
     On Error GoTo WriteForceCharMove_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageForceCharMove(Direccion))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageForceCharMove(Direccion))
     Exit Sub
 WriteForceCharMove_Err:
     Call Writer.Clear
@@ -1013,7 +1019,7 @@ Public Sub WriteForceCharMoveSiguiendo(ByVal UserIndex As Integer, ByVal Direcci
     On Error GoTo WriteForceCharMoveSiguiendo_Err
     Call Writer.WriteInt16(ServerPacketID.eForceCharMoveSiguiendo)
     Call Writer.WriteInt8(Direccion)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteForceCharMoveSiguiendo_Err:
     Call Writer.Clear
@@ -1049,8 +1055,8 @@ Public Sub WriteCharacterChange(ByVal UserIndex As Integer, _
                                 Optional ByVal Idle As Boolean = False, _
                                 Optional ByVal Navegando As Boolean = False)
     On Error GoTo WriteCharacterChange_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageCharacterChange(body, head, Heading, charindex, weapon, shield, Cart, BackPack, FX, FXLoops, helmet, Idle, _
-            Navegando))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageCharacterChange(body, head, Heading, charindex, weapon, shield, Cart, BackPack, FX, FXLoops, helmet, _
+            Idle, Navegando))
     Exit Sub
 WriteCharacterChange_Err:
     Call Writer.Clear
@@ -1067,7 +1073,7 @@ End Sub
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 Public Sub WriteObjectCreate(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVal amount As Integer, ByVal x As Byte, ByVal y As Byte)
     On Error GoTo WriteObjectCreate_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageObjectCreate(ObjIndex, amount, x, y, ObjData(ObjIndex).ElementalTags))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageObjectCreate(ObjIndex, amount, x, y, ObjData(ObjIndex).ElementalTags))
     Exit Sub
 WriteObjectCreate_Err:
     Call Writer.Clear
@@ -1076,7 +1082,7 @@ End Sub
 
 Public Sub WriteUpdateTrapState(ByVal UserIndex As Integer, State As Integer, ByVal x As Integer, ByVal y As Integer)
     On Error GoTo WriteUpdateTrapState_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareTrapUpdate(State, x, y))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareTrapUpdate(State, x, y))
     Exit Sub
 WriteUpdateTrapState_Err:
     Call Writer.Clear
@@ -1086,7 +1092,7 @@ End Sub
 Public Sub WriteParticleFloorCreate(ByVal UserIndex As Integer, ByVal Particula As Integer, ByVal ParticulaTime As Integer, ByVal Map As Integer, ByVal x As Byte, ByVal y As Byte)
     On Error GoTo WriteParticleFloorCreate_Err
     If Particula = 0 Then
-        Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageParticleFXToFloor(x, y, Particula, ParticulaTime))
+        Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageParticleFXToFloor(x, y, Particula, ParticulaTime))
     End If
     Exit Sub
 WriteParticleFloorCreate_Err:
@@ -1099,7 +1105,7 @@ Public Sub WriteLightFloorCreate(ByVal UserIndex As Integer, ByVal LuzColor As L
     MapData(Map, x, y).Luz.Color = LuzColor
     MapData(Map, x, y).Luz.Rango = Rango
     If Rango = 0 Then
-        Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageLightFXToFloor(x, y, LuzColor, Rango))
+        Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageLightFXToFloor(x, y, LuzColor, Rango))
     End If
     Exit Sub
 WriteLightFloorCreate_Err:
@@ -1109,7 +1115,7 @@ End Sub
 
 Public Sub WriteFxPiso(ByVal UserIndex As Integer, ByVal GrhIndex As Integer, ByVal x As Byte, ByVal y As Byte)
     On Error GoTo WriteFxPiso_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageFxPiso(GrhIndex, x, y))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageFxPiso(GrhIndex, x, y))
     Exit Sub
 WriteFxPiso_Err:
     Call Writer.Clear
@@ -1125,7 +1131,7 @@ End Sub
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 Public Sub WriteObjectDelete(ByVal UserIndex As Integer, ByVal x As Byte, ByVal y As Byte)
     On Error GoTo WriteObjectDelete_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageObjectDelete(x, y))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageObjectDelete(x, y))
     Exit Sub
 WriteObjectDelete_Err:
     Call Writer.Clear
@@ -1146,7 +1152,7 @@ Public Sub Write_BlockPosition(ByVal UserIndex As Integer, ByVal x As Byte, ByVa
     Call Writer.WriteInt8(x)
     Call Writer.WriteInt8(y)
     Call Writer.WriteInt8(Blocked)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 Write_BlockPosition_Err:
     Call Writer.Clear
@@ -1162,7 +1168,7 @@ End Sub
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 Public Sub WritePlayMidi(ByVal UserIndex As Integer, ByVal midi As Byte, Optional ByVal loops As Integer = -1)
     On Error GoTo WritePlayMidi_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessagePlayMidi(midi, loops))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessagePlayMidi(midi, loops))
     Exit Sub
 WritePlayMidi_Err:
     Call Writer.Clear
@@ -1184,7 +1190,7 @@ Public Sub WritePlayWave(ByVal UserIndex As Integer, _
                          Optional ByVal CancelLastWave As Byte = 0, _
                          Optional ByVal Localize As Byte = 0)
     On Error GoTo WritePlayWave_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessagePlayWave(wave, x, y, CancelLastWave, Localize))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessagePlayWave(wave, x, y, CancelLastWave, Localize))
     Exit Sub
 WritePlayWave_Err:
     Call Writer.Clear
@@ -1206,7 +1212,7 @@ Public Sub WritePlayWaveStep(ByVal UserIndex As Integer, _
     Call Writer.WriteInt8(Distance)
     Call Writer.WriteInt16(balance)
     Call Writer.WriteBool(step)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WritePlayWaveStep_Err:
     Call Writer.Clear
@@ -1224,13 +1230,15 @@ Public Sub WriteGuildList(ByVal UserIndex As Integer, ByRef guildList() As Strin
     Dim Tmp As String
     Dim i   As Long
     Call Writer.WriteInt16(ServerPacketID.eguildList)
+
     ' Prepare guild name's list
     For i = LBound(guildList()) To UBound(guildList())
         Tmp = Tmp & guildList(i) & SEPARATOR
     Next i
+
     If Len(Tmp) Then Tmp = Left$(Tmp, Len(Tmp) - 1)
     Call Writer.WriteString8(Tmp)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteGuildList_Err:
     Call Writer.Clear
@@ -1247,7 +1255,7 @@ Public Sub WriteAreaChanged(ByVal UserIndex As Integer, ByVal x As Byte, ByVal y
     Call Writer.WriteInt16(ServerPacketID.eAreaChanged)
     Call Writer.WriteInt8(x)
     Call Writer.WriteInt8(y)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteAreaChanged_Err:
     Call Writer.Clear
@@ -1261,7 +1269,7 @@ End Sub
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 Public Sub WritePauseToggle(ByVal UserIndex As Integer)
     On Error GoTo WritePauseToggle_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessagePauseToggle())
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessagePauseToggle())
     Exit Sub
 WritePauseToggle_Err:
     Call Writer.Clear
@@ -1275,7 +1283,7 @@ End Sub
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 Public Sub WriteRainToggle(ByVal UserIndex As Integer)
     On Error GoTo WriteRainToggle_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageRainToggle())
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageRainToggle())
     Exit Sub
 WriteRainToggle_Err:
     Call Writer.Clear
@@ -1284,7 +1292,7 @@ End Sub
 
 Public Sub WriteNubesToggle(ByVal UserIndex As Integer)
     On Error GoTo WriteNubesToggle_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageNieblandoToggle(IntensidadDeNubes))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageNieblandoToggle(IntensidadDeNubes))
     Exit Sub
 WriteNubesToggle_Err:
     Call Writer.Clear
@@ -1302,7 +1310,7 @@ End Sub
 Public Sub WriteCreateFX(ByVal UserIndex As Integer, ByVal charindex As Integer, ByVal FX As Integer, ByVal FXLoops As Integer)
     'Writes the "CreateFX" message to the given user's outgoing data buffer
     On Error GoTo WriteCreateFX_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageCreateFX(charindex, FX, FXLoops, UserList(UserIndex).pos.x, UserList(UserIndex).pos.y))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageCreateFX(charindex, FX, FXLoops, UserList(UserIndex).pos.x, UserList(UserIndex).pos.y))
     Exit Sub
 WriteCreateFX_Err:
     Call Writer.Clear
@@ -1333,7 +1341,7 @@ Public Sub WriteUpdateUserStats(ByVal UserIndex As Integer)
     Call Writer.WriteInt32(ExpLevelUp(UserList(UserIndex).Stats.ELV))
     Call Writer.WriteInt32(UserList(UserIndex).Stats.Exp)
     Call Writer.WriteInt8(UserList(UserIndex).clase)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateUserStats_Err:
     Call Writer.Clear
@@ -1345,54 +1353,54 @@ Public Sub WriteUpdateUserKey(ByVal UserIndex As Integer, ByVal Slot As Integer,
     Call Writer.WriteInt16(ServerPacketID.eUpdateUserKey)
     Call Writer.WriteInt16(Slot)
     Call Writer.WriteInt16(Llave)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateUserKey_Err:
     Call Writer.Clear
     Call TraceError(Err.Number, Err.Description, "Argentum20Server.Protocol_Writes.WriteUpdateUserKey", Erl)
 End Sub
 
-' Actualiza el indicador de daño mágico
+' Actualiza el indicador de daï¿½o mï¿½gico
 Public Sub WriteUpdateDM(ByVal UserIndex As Integer)
     On Error GoTo WriteUpdateDM_Err
     Dim Valor As Integer
     With UserList(UserIndex).invent
-        ' % daño mágico del arma
+        ' % daï¿½o mï¿½gico del arma
         If .EquippedWeaponObjIndex > 0 Then
             Valor = Valor + ObjData(.EquippedWeaponObjIndex).MagicDamageBonus
         End If
-        ' % daño mágico del anillo
+        ' % daï¿½o mï¿½gico del anillo
         If .EquippedRingAccesoryObjIndex > 0 Then
             Valor = Valor + ObjData(.EquippedRingAccesoryObjIndex).MagicDamageBonus
         End If
         Call Writer.WriteInt16(ServerPacketID.eUpdateDM)
         Call Writer.WriteInt16(Valor)
     End With
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateDM_Err:
     Call Writer.Clear
     Call TraceError(Err.Number, Err.Description, "Argentum20Server.Protocol_Writes.WriteUpdateDM", Erl)
 End Sub
 
-' Actualiza el indicador de resistencia mágica
+' Actualiza el indicador de resistencia mï¿½gica
 Public Sub WriteUpdateRM(ByVal UserIndex As Integer)
     On Error GoTo WriteUpdateRM_Err
     Dim Valor As Integer
     With UserList(UserIndex).invent
-        ' Resistencia mágica de la armadura
+        ' Resistencia mï¿½gica de la armadura
         If .EquippedArmorObjIndex > 0 Then
             Valor = Valor + ObjData(.EquippedArmorObjIndex).ResistenciaMagica
         End If
-        ' Resistencia mágica del anillo
+        ' Resistencia mï¿½gica del anillo
         If .EquippedRingAccesoryObjIndex > 0 Then
             Valor = Valor + ObjData(.EquippedRingAccesoryObjIndex).ResistenciaMagica
         End If
-        ' Resistencia mágica del escudo
+        ' Resistencia mï¿½gica del escudo
         If .EquippedShieldObjIndex > 0 Then
             Valor = Valor + ObjData(.EquippedShieldObjIndex).ResistenciaMagica
         End If
-        ' Resistencia mágica del casco
+        ' Resistencia mï¿½gica del casco
         If .EquippedHelmetObjIndex > 0 Then
             Valor = Valor + ObjData(.EquippedHelmetObjIndex).ResistenciaMagica
         End If
@@ -1400,7 +1408,7 @@ Public Sub WriteUpdateRM(ByVal UserIndex As Integer)
         Call Writer.WriteInt16(ServerPacketID.eUpdateRM)
         Call Writer.WriteInt16(Valor)
     End With
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateRM_Err:
     Call Writer.Clear
@@ -1419,7 +1427,7 @@ Public Sub WriteWorkRequestTarget(ByVal UserIndex As Integer, ByVal Skill As e_S
     Call Writer.WriteInt8(Skill)
     Call Writer.WriteBool(CasteaArea)
     Call Writer.WriteInt8(Radio)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteWorkRequestTarget_Err:
     Call Writer.Clear
@@ -1439,7 +1447,7 @@ Public Sub WriteInventoryUnlockSlots(ByVal UserIndex As Integer)
                 Case tAventurero
                     Call Writer.WriteInt8(1)
             End Select
-            Call modSendData.SendData(ToIndex, UserIndex)
+            Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
         End If
     End With
     Exit Sub
@@ -1465,7 +1473,7 @@ Public Sub WriteIntervals(ByVal UserIndex As Integer)
         Call Writer.WriteInt32(.Intervals.UsarClic)
         Call Writer.WriteInt32(IntervaloTirar)
     End With
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteIntervals_Err:
     Call Writer.Clear
@@ -1495,7 +1503,7 @@ Public Sub WriteChangeInventorySlot(ByVal UserIndex As Integer, ByVal Slot As By
     Else
         Call Writer.WriteBool(False)
     End If
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteChangeInventorySlot_Err:
     Call Writer.Clear
@@ -1528,7 +1536,7 @@ Public Sub WriteChangeBankSlot(ByVal UserIndex As Integer, ByVal Slot As Byte)
     Call Writer.WriteInt16(UserList(UserIndex).BancoInvent.Object(Slot).amount)
     Call Writer.WriteInt32(Valor)
     Call Writer.WriteInt8(PodraUsarlo)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteChangeBankSlot_Err:
     Call Writer.Clear
@@ -1553,7 +1561,7 @@ Public Sub WriteChangeSpellSlot(ByVal UserIndex As Integer, ByVal Slot As Intege
         Call Writer.WriteInt16(-1)
         Call Writer.WriteBool(False)
     End If
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteChangeSpellSlot_Err:
     Call Writer.Clear
@@ -1573,7 +1581,7 @@ Public Sub WriteAttributes(ByVal UserIndex As Integer)
     Call Writer.WriteInt8(UserList(UserIndex).Stats.UserAtributos(e_Atributos.Inteligencia))
     Call Writer.WriteInt8(UserList(UserIndex).Stats.UserAtributos(e_Atributos.Constitucion))
     Call Writer.WriteInt8(UserList(UserIndex).Stats.UserAtributos(e_Atributos.Carisma))
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteAttributes_Err:
     Call Writer.Clear
@@ -1592,6 +1600,7 @@ Public Sub WriteBlacksmithWeapons(ByVal UserIndex As Integer)
     Dim count          As Integer
     ReDim validIndexes(1 To UBound(ArmasHerrero()))
     Call Writer.WriteInt16(ServerPacketID.eBlacksmithWeapons)
+
     For i = 1 To UBound(ArmasHerrero())
         ' Can the user create this object? If so add it to the list....
         If ObjData(ArmasHerrero(i)).SkHerreria <= UserList(UserIndex).Stats.UserSkills(e_Skill.Herreria) Then
@@ -1599,13 +1608,16 @@ Public Sub WriteBlacksmithWeapons(ByVal UserIndex As Integer)
             validIndexes(count) = i
         End If
     Next i
+
     ' Write the number of objects in the list
     Call Writer.WriteInt16(count)
+
     ' Write the needed data of each object
     For i = 1 To count
         Call Writer.WriteInt16(ArmasHerrero(validIndexes(i)))
     Next i
-    Call modSendData.SendData(ToIndex, UserIndex)
+
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteBlacksmithWeapons_Err:
     Call Writer.Clear
@@ -1624,6 +1636,7 @@ Public Sub WriteBlacksmithArmors(ByVal UserIndex As Integer)
     Dim count          As Integer
     ReDim validIndexes(1 To UBound(ArmadurasHerrero()))
     Call Writer.WriteInt16(ServerPacketID.eBlacksmithArmors)
+
     For i = 1 To UBound(ArmadurasHerrero())
         ' Can the user create this object? If so add it to the list....
         If ObjData(ArmadurasHerrero(i)).SkHerreria <= Round(UserList(UserIndex).Stats.UserSkills(e_Skill.Herreria) / ModHerreria(UserList(UserIndex).clase), 0) Then
@@ -1631,13 +1644,16 @@ Public Sub WriteBlacksmithArmors(ByVal UserIndex As Integer)
             validIndexes(count) = i
         End If
     Next i
+
     ' Write the number of objects in the list
     Call Writer.WriteInt16(count)
+
     ' Write the needed data of each object
     For i = 1 To count
         Call Writer.WriteInt16(ArmadurasHerrero(validIndexes(i)))
     Next i
-    Call modSendData.SendData(ToIndex, UserIndex)
+
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteBlacksmithArmors_Err:
     Call Writer.Clear
@@ -1651,6 +1667,7 @@ Public Sub WriteBlacksmithElementalRunes(ByVal UserIndex As Integer)
     Dim count          As Integer
     ReDim validIndexes(1 To UBound(BlackSmithElementalRunes()))
     Call Writer.WriteInt16(ServerPacketID.eBlacksmithExtraObjects)
+
     For i = 1 To UBound(BlackSmithElementalRunes())
         ' Can the user create this object? If so add it to the list....
         If ObjData(BlackSmithElementalRunes(i)).SkHerreria <= UserList(UserIndex).Stats.UserSkills(e_Skill.Herreria) Then
@@ -1658,13 +1675,16 @@ Public Sub WriteBlacksmithElementalRunes(ByVal UserIndex As Integer)
             validIndexes(count) = i
         End If
     Next i
+
     ' Write the number of objects in the list
     Call Writer.WriteInt16(count)
+
     ' Write the needed data of each object
     For i = 1 To count
         Call Writer.WriteInt16(BlackSmithElementalRunes(validIndexes(i)))
     Next i
-    Call modSendData.SendData(ToIndex, UserIndex)
+
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteBlacksmithElementalRunes_Err:
     Call Writer.Clear
@@ -1683,6 +1703,7 @@ Public Sub WriteCarpenterObjects(ByVal UserIndex As Integer)
     Dim count          As Byte
     ReDim validIndexes(1 To UBound(ObjCarpintero()))
     Call Writer.WriteInt16(ServerPacketID.eCarpenterObjects)
+
     For i = 1 To UBound(ObjCarpintero())
         ' Can the user create this object? If so add it to the list....
         If ObjData(ObjCarpintero(i)).SkCarpinteria <= UserList(UserIndex).Stats.UserSkills(e_Skill.Carpinteria) Then
@@ -1691,8 +1712,10 @@ Public Sub WriteCarpenterObjects(ByVal UserIndex As Integer)
             validIndexes(count) = i
         End If
     Next i
+
     ' Write the number of objects in the list
     Call Writer.WriteInt8(count)
+
     ' Write the needed data of each object
     For i = 1 To count
         Call Writer.WriteInt16(ObjCarpintero(validIndexes(i)))
@@ -1700,7 +1723,8 @@ Public Sub WriteCarpenterObjects(ByVal UserIndex As Integer)
         'Call Writer.WriteInt32(obj.GrhIndex)
         ' Ladder 07/07/2014   Ahora se envia el grafico de los objetos
     Next i
-    Call modSendData.SendData(ToIndex, UserIndex)
+
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteCarpenterObjects_Err:
     Call Writer.Clear
@@ -1714,6 +1738,7 @@ Public Sub WriteAlquimistaObjects(ByVal UserIndex As Integer)
     Dim count          As Integer
     ReDim validIndexes(1 To UBound(ObjAlquimista()))
     Call Writer.WriteInt16(ServerPacketID.eAlquimistaObj)
+
     For i = 1 To UBound(ObjAlquimista())
         ' Can the user create this object? If so add it to the list....
         If ObjData(ObjAlquimista(i)).SkPociones <= UserList(UserIndex).Stats.UserSkills(e_Skill.Alquimia) \ ModAlquimia(UserList(UserIndex).clase) Then
@@ -1721,13 +1746,16 @@ Public Sub WriteAlquimistaObjects(ByVal UserIndex As Integer)
             validIndexes(count) = i
         End If
     Next i
+
     ' Write the number of objects in the list
     Call Writer.WriteInt16(count)
+
     ' Write the needed data of each object
     For i = 1 To count
         Call Writer.WriteInt16(ObjAlquimista(validIndexes(i)))
     Next i
-    Call modSendData.SendData(ToIndex, UserIndex)
+
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteAlquimistaObjects_Err:
     Call Writer.Clear
@@ -1741,6 +1769,7 @@ Public Sub WriteSastreObjects(ByVal UserIndex As Integer)
     Dim count          As Integer
     ReDim validIndexes(1 To UBound(ObjSastre()))
     Call Writer.WriteInt16(ServerPacketID.eSastreObj)
+
     For i = 1 To UBound(ObjSastre())
         ' Can the user create this object? If so add it to the list....
         If ObjData(ObjSastre(i)).SkSastreria <= UserList(UserIndex).Stats.UserSkills(e_Skill.Sastreria) Then
@@ -1748,13 +1777,16 @@ Public Sub WriteSastreObjects(ByVal UserIndex As Integer)
             validIndexes(count) = i
         End If
     Next i
+
     ' Write the number of objects in the list
     Call Writer.WriteInt16(count)
+
     ' Write the needed data of each object
     For i = 1 To count
         Call Writer.WriteInt16(ObjSastre(validIndexes(i)))
     Next i
-    Call modSendData.SendData(ToIndex, UserIndex)
+
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteSastreObjects_Err:
     Call Writer.Clear
@@ -1769,7 +1801,7 @@ End Sub
 Public Sub WriteRestOK(ByVal UserIndex As Integer)
     On Error GoTo WriteRestOK_Err
     Call Writer.WriteInt16(ServerPacketID.eRestOK)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteRestOK_Err:
     Call Writer.Clear
@@ -1785,7 +1817,7 @@ End Sub
 Public Sub WriteErrorMsg(ByVal UserIndex As Integer, ByVal Message As String)
     'Writes the "ErrorMsg" message to the given user's outgoing data buffer
     On Error GoTo WriteErrorMsg_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageErrorMsg(Message))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageErrorMsg(Message))
     Exit Sub
 WriteErrorMsg_Err:
     Call Writer.Clear
@@ -1800,7 +1832,7 @@ End Sub
 Public Sub WriteBlind(ByVal UserIndex As Integer)
     On Error GoTo WriteBlind_Err
     Call Writer.WriteInt16(ServerPacketID.eBlind)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteBlind_Err:
     Call Writer.Clear
@@ -1815,7 +1847,7 @@ End Sub
 Public Sub WriteDumb(ByVal UserIndex As Integer)
     On Error GoTo WriteDumb_Err
     Call Writer.WriteInt16(ServerPacketID.eDumb)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteDumb_Err:
     Call Writer.Clear
@@ -1834,7 +1866,7 @@ Public Sub WriteShowSignal(ByVal UserIndex As Integer, ByVal ObjIndex As Integer
     Call Writer.WriteInt16(ServerPacketID.eShowSignal)
     Call Writer.WriteInt16(ObjIndex)
     Call Writer.WriteInt16(ObjData(ObjIndex).GrhSecundario)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowSignal_Err:
     Call Writer.Clear
@@ -1862,7 +1894,7 @@ Public Sub WriteChangeNPCInventorySlot(ByVal UserIndex As Integer, ByVal Slot As
     Call Writer.WriteReal32(price)
     Call Writer.WriteInt32(obj.ElementalTags)
     Call Writer.WriteInt8(PodraUsarlo)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteChangeNPCInventorySlot_Err:
     Call Writer.Clear
@@ -1881,7 +1913,7 @@ Public Sub WriteUpdateHungerAndThirst(ByVal UserIndex As Integer)
     Call Writer.WriteInt8(UserList(UserIndex).Stats.MinAGU)
     Call Writer.WriteInt8(UserList(UserIndex).Stats.MaxHam)
     Call Writer.WriteInt8(UserList(UserIndex).Stats.MinHam)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateHungerAndThirst_Err:
     Call Writer.Clear
@@ -1892,7 +1924,7 @@ Public Sub WriteLight(ByVal UserIndex As Integer, ByVal Map As Integer)
     On Error GoTo WriteLight_Err
     Call Writer.WriteInt16(ServerPacketID.eLight)
     Call Writer.WriteString8(MapInfo(Map).base_light)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteLight_Err:
     Call Writer.Clear
@@ -1905,7 +1937,7 @@ Public Sub WriteFlashScreen(ByVal UserIndex As Integer, ByVal Color As Long, ByV
     Call Writer.WriteInt32(Color)
     Call Writer.WriteInt32(Time)
     Call Writer.WriteBool(Ignorar)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteFlashScreen_Err:
     Call Writer.Clear
@@ -1918,7 +1950,7 @@ Public Sub WriteFYA(ByVal UserIndex As Integer)
     Call Writer.WriteInt8(UserList(UserIndex).Stats.UserAtributos(1))
     Call Writer.WriteInt8(UserList(UserIndex).Stats.UserAtributos(2))
     Call Writer.WriteInt16(UserList(UserIndex).flags.DuracionEfecto)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteFYA_Err:
     Call Writer.Clear
@@ -1928,7 +1960,7 @@ End Sub
 Public Sub WriteCerrarleCliente(ByVal UserIndex As Integer)
     On Error GoTo WriteCerrarleCliente_Err
     Call Writer.WriteInt16(ServerPacketID.eCerrarleCliente)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteCerrarleCliente_Err:
     Call Writer.Clear
@@ -1940,7 +1972,7 @@ Public Sub WriteContadores(ByVal UserIndex As Integer)
     Call Writer.WriteInt16(ServerPacketID.eContadores)
     Call Writer.WriteInt16(UserList(UserIndex).Counters.Invisibilidad)
     Call Writer.WriteInt16(UserList(UserIndex).flags.DuracionEfecto)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteContadores_Err:
     Call Writer.Clear
@@ -1950,7 +1982,7 @@ End Sub
 Public Sub WriteShowPapiro(ByVal UserIndex As Integer)
     On Error GoTo WriteShowPapiro_Err
     Call Writer.WriteInt16(ServerPacketID.eShowPapiro)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowPapiro_Err:
     Call Writer.Clear
@@ -1961,7 +1993,7 @@ Public Sub WriteUpdateCdType(ByVal UserIndex As Integer, ByVal cdType As Byte)
     On Error GoTo WriteUpdateCdType_Err
     Call Writer.WriteInt16(ServerPacketID.eUpdateCooldownType)
     Call Writer.WriteInt8(cdType)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateCdType_Err:
     Call Writer.Clear
@@ -1976,7 +2008,7 @@ Public Sub WritePrivilegios(ByVal UserIndex As Integer)
     Else
         Call Writer.WriteBool(False)
     End If
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WritePrivilegios_Err:
     Call Writer.Clear
@@ -1988,7 +2020,7 @@ Public Sub WriteBindKeys(ByVal UserIndex As Integer)
     Call Writer.WriteInt16(ServerPacketID.eBindKeys)
     Call Writer.WriteInt8(UserList(UserIndex).ChatCombate)
     Call Writer.WriteInt8(UserList(UserIndex).ChatGlobal)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteBindKeys_Err:
     Call Writer.Clear
@@ -1999,7 +2031,7 @@ Public Sub WriteNotificarClienteSeguido(ByVal UserIndex As Integer, ByVal siguie
     On Error GoTo WriteNotificarClienteSeguido_Err
     Call Writer.WriteInt16(ServerPacketID.eNotificarClienteSeguido)
     Call Writer.WriteInt8(siguiendo)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteNotificarClienteSeguido_Err:
     Call Writer.Clear
@@ -2011,7 +2043,7 @@ Public Sub WriteRecievePosSeguimiento(ByVal UserIndex As Integer, ByVal PosX As 
     Call Writer.WriteInt16(ServerPacketID.eRecievePosSeguimiento)
     Call Writer.WriteInt16(PosX)
     Call Writer.WriteInt16(PosY)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteNotificarClienteSeguido_Err:
     Call Writer.Clear
@@ -2024,7 +2056,7 @@ Public Sub WriteGetInventarioHechizos(ByVal UserIndex As Integer, ByVal value As
     Call Writer.WriteInt8(value)
     Call Writer.WriteInt8(hechiSel)
     Call Writer.WriteInt8(scrollSel)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 GetInventarioHechizos_Err:
     Call Writer.Clear
@@ -2035,7 +2067,7 @@ Public Sub WriteNofiticarClienteCasteo(ByVal UserIndex As Integer, ByVal value A
     On Error GoTo NofiticarClienteCasteo_Err
     Call Writer.WriteInt16(ServerPacketID.eNotificarClienteCasteo)
     Call Writer.WriteInt8(value)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 NofiticarClienteCasteo_Err:
     Call Writer.Clear
@@ -2045,7 +2077,7 @@ End Sub
 Public Sub WriteCancelarSeguimiento(ByVal UserIndex As Integer)
     On Error GoTo WriteCancelarSeguimiento_Err
     Call Writer.WriteInt16(ServerPacketID.eCancelarSeguimiento)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteCancelarSeguimiento_Err:
     Call Writer.Clear
@@ -2056,7 +2088,7 @@ Public Sub WriteSendFollowingCharindex(ByVal UserIndex As Integer, ByVal charind
     On Error GoTo WriteSendFollowingCharindex_Err
     Call Writer.WriteInt16(ServerPacketID.eSendFollowingCharindex)
     Call Writer.WriteInt16(charindex)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteSendFollowingCharindex_Err:
     Call Writer.Clear
@@ -2081,7 +2113,7 @@ Public Sub WriteMiniStats(ByVal UserIndex As Integer)
     Call Writer.WriteInt8(UserList(UserIndex).genero)
     Call Writer.WriteInt32(UserList(UserIndex).Stats.PuntosPesca)
     Call Writer.WriteInt8(UserList(UserIndex).raza)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteMiniStats_Err:
     Call Writer.Clear
@@ -2097,7 +2129,7 @@ Public Sub WriteLevelUp(ByVal UserIndex As Integer, ByVal skillPoints As Integer
     On Error GoTo WriteLevelUp_Err
     Call Writer.WriteInt16(ServerPacketID.eLevelUp)
     Call Writer.WriteInt16(skillPoints)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteLevelUp_Err:
     Call Writer.Clear
@@ -2115,7 +2147,7 @@ Public Sub WriteAddForumMsg(ByVal UserIndex As Integer, ByVal title As String, B
     Call Writer.WriteInt16(ServerPacketID.eAddForumMsg)
     Call Writer.WriteString8(title)
     Call Writer.WriteString8(Message)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteAddForumMsg_Err:
     Call Writer.Clear
@@ -2130,7 +2162,7 @@ End Sub
 Public Sub WriteShowForumForm(ByVal UserIndex As Integer)
     On Error GoTo WriteShowForumForm_Err
     Call Writer.WriteInt16(ServerPacketID.eShowForumForm)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowForumForm_Err:
     Call Writer.Clear
@@ -2146,7 +2178,7 @@ End Sub
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 Public Sub WriteSetInvisible(ByVal UserIndex As Integer, ByVal TargetIndex As Integer, ByVal invisible As Boolean)
     On Error GoTo WriteSetInvisible_Err
-    Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageSetInvisible(UserList(TargetIndex).Char.charindex, invisible, UserList(TargetIndex).pos.x, UserList( _
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareMessageSetInvisible(UserList(TargetIndex).Char.charindex, invisible, UserList(TargetIndex).pos.x, UserList( _
             TargetIndex).pos.y))
     Exit Sub
 WriteSetInvisible_Err:
@@ -2162,7 +2194,7 @@ End Sub
 Public Sub WriteMeditateToggle(ByVal UserIndex As Integer)
     On Error GoTo WriteMeditateToggle_Err
     Call Writer.WriteInt16(ServerPacketID.eMeditateToggle)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteMeditateToggle_Err:
     Call Writer.Clear
@@ -2177,7 +2209,7 @@ End Sub
 Public Sub WriteBlindNoMore(ByVal UserIndex As Integer)
     On Error GoTo WriteBlindNoMore_Err
     Call Writer.WriteInt16(ServerPacketID.eBlindNoMore)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteBlindNoMore_Err:
     Call Writer.Clear
@@ -2192,7 +2224,7 @@ End Sub
 Public Sub WriteDumbNoMore(ByVal UserIndex As Integer)
     On Error GoTo WriteDumbNoMore_Err
     Call Writer.WriteInt16(ServerPacketID.eDumbNoMore)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteDumbNoMore_Err:
     Call Writer.Clear
@@ -2208,10 +2240,12 @@ Public Sub WriteSendSkills(ByVal UserIndex As Integer)
     On Error GoTo WriteSendSkills_Err
     Dim i As Long
     Call Writer.WriteInt16(ServerPacketID.eSendSkills)
+
     For i = 1 To NUMSKILLS
         Call Writer.WriteInt8(UserList(UserIndex).Stats.UserSkills(i))
     Next i
-    Call modSendData.SendData(ToIndex, UserIndex)
+
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteSendSkills_Err:
     Call Writer.Clear
@@ -2229,12 +2263,14 @@ Public Sub WriteTrainerCreatureList(ByVal UserIndex As Integer, ByVal NpcIndex A
     Dim i   As Long
     Dim str As String
     Call Writer.WriteInt16(ServerPacketID.eTrainerCreatureList)
+
     For i = 1 To NpcList(NpcIndex).NroCriaturas
         str = str & NpcList(NpcIndex).Criaturas(i).NpcName & SEPARATOR
     Next i
+
     If LenB(str) > 0 Then str = Left$(str, Len(str) - 1)
     Call Writer.WriteString8(str)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteTrainerCreatureList_Err:
     Call Writer.Clear
@@ -2261,23 +2297,27 @@ Public Sub WriteGuildNews(ByVal UserIndex As Integer, _
     Dim Tmp As String
     Call Writer.WriteInt16(ServerPacketID.eguildNews)
     Call Writer.WriteString8(guildNews)
+
     ' Prepare guild name's list
     For i = LBound(guildList()) To UBound(guildList())
         Tmp = Tmp & guildList(i) & SEPARATOR
     Next i
+
     If Len(Tmp) Then Tmp = Left$(Tmp, Len(Tmp) - 1)
     Call Writer.WriteString8(Tmp)
     ' Prepare guild member's list
     Tmp = vbNullString
+
     For i = LBound(MemberList()) To UBound(MemberList())
         Tmp = Tmp & GetUserName(MemberList(i)) & SEPARATOR
     Next i
+
     If Len(Tmp) Then Tmp = Left$(Tmp, Len(Tmp) - 1)
     Call Writer.WriteString8(Tmp)
     Call Writer.WriteInt8(ClanNivel)
     Call Writer.WriteInt16(ExpAcu)
     Call Writer.WriteInt16(ExpNe)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteGuildNews_Err:
     Call Writer.Clear
@@ -2294,7 +2334,7 @@ Public Sub WriteOfferDetails(ByVal UserIndex As Integer, ByVal details As String
     On Error GoTo WriteOfferDetails_Err
     Call Writer.WriteInt16(ServerPacketID.eOfferDetails)
     Call Writer.WriteString8(details)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteOfferDetails_Err:
     Call Writer.Clear
@@ -2312,13 +2352,15 @@ Public Sub WriteAlianceProposalsList(ByVal UserIndex As Integer, ByRef guilds() 
     Dim i   As Long
     Dim Tmp As String
     Call Writer.WriteInt16(ServerPacketID.eAlianceProposalsList)
+
     ' Prepare guild's list
     For i = LBound(guilds()) To UBound(guilds())
         Tmp = Tmp & guilds(i) & SEPARATOR
     Next i
+
     If Len(Tmp) Then Tmp = Left$(Tmp, Len(Tmp) - 1)
     Call Writer.WriteString8(Tmp)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteAlianceProposalsList_Err:
     Call Writer.Clear
@@ -2336,13 +2378,15 @@ Public Sub WritePeaceProposalsList(ByVal UserIndex As Integer, ByRef guilds() As
     Dim i   As Long
     Dim Tmp As String
     Call Writer.WriteInt16(ServerPacketID.ePeaceProposalsList)
+
     ' Prepare guilds' list
     For i = LBound(guilds()) To UBound(guilds())
         Tmp = Tmp & guilds(i) & SEPARATOR
     Next i
+
     If Len(Tmp) Then Tmp = Left$(Tmp, Len(Tmp) - 1)
     Call Writer.WriteString8(Tmp)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WritePeaceProposalsList_Err:
     Call Writer.Clear
@@ -2387,7 +2431,7 @@ Public Sub WriteCharacterInfo(ByVal UserIndex As Integer, ByVal CharName As Stri
     Call Writer.WriteBool(CaosLegion)
     Call Writer.WriteInt32(citicensKilled)
     Call Writer.WriteInt32(criminalsKilled)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteCharacterInfo_Err:
     Call Writer.Clear
@@ -2415,32 +2459,38 @@ Public Sub WriteGuildLeaderInfo(ByVal UserIndex As Integer, _
     Dim i   As Long
     Dim Tmp As String
     Call Writer.WriteInt16(ServerPacketID.eGuildLeaderInfo)
+
     ' Prepare guild name's list
     For i = LBound(guildList()) To UBound(guildList())
         Tmp = Tmp & guildList(i) & SEPARATOR
     Next i
+
     If Len(Tmp) Then Tmp = Left$(Tmp, Len(Tmp) - 1)
     Call Writer.WriteString8(Tmp)
     ' Prepare guild member's list
     Tmp = vbNullString
+
     For i = LBound(MemberList()) To UBound(MemberList())
         Tmp = Tmp & GetUserName(MemberList(i)) & SEPARATOR
     Next i
+
     If Len(Tmp) Then Tmp = Left$(Tmp, Len(Tmp) - 1)
     Call Writer.WriteString8(Tmp)
     ' Store guild news
     Call Writer.WriteString8(guildNews)
     ' Prepare the join request's list
     Tmp = vbNullString
+
     For i = LBound(joinRequests()) To UBound(joinRequests())
         Tmp = Tmp & joinRequests(i) & SEPARATOR
     Next i
+
     If Len(Tmp) Then Tmp = Left$(Tmp, Len(Tmp) - 1)
     Call Writer.WriteString8(Tmp)
     Call Writer.WriteInt8(NivelDeClan)
     Call Writer.WriteInt16(ExpActual)
     Call Writer.WriteInt16(ExpNecesaria)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteGuildLeaderInfo_Err:
     Call Writer.Clear
@@ -2484,7 +2534,7 @@ Public Sub WriteGuildDetails(ByVal UserIndex As Integer, _
     Call Writer.WriteString8(alignment)
     Call Writer.WriteString8(guildDesc)
     Call Writer.WriteInt8(NivelDeClan)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteGuildDetails_Err:
     Call Writer.Clear
@@ -2499,7 +2549,7 @@ End Sub
 Public Sub WriteShowGuildFundationForm(ByVal UserIndex As Integer)
     On Error GoTo WriteShowGuildFundationForm_Err
     Call Writer.WriteInt16(ServerPacketID.eShowGuildFundationForm)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowGuildFundationForm_Err:
     Call Writer.Clear
@@ -2514,7 +2564,7 @@ End Sub
 Public Sub WriteParalizeOK(ByVal UserIndex As Integer)
     On Error GoTo WriteParalizeOK_Err
     Call Writer.WriteInt16(ServerPacketID.eParalizeOK)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteParalizeOK_Err:
     Call Writer.Clear
@@ -2525,7 +2575,7 @@ Public Sub WriteStunStart(ByVal UserIndex As Integer, ByVal Duration As Integer)
     On Error GoTo WriteStunStart_Err
     Call Writer.WriteInt16(ServerPacketID.eStunStart)
     Call Writer.WriteInt16(Duration)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteStunStart_Err:
     Call Writer.Clear
@@ -2535,7 +2585,7 @@ End Sub
 Public Sub WriteInmovilizaOK(ByVal UserIndex As Integer)
     On Error GoTo WriteInmovilizaOK_Err
     Call Writer.WriteInt16(ServerPacketID.eInmovilizadoOK)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteInmovilizaOK_Err:
     Call Writer.Clear
@@ -2546,7 +2596,7 @@ Public Sub WriteStopped(ByVal UserIndex As Integer, ByVal Stopped As Boolean)
     On Error GoTo WriteStopped_Err
     Call Writer.WriteInt16(ServerPacketID.eStopped)
     Call Writer.WriteBool(Stopped)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteStopped_Err:
     Call Writer.Clear
@@ -2563,7 +2613,7 @@ Public Sub WriteShowUserRequest(ByVal UserIndex As Integer, ByVal details As Str
     On Error GoTo WriteShowUserRequest_Err
     Call Writer.WriteInt16(ServerPacketID.eShowUserRequest)
     Call Writer.WriteString8(details)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowUserRequest_Err:
     Call Writer.Clear
@@ -2583,6 +2633,7 @@ Public Sub WriteChangeUserTradeSlot(ByVal UserIndex As Integer, ByRef itemsAenvi
     Call Writer.WriteBool(miOferta)
     Call Writer.WriteInt32(gold)
     Dim i As Long
+
     For i = 1 To UBound(itemsAenviar)
         Call Writer.WriteInt16(itemsAenviar(i).ObjIndex)
         If itemsAenviar(i).ObjIndex = 0 Then
@@ -2598,7 +2649,8 @@ Public Sub WriteChangeUserTradeSlot(ByVal UserIndex As Integer, ByRef itemsAenvi
         Call Writer.WriteInt32(itemsAenviar(i).amount)
         Call Writer.WriteInt32(itemsAenviar(i).ElementalTags)
     Next i
-    Call modSendData.SendData(ToIndex, UserIndex)
+
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteChangeUserTradeSlot_Err:
     Call Writer.Clear
@@ -2615,7 +2667,7 @@ Public Sub WriteSpawnList(ByVal UserIndex As Integer, ByVal ListaCompleta As Boo
     On Error GoTo WriteSpawnList_Err
     Call Writer.WriteInt16(ServerPacketID.eSpawnListt)
     Call Writer.WriteBool(ListaCompleta)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteSpawnList_Err:
     Call Writer.Clear
@@ -2632,12 +2684,14 @@ Public Sub WriteShowSOSForm(ByVal UserIndex As Integer)
     Dim i   As Long
     Dim Tmp As String
     Call Writer.WriteInt16(ServerPacketID.eShowSOSForm)
+
     For i = 1 To Ayuda.Longitud
         Tmp = Tmp & Ayuda.VerElemento(i) & SEPARATOR
     Next i
+
     If LenB(Tmp) <> 0 Then Tmp = Left$(Tmp, Len(Tmp) - 1)
     Call Writer.WriteString8(Tmp)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowSOSForm_Err:
     Call Writer.Clear
@@ -2654,7 +2708,7 @@ Public Sub WriteShowMOTDEditionForm(ByVal UserIndex As Integer, ByVal currentMOT
     On Error GoTo WriteShowMOTDEditionForm_Err
     Call Writer.WriteInt16(ServerPacketID.eShowMOTDEditionForm)
     Call Writer.WriteString8(currentMOTD)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowMOTDEditionForm_Err:
     Call Writer.Clear
@@ -2674,7 +2728,7 @@ Public Sub WriteShowGMPanelForm(ByVal UserIndex As Integer)
     Call Writer.WriteInt16(UserList(UserIndex).Char.CascoAnim)
     Call Writer.WriteInt16(UserList(UserIndex).Char.WeaponAnim)
     Call Writer.WriteInt16(UserList(UserIndex).Char.ShieldAnim)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowGMPanelForm_Err:
     Call Writer.Clear
@@ -2684,7 +2738,7 @@ End Sub
 Public Sub WriteShowFundarClanForm(ByVal UserIndex As Integer)
     On Error GoTo WriteShowFundarClanForm_Err
     Call Writer.WriteInt16(ServerPacketID.eShowFundarClanForm)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowFundarClanForm_Err:
     Call Writer.Clear
@@ -2703,13 +2757,15 @@ Public Sub WriteUserNameList(ByVal UserIndex As Integer, ByRef userNamesList() A
     Dim i   As Long
     Dim Tmp As String
     Call Writer.WriteInt16(ServerPacketID.eUserNameList)
+
     ' Prepare user's names list
     For i = 1 To cant
         Tmp = Tmp & userNamesList(i) & SEPARATOR
     Next i
+
     If Len(Tmp) Then Tmp = Left$(Tmp, Len(Tmp) - 1)
     Call Writer.WriteString8(Tmp)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUserNameList_Err:
     Call Writer.Clear
@@ -2721,7 +2777,7 @@ Public Sub WriteGoliathInit(ByVal UserIndex As Integer)
     Call Writer.WriteInt16(ServerPacketID.eGoliath)
     Call Writer.WriteInt32(UserList(UserIndex).Stats.Banco)
     Call Writer.WriteInt8(UserList(UserIndex).BancoInvent.NroItems)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteGoliathInit_Err:
     Call Writer.Clear
@@ -2731,7 +2787,7 @@ End Sub
 Public Sub WritePelearConPezEspecial(ByVal UserIndex As Integer)
     On Error GoTo WritePelearConPezEspecial_Err
     Call Writer.WriteInt16(ServerPacketID.ePelearConPezEspecial)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WritePelearConPezEspecial_Err:
     Call Writer.Clear
@@ -2742,7 +2798,7 @@ Public Sub WriteUpdateBankGld(ByVal UserIndex As Integer)
     On Error GoTo WriteUpdateBankGld_Err
     Call Writer.WriteInt16(ServerPacketID.eUpdateBankGld)
     Call Writer.WriteInt32(UserList(UserIndex).Stats.Banco)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateBankGld_Err:
     Call Writer.Clear
@@ -2752,7 +2808,7 @@ End Sub
 Public Sub WriteShowFrmLogear(ByVal UserIndex As Integer)
     On Error GoTo WriteShowFrmLogear_Err
     Call Writer.WriteInt16(ServerPacketID.eShowFrmLogear)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowFrmLogear_Err:
     Call Writer.Clear
@@ -2764,7 +2820,7 @@ Public Sub WriteShowFrmMapa(ByVal UserIndex As Integer)
     Call Writer.WriteInt16(ServerPacketID.eShowFrmMapa)
     Call Writer.WriteInt16(SvrConfig.GetValue("ExpMult"))
     Call Writer.WriteInt16(SvrConfig.GetValue("GoldMult"))
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShowFrmMapa_Err:
     Call Writer.Clear
@@ -2775,8 +2831,8 @@ Public Sub WritePreguntaBox(ByVal UserIndex As Integer, ByVal MsgID As Integer, 
     On Error GoTo WritePreguntaBox_Err
     Call Writer.WriteInt16(ServerPacketID.eShowPregunta)
     Call Writer.WriteInt16(MsgID)           ' Enviar el ID
-    Call Writer.WriteString8(Param)          ' Enviar el parámetro (puede ser vacío)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call Writer.WriteString8(Param)          ' Enviar el parï¿½metro (puede ser vacï¿½o)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WritePreguntaBox_Err:
     Call Writer.Clear
@@ -2792,25 +2848,29 @@ Public Sub WriteDatosGrupo(ByVal UserIndex As Integer)
         If .Grupo.EnGrupo = True Then
             Call Writer.WriteInt8(UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros)
             If .Grupo.Lider.ArrayIndex = UserIndex Then
+
                 For i = 1 To UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros
                     If i = 1 Then
-                        Call Writer.WriteString8(UserList(.Grupo.Miembros(i).ArrayIndex).name & "(Líder)")
+                        Call Writer.WriteString8(UserList(.Grupo.Miembros(i).ArrayIndex).name & "(Lï¿½der)")
                     Else
                         Call Writer.WriteString8(UserList(.Grupo.Miembros(i).ArrayIndex).name)
                     End If
                 Next i
+
             Else
+
                 For i = 1 To UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros
                     If i = 1 Then
-                        Call Writer.WriteString8(UserList(UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(i).ArrayIndex).name & "(Líder)")
+                        Call Writer.WriteString8(UserList(UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(i).ArrayIndex).name & "(Lï¿½der)")
                     Else
                         Call Writer.WriteString8(UserList(UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(i).ArrayIndex).name)
                     End If
                 Next i
+
             End If
         End If
     End With
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteDatosGrupo_Err:
     Call Writer.Clear
@@ -2830,7 +2890,7 @@ Public Sub WriteUbicacion(ByVal UserIndex As Integer, ByVal Miembro As Byte, ByV
         Call Writer.WriteInt8(0)
         Call Writer.WriteInt16(0)
     End If
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUbicacion_Err:
     Call Writer.Clear
@@ -2844,11 +2904,13 @@ Public Sub WriteViajarForm(ByVal UserIndex As Integer, ByVal NpcIndex As Integer
     Dim i        As Byte
     destinos = NpcList(NpcIndex).NumDestinos
     Call Writer.WriteInt8(destinos)
+
     For i = 1 To destinos
         Call Writer.WriteString8(NpcList(NpcIndex).dest(i))
     Next i
+
     Call Writer.WriteInt8(NpcList(NpcIndex).Interface)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteViajarForm_Err:
     Call Writer.Clear
@@ -2860,9 +2922,9 @@ Public Sub WriteQuestDetails(ByVal UserIndex As Integer, ByVal QuestIndex As Int
     Dim i As Integer
     'ID del paquete
     Call Writer.WriteInt16(ServerPacketID.eQuestDetails)
-    'Se usa la variable QuestSlot para saber si enviamos la info de una quest ya empezada o la info de una quest que no se aceptí todavía (1 para el primer caso y 0 para el segundo)
+    'Se usa la variable QuestSlot para saber si enviamos la info de una quest ya empezada o la info de una quest que no se aceptï¿½ todavï¿½a (1 para el primer caso y 0 para el segundo)
     Call Writer.WriteInt8(IIf(QuestSlot, 1, 0))
-    'Enviamos nombre, descripción y nivel requerido de la quest
+    'Enviamos nombre, descripciï¿½n y nivel requerido de la quest
     'Call Writer.WriteString8(QuestList(QuestIndex).Nombre)
     'Call Writer.WriteString8(QuestList(QuestIndex).Desc)
     Call Writer.WriteInt16(QuestIndex)
@@ -2871,19 +2933,22 @@ Public Sub WriteQuestDetails(ByVal UserIndex As Integer, ByVal QuestIndex As Int
     'Enviamos la cantidad de npcs requeridos
     Call Writer.WriteInt8(QuestList(QuestIndex).RequiredNPCs)
     If QuestList(QuestIndex).RequiredNPCs Then
+
         'Si hay npcs entonces enviamos la lista
         For i = 1 To QuestList(QuestIndex).RequiredNPCs
             Call Writer.WriteInt16(QuestList(QuestIndex).RequiredNPC(i).amount)
             Call Writer.WriteInt16(QuestList(QuestIndex).RequiredNPC(i).NpcIndex)
-            'Si es una quest ya empezada, entonces mandamos los NPCs que matí.
+            'Si es una quest ya empezada, entonces mandamos los NPCs que matï¿½.
             If QuestSlot Then
                 Call Writer.WriteInt16(UserList(UserIndex).QuestStats.Quests(QuestSlot).NPCsKilled(i))
             End If
         Next i
+
     End If
     'Enviamos la cantidad de objs requeridos
     Call Writer.WriteInt8(QuestList(QuestIndex).RequiredOBJs)
     If QuestList(QuestIndex).RequiredOBJs Then
+
         'Si hay objs entonces enviamos la lista
         For i = 1 To QuestList(QuestIndex).RequiredOBJs
             Call Writer.WriteInt16(QuestList(QuestIndex).RequiredOBJ(i).amount)
@@ -2892,6 +2957,7 @@ Public Sub WriteQuestDetails(ByVal UserIndex As Integer, ByVal QuestIndex As Int
             Call Writer.WriteInt16(get_object_amount_from_inventory(UserIndex, QuestList(QuestIndex).RequiredOBJ(i).ObjIndex))
             ' Call Writer.WriteInt16(0)
         Next i
+
     End If
     Call Writer.WriteInt8(QuestList(QuestIndex).RequiredSkill.SkillType)
     Call Writer.WriteInt8(QuestList(QuestIndex).RequiredSkill.RequiredValue)
@@ -2901,17 +2967,21 @@ Public Sub WriteQuestDetails(ByVal UserIndex As Integer, ByVal QuestIndex As Int
     'Enviamos la cantidad de objs de recompensa
     Call Writer.WriteInt8(QuestList(QuestIndex).RewardOBJs)
     If QuestList(QuestIndex).RewardOBJs Then
+
         'si hay objs entonces enviamos la lista
         For i = 1 To QuestList(QuestIndex).RewardOBJs
             Call Writer.WriteInt16(QuestList(QuestIndex).RewardOBJ(i).amount)
             Call Writer.WriteInt16(QuestList(QuestIndex).RewardOBJ(i).ObjIndex)
         Next i
+
     End If
     Call Writer.WriteInt8(QuestList(QuestIndex).RewardSpellCount)
+
     For i = 1 To QuestList(QuestIndex).RewardSpellCount
         Writer.WriteInt16 (QuestList(QuestIndex).RewardSpellList(i))
     Next i
-    Call modSendData.SendData(ToIndex, UserIndex)
+
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteQuestDetails_Err:
     Call Writer.Clear
@@ -2925,20 +2995,22 @@ Public Sub WriteQuestListSend(ByVal UserIndex As Integer)
     Dim tmpByte As Byte
     With UserList(UserIndex)
         Call Writer.WriteInt16(ServerPacketID.eQuestListSend)
+
         For i = 1 To MAXUSERQUESTS
             If .QuestStats.Quests(i).QuestIndex Then
                 tmpByte = tmpByte + 1
                 tmpStr = tmpStr & QuestList(.QuestStats.Quests(i).QuestIndex).nombre & ";"
             End If
         Next i
+
         'Escribimos la cantidad de quests
         Call Writer.WriteInt8(tmpByte)
-        'Escribimos la lista de quests (sacamos el íltimo caracter)
+        'Escribimos la lista de quests (sacamos el ï¿½ltimo caracter)
         If tmpByte Then
             Call Writer.WriteString8(Left$(tmpStr, Len(tmpStr) - 1))
         End If
     End With
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteQuestListSend_Err:
     Call Writer.Clear
@@ -2952,6 +3024,7 @@ Public Sub WriteNpcQuestListSend(ByVal UserIndex As Integer, ByVal NpcIndex As I
     Dim QuestIndex As Integer
     Call Writer.WriteInt16(ServerPacketID.eNpcQuestListSend)
     Call Writer.WriteInt8(NpcList(NpcIndex).NumQuest) 'Escribimos primero cuantas quest tiene el NPC
+
     For j = 1 To NpcList(NpcIndex).NumQuest
         QuestIndex = NpcList(NpcIndex).QuestNumber(j)
         Call Writer.WriteInt16(QuestIndex)
@@ -2962,30 +3035,36 @@ Public Sub WriteNpcQuestListSend(ByVal UserIndex As Integer, ByVal NpcIndex As I
         'Enviamos la cantidad de npcs requeridos
         Call Writer.WriteInt8(QuestList(QuestIndex).RequiredNPCs)
         If QuestList(QuestIndex).RequiredNPCs Then
+
             'Si hay npcs entonces enviamos la lista
             For i = 1 To QuestList(QuestIndex).RequiredNPCs
                 Call Writer.WriteInt16(QuestList(QuestIndex).RequiredNPC(i).amount)
                 Call Writer.WriteInt16(QuestList(QuestIndex).RequiredNPC(i).NpcIndex)
-                'Si es una quest ya empezada, entonces mandamos los NPCs que matí.
+                'Si es una quest ya empezada, entonces mandamos los NPCs que matï¿½.
                 'If QuestSlot Then
                 ' Call Writer.WriteInt16(UserList(UserIndex).QuestStats.Quests(QuestSlot).NPCsKilled(i))
                 ' End If
             Next i
+
         End If
         'Enviamos la cantidad de objs requeridos
         Call Writer.WriteInt8(QuestList(QuestIndex).RequiredOBJs)
         If QuestList(QuestIndex).RequiredOBJs Then
+
             'Si hay objs entonces enviamos la lista
             For i = 1 To QuestList(QuestIndex).RequiredOBJs
                 Call Writer.WriteInt16(QuestList(QuestIndex).RequiredOBJ(i).amount)
                 Call Writer.WriteInt16(QuestList(QuestIndex).RequiredOBJ(i).ObjIndex)
             Next i
+
         End If
         Call Writer.WriteInt8(QuestList(QuestIndex).RequiredSpellCount)
         If QuestList(QuestIndex).RequiredSpellCount > 0 Then
+
             For i = 1 To QuestList(QuestIndex).RequiredSpellCount
                 Call Writer.WriteInt16(QuestList(QuestIndex).RequiredSpellList(i))
             Next i
+
         End If
         Call Writer.WriteInt8(QuestList(QuestIndex).RequiredSkill.SkillType)
         Call Writer.WriteInt8(QuestList(QuestIndex).RequiredSkill.RequiredValue)
@@ -2995,16 +3074,20 @@ Public Sub WriteNpcQuestListSend(ByVal UserIndex As Integer, ByVal NpcIndex As I
         'Enviamos la cantidad de objs de recompensa
         Call Writer.WriteInt8(QuestList(QuestIndex).RewardOBJs)
         If QuestList(QuestIndex).RewardOBJs Then
+
             'si hay objs entonces enviamos la lista
             For i = 1 To QuestList(QuestIndex).RewardOBJs
                 Call Writer.WriteInt16(QuestList(QuestIndex).RewardOBJ(i).amount)
                 Call Writer.WriteInt16(QuestList(QuestIndex).RewardOBJ(i).ObjIndex)
             Next i
+
         End If
         Call Writer.WriteInt8(QuestList(QuestIndex).RewardSpellCount)
+
         For i = 1 To QuestList(QuestIndex).RewardSpellCount
             Call Writer.WriteInt16(QuestList(QuestIndex).RewardSpellList(i))
         Next i
+
         'Enviamos el estado de la QUEST
         '0 Disponible
         '1 EN CURSO
@@ -3039,7 +3122,8 @@ Public Sub WriteNpcQuestListSend(ByVal UserIndex As Integer, ByVal NpcIndex As I
             End If
         End If
     Next j
-    Call modSendData.SendData(ToIndex, UserIndex)
+
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteNpcQuestListSend_Err:
     Call Writer.Clear
@@ -3050,7 +3134,7 @@ Sub WriteCommerceRecieveChatMessage(ByVal UserIndex As Integer, ByVal Message As
     On Error GoTo WriteCommerceRecieveChatMessage_Err
     Call Writer.WriteInt16(ServerPacketID.eCommerceRecieveChatMessage)
     Call Writer.WriteString8(Message)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteCommerceRecieveChatMessage_Err:
     Call Writer.Clear
@@ -3063,7 +3147,7 @@ Sub WriteInvasionInfo(ByVal UserIndex As Integer, ByVal Invasion As Integer, ByV
     Call Writer.WriteInt8(Invasion)
     Call Writer.WriteInt8(PorcentajeVida)
     Call Writer.WriteInt8(PorcentajeTiempo)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteInvasionInfo_Err:
     Call Writer.Clear
@@ -3074,7 +3158,7 @@ Sub WriteOpenCrafting(ByVal UserIndex As Integer, ByVal Tipo As Byte)
     On Error GoTo WriteOpenCrafting_Err
     Call Writer.WriteInt16(ServerPacketID.eOpenCrafting)
     Call Writer.WriteInt8(Tipo)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteOpenCrafting_Err:
     Call Writer.Clear
@@ -3086,7 +3170,7 @@ Sub WriteCraftingItem(ByVal UserIndex As Integer, ByVal Slot As Byte, ByVal ObjI
     Call Writer.WriteInt16(ServerPacketID.eCraftingItem)
     Call Writer.WriteInt8(Slot)
     Call Writer.WriteInt16(ObjIndex)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteCraftingItem_Err:
     Call Writer.Clear
@@ -3099,7 +3183,7 @@ Sub WriteCraftingCatalyst(ByVal UserIndex As Integer, ByVal ObjIndex As Integer,
     Call Writer.WriteInt16(ObjIndex)
     Call Writer.WriteInt16(amount)
     Call Writer.WriteInt8(Porcentaje)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteCraftingCatalyst_Err:
     Call Writer.Clear
@@ -3114,7 +3198,7 @@ Sub WriteCraftingResult(ByVal UserIndex As Integer, ByVal Result As Integer, Opt
         Call Writer.WriteInt8(Porcentaje)
         Call Writer.WriteInt32(precio)
     End If
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteCraftingResult_Err:
     Call Writer.Clear
@@ -3126,7 +3210,7 @@ Public Sub WriteUpdateNPCSimbolo(ByVal UserIndex As Integer, ByVal NpcIndex As I
     Call Writer.WriteInt16(ServerPacketID.eUpdateNPCSimbolo)
     Call Writer.WriteInt16(NpcList(NpcIndex).Char.charindex)
     Call Writer.WriteInt8(Simbolo)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateNPCSimbolo_Err:
     Call Writer.Clear
@@ -3136,7 +3220,7 @@ End Sub
 Public Sub WriteGuardNotice(ByVal UserIndex As Integer)
     On Error GoTo WriteGuardNotice_Err
     Call Writer.WriteInt16(ServerPacketID.eGuardNotice)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteGuardNotice_Err:
     Call Writer.Clear
@@ -3797,6 +3881,7 @@ Public Function PrepareUpdateGroupInfo(ByVal UserIndex As Integer)
         With UserList(UserList(UserIndex).Grupo.Lider.ArrayIndex).Grupo
             Dim i As Integer
             Writer.WriteInt8 (.CantidadMiembros)
+
             For i = 1 To .CantidadMiembros
                 Writer.WriteString8 (UserList(.Miembros(i).ArrayIndex).name)
                 Writer.WriteInt16 (UserList(.Miembros(i).ArrayIndex).Char.charindex)
@@ -3804,6 +3889,7 @@ Public Function PrepareUpdateGroupInfo(ByVal UserIndex As Integer)
                 Writer.WriteInt16 (UserList(.Miembros(i).ArrayIndex).Stats.MinHp)
                 Writer.WriteInt16 (UserList(.Miembros(i).ArrayIndex).Stats.MaxHp)
             Next i
+
         End With
     Else
         Writer.WriteInt8 (0)
@@ -4202,7 +4288,7 @@ End Function
 Public Sub writeAnswerReset(ByVal UserIndex As Integer)
     On Error GoTo writeAnswerReset_Err
     Call Writer.WriteInt16(ServerPacketID.eAnswerReset)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 writeAnswerReset_Err:
     Call Writer.Clear
@@ -4217,13 +4303,15 @@ Public Sub WriteShopInit(ByVal UserIndex As Integer)
     Call Writer.WriteInt16(cant_obj_shop)
     Call LoadPatronCreditsFromDB(UserIndex)
     Call Writer.WriteInt32(UserList(UserIndex).Stats.Creditos)
-    'Envío todos los objetos.
+
+    'Envï¿½o todos los objetos.
     For i = 1 To cant_obj_shop
         Call Writer.WriteInt32(ObjShop(i).ObjNum)
         Call Writer.WriteInt32(ObjShop(i).Valor)
         Call Writer.WriteString8(ObjShop(i).name)
     Next i
-    Call modSendData.SendData(ToIndex, UserIndex)
+
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShopInit_Err:
     Call Writer.Clear
@@ -4233,7 +4321,7 @@ End Sub
 Public Sub WriteShopPjsInit(ByVal UserIndex As Integer)
     On Error GoTo WriteShopPjsInit_Err
     Call Writer.WriteInt16(ServerPacketID.eShopPjsInit)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteShopPjsInit_Err:
     Call Writer.Clear
@@ -4244,7 +4332,7 @@ Public Sub writeUpdateShopClienteCredits(ByVal UserIndex As Integer)
     On Error GoTo writeUpdateShopClienteCredits_Err
     Call Writer.WriteInt16(ServerPacketID.eUpdateShopClienteCredits)
     Call Writer.WriteInt32(UserList(UserIndex).Stats.Creditos)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 writeUpdateShopClienteCredits_Err:
     Call Writer.Clear
@@ -4266,7 +4354,7 @@ Public Sub WriteSendSkillCdUpdate(ByVal UserIndex As Integer, _
     Call Writer.WriteInt32(TotalTime)
     Call Writer.WriteInt8(ConvertToClientBuff(SkillType))
     Call Writer.WriteInt16(Stacks)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteSendSkillCdUpdate_Err:
     Call Writer.Clear
@@ -4283,26 +4371,32 @@ Public Sub WriteObjQuestSend(ByVal UserIndex As Integer, ByVal QuestIndex As Int
     'Enviamos la cantidad de npcs requeridos
     Call Writer.WriteInt8(QuestList(QuestIndex).RequiredNPCs)
     If QuestList(QuestIndex).RequiredNPCs Then
+
         'Si hay npcs entonces enviamos la lista
         For i = 1 To QuestList(QuestIndex).RequiredNPCs
             Call Writer.WriteInt16(QuestList(QuestIndex).RequiredNPC(i).amount)
             Call Writer.WriteInt16(QuestList(QuestIndex).RequiredNPC(i).NpcIndex)
         Next i
+
     End If
     'Enviamos la cantidad de objs requeridos
     Call Writer.WriteInt8(QuestList(QuestIndex).RequiredOBJs)
     If QuestList(QuestIndex).RequiredOBJs Then
+
         'Si hay objs entonces enviamos la lista
         For i = 1 To QuestList(QuestIndex).RequiredOBJs
             Call Writer.WriteInt16(QuestList(QuestIndex).RequiredOBJ(i).amount)
             Call Writer.WriteInt16(QuestList(QuestIndex).RequiredOBJ(i).ObjIndex)
         Next i
+
     End If
     Call Writer.WriteInt8(QuestList(QuestIndex).RequiredSpellCount)
     If QuestList(QuestIndex).RequiredSpellCount > 0 Then
+
         For i = 1 To QuestList(QuestIndex).RequiredSpellCount
             Call Writer.WriteInt16(QuestList(QuestIndex).RequiredSpellList(i))
         Next i
+
     End If
     Call Writer.WriteInt8(QuestList(QuestIndex).RequiredSkill.SkillType)
     Call Writer.WriteInt8(QuestList(QuestIndex).RequiredSkill.RequiredValue)
@@ -4312,11 +4406,13 @@ Public Sub WriteObjQuestSend(ByVal UserIndex As Integer, ByVal QuestIndex As Int
     'Enviamos la cantidad de objs de recompensa
     Call Writer.WriteInt8(QuestList(QuestIndex).RewardOBJs)
     If QuestList(QuestIndex).RewardOBJs Then
+
         'si hay objs entonces enviamos la lista
         For i = 1 To QuestList(QuestIndex).RewardOBJs
             Call Writer.WriteInt16(QuestList(QuestIndex).RewardOBJ(i).amount)
             Call Writer.WriteInt16(QuestList(QuestIndex).RewardOBJ(i).ObjIndex)
         Next i
+
     End If
     'Enviamos el estado de la QUEST
     '0 Disponible
@@ -4350,7 +4446,7 @@ Public Sub WriteObjQuestSend(ByVal UserIndex As Integer, ByVal QuestIndex As Int
     UserList(UserIndex).flags.QuestNumber = QuestIndex
     UserList(UserIndex).flags.QuestItemSlot = Slot
     UserList(UserIndex).flags.QuestOpenByObj = True
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteNpcQuestListSend_Err:
     Call Writer.Clear
@@ -4367,9 +4463,11 @@ Public Sub WriteDebugLogResponse(ByVal UserIndex As Integer, ByVal debugType, By
         Call Writer.WriteInt16(messageCount + 1)
         Call Writer.WriteString8("remote errors:")
         Dim i As Integer
+
         For i = 1 To messageCount
             Call Writer.WriteString8(messageList(i))
         Next i
+
     ElseIf debugType = 1 Then
         'TODO- debug
         Dim tIndex As Integer: tIndex = NameIndex(Args(0)).ArrayIndex
@@ -4391,7 +4489,7 @@ Public Sub WriteDebugLogResponse(ByVal UserIndex As Integer, ByVal debugType, By
         Call Writer.WriteInt16(1)
         Call Writer.WriteString8("remote DEBUG: avialable user slots: " & GetAvailableUserSlot & ", LastUser: " & LastUser)
     End If
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteDebugLogResponse_Err:
     Call Writer.Clear
@@ -4418,9 +4516,11 @@ Public Function PrepareActiveToggles()
     ActiveToggles = GetActiveToggles(ActiveToggleCount)
     Call Writer.WriteInt16(ActiveToggleCount)
     Dim i As Integer
+
     For i = 0 To ActiveToggleCount - 1
         Call Writer.WriteString8(ActiveToggles(i))
     Next i
+
     Exit Function
 PrepareActiveToggles_Err:
     Call Writer.Clear
@@ -4434,7 +4534,7 @@ Public Sub WriteAntiCheatMessage(ByVal UserIndex As Integer, ByVal data As Long,
     CopyMemory Buffer(0), ByVal data, DataSize
     Call Writer.WriteInt16(ServerPacketID.eAntiCheatMessage)
     Call Writer.WriteSafeArrayInt8(Buffer)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteAntiCheatMessage_Err:
     Call Writer.Clear
@@ -4444,7 +4544,7 @@ End Sub
 Public Sub WriteAntiCheatStartSeassion(ByVal UserIndex As Integer)
     On Error GoTo WriteAntiStartSeassion_Err
     Call Writer.WriteInt16(ServerPacketID.eAntiCheatStartSession)
-    Call modSendData.SendData(ToIndex, UserIndex)
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteAntiStartSeassion_Err:
     Call Writer.Clear
@@ -4459,6 +4559,7 @@ Public Sub WriteUpdateLobbyList(ByVal UserIndex As Integer)
     Dim i As Integer
     Call Writer.WriteInt16(ServerPacketID.eReportLobbyList)
     Call Writer.WriteInt16(OpenLobbyCount)
+
     For i = 0 To OpenLobbyCount - 1
         Call Writer.WriteInt16(IdList(i))
         With LobbyList(IdList(i))
@@ -4479,9 +4580,31 @@ Public Sub WriteUpdateLobbyList(ByVal UserIndex As Integer)
             Call Writer.WriteInt8(IIf(Len(.Password) > 0, 1, 0))
         End With
     Next i
-    Call modSendData.SendData(ToIndex, UserIndex)
+
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
     Exit Sub
 WriteUpdateLobbyList_Err:
     Call Writer.Clear
     Call TraceError(Err.Number, Err.Description, "Argentum20Server.Protocol_Writes.PrepareActiveToggles", Erl)
+End Sub
+
+Public Sub WriteChangeSkinSlot(ByVal UserIndex As Integer, ByVal TypeSkin As e_OBJType, ByVal Slot As Byte)
+    With UserList(UserIndex)
+        Call Writer.WriteInt16(ServerPacketID.ChangeSkinSlot)
+        Call Writer.WriteInt8(Slot)
+        Call Writer.WriteInt16(.Invent_Skins.Object(Slot).ObjIndex)
+        'Enviamos si estï¿½ equipada la skin o no
+        Call Writer.WriteBool(.Invent_Skins.Object(Slot).Equipped)
+        'Si hay algï¿½n error de dateo, no bugeamos el inventario.
+        If .Invent_Skins.Object(Slot).ObjIndex > 0 Then
+            Call Writer.WriteInt32(ObjData(.Invent_Skins.Object(Slot).ObjIndex).GrhIndex)
+            Call Writer.WriteInt8(ObjData(.Invent_Skins.Object(Slot).ObjIndex).OBJType)
+            Call Writer.WriteString8(ObjData(.Invent_Skins.Object(Slot).ObjIndex).name)
+        Else
+            Call Writer.WriteInt32(0)
+            Call Writer.WriteInt16(0)
+            Call Writer.WriteString8(vbNullString)
+        End If
+        Call modSendData.SendData(SendTarget.ToIndex, UserIndex)
+    End With
 End Sub

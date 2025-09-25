@@ -127,23 +127,29 @@ Public Sub EcharMiembro(ByVal UserIndex As Integer, ByVal Indice As Byte)
             Call WriteLocaleMsg(UserIndex, 2053, e_FontTypeNames.FONTTYPE_New_GRUPO) ' Msg2053="No podés expulsarte a ti mismo."
             Exit Sub
         End If
+
         For i = 1 To UBound(.Miembros)
             If UserIndexEchar = .Miembros(i).ArrayIndex Then
                 Call ClearUserRef(.Miembros(i))
                 indexviejo = i
+
                 For LoopC = indexviejo To 5
                     .Miembros(LoopC) = .Miembros(LoopC + 1)
                 Next LoopC
+
                 i = UBound(.Miembros)
                 Call ClearUserRef(.Miembros(i))
                 Exit For
             End If
         Next i
+
         .CantidadMiembros = .CantidadMiembros - 1
         Dim a As Long
+
         For a = 1 To .CantidadMiembros
             Call WriteUbicacion(.Miembros(a).ArrayIndex, indexviejo, 0)
         Next a
+
     End With
     With UserList(UserIndexEchar)
         Call WriteLocaleMsg(UserIndex, 2054, .name, e_FontTypeNames.FONTTYPE_New_GRUPO) ' Msg2054="¬1 fue expulsado del grupo."
@@ -169,7 +175,7 @@ Public Sub EcharMiembro(ByVal UserIndex As Integer, ByVal Indice As Byte)
             .CantidadMiembros = 0
             Call SetUserRef(.Miembros(1), 0)
             .Id = -1
-            Call modSendData.SendData(ToIndex, UserIndex, PrepareUpdateGroupInfo(UserIndex))
+            Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareUpdateGroupInfo(UserIndex))
             Dim LiderMap As Integer: LiderMap = UserList(UserIndex).pos.Map
             If MapInfo(LiderMap).OnlyGroups And MapInfo(LiderMap).Salida.Map <> 0 Then
                 Call WriteLocaleMsg(UserIndex, 2056, e_FontTypeNames.FONTTYPE_INFO) ' Msg2056="Debes estar en un grupo para permanecer en este mapa."
@@ -179,7 +185,7 @@ Public Sub EcharMiembro(ByVal UserIndex As Integer, ByVal Indice As Byte)
     End With
     Call RefreshCharStatus(UserIndex)
     Call modSendData.SendData(ToGroup, GroupLider, PrepareUpdateGroupInfo(GroupLider))
-    Call modSendData.SendData(ToIndex, UserIndexEchar, PrepareUpdateGroupInfo(UserIndexEchar))
+    Call modSendData.SendData(SendTarget.ToIndex, UserIndexEchar, PrepareUpdateGroupInfo(UserIndexEchar))
     Exit Sub
 EcharMiembro_Err:
     Call TraceError(Err.Number, Err.Description, "ModGrupos.EcharMiembro", Erl)
@@ -197,23 +203,29 @@ Public Sub SalirDeGrupo(ByVal UserIndex As Integer)
         End If
         .Grupo.EnGrupo = False
         .Grupo.Id = -1
+
         For i = 1 To UBound(.Grupo.Miembros)
             If .name = UserList(UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(i).ArrayIndex).name Then
                 Call ClearUserRef(UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(i))
                 indexviejo = i
+
                 For LoopC = indexviejo To 5
                     UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(LoopC) = UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(LoopC + 1)
                 Next LoopC
+
                 i = UBound(.Grupo.Miembros)
                 Call ClearUserRef(.Grupo.Miembros(i))
                 Exit For
             End If
         Next i
+
         UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros = UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros - 1
         Dim a As Long
+
         For a = 1 To UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros
             Call WriteUbicacion(UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(a).ArrayIndex, indexviejo, 0)
         Next a
+
         Call WriteLocaleMsg(UserIndex, "37", e_FontTypeNames.FONTTYPE_New_GRUPO) 'quit group message
         Call WriteLocaleMsg(.Grupo.Lider.ArrayIndex, "202", e_FontTypeNames.FONTTYPE_New_GRUPO, .name)
         If UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros = 1 Then
@@ -226,7 +238,7 @@ Public Sub SalirDeGrupo(ByVal UserIndex As Integer)
             UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros = 0
             Call SetUserRef(UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(1), 0)
             Call RefreshCharStatus(.Grupo.Lider.ArrayIndex)
-            Call modSendData.SendData(ToIndex, .Grupo.Lider.ArrayIndex, PrepareUpdateGroupInfo(.Grupo.Lider.ArrayIndex))
+            Call modSendData.SendData(SendTarget.ToIndex, .Grupo.Lider.ArrayIndex, PrepareUpdateGroupInfo(.Grupo.Lider.ArrayIndex))
             Dim LiderMap As Integer: LiderMap = UserList(.Grupo.Lider.ArrayIndex).pos.Map
             If MapInfo(LiderMap).OnlyGroups And MapInfo(LiderMap).Salida.Map <> 0 Then
                 Call WriteLocaleMsg(.Grupo.Lider.ArrayIndex, 2059, e_FontTypeNames.FONTTYPE_INFO) ' Msg2059="Debes estar en un grupo para permanecer en este mapa."
@@ -236,7 +248,7 @@ Public Sub SalirDeGrupo(ByVal UserIndex As Integer)
         Call WriteUbicacion(UserIndex, 1, 0)
         Call modSendData.SendData(ToGroup, .Grupo.Lider.ArrayIndex, PrepareUpdateGroupInfo(.Grupo.Lider.ArrayIndex))
         Call SetUserRef(.Grupo.Lider, 0)
-        Call modSendData.SendData(ToIndex, UserIndex, PrepareUpdateGroupInfo(UserIndex))
+        Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareUpdateGroupInfo(UserIndex))
         If MapInfo(.pos.Map).OnlyGroups And MapInfo(.pos.Map).Salida.Map <> 0 Then
             Call WriteLocaleMsg(UserIndex, 2060, e_FontTypeNames.FONTTYPE_INFO) ' Msg2060="Debes estar en un grupo para permanecer en este mapa."
             Call WarpUserChar(UserIndex, MapInfo(.pos.Map).Salida.Map, MapInfo(.pos.Map).Salida.x, MapInfo(.pos.Map).Salida.y, True)
@@ -257,23 +269,29 @@ Public Sub SalirDeGrupoForzado(ByVal UserIndex As Integer)
     With UserList(UserIndex)
         .Grupo.EnGrupo = False
         .Grupo.Id = -1
+
         For i = 1 To 6
             If .name = UserList(UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(i).ArrayIndex).name Then
                 Call SetUserRef(UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(i), 0)
                 indexviejo = i
+
                 For LoopC = indexviejo To 5
                     UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(LoopC) = UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(LoopC + 1)
                 Next LoopC
+
                 Exit For
             End If
         Next i
+
         UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros = UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros - 1
         Call modSendData.SendData(ToGroup, .Grupo.Lider.ArrayIndex, PrepareUpdateGroupInfo(.Grupo.Lider.ArrayIndex))
-        Call modSendData.SendData(ToIndex, UserIndex, PrepareUpdateGroupInfo(UserIndex))
+        Call modSendData.SendData(SendTarget.ToIndex, UserIndex, PrepareUpdateGroupInfo(UserIndex))
         Dim a As Long
+
         For a = 1 To UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros
             Call WriteUbicacion(UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(a).ArrayIndex, indexviejo, 0)
         Next a
+
         Call WriteLocaleMsg(.Grupo.Lider.ArrayIndex, "202", e_FontTypeNames.FONTTYPE_New_GRUPO, .name)
         If UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros = 1 Then
             Call WriteLocaleMsg(.Grupo.Lider.ArrayIndex, "35", e_FontTypeNames.FONTTYPE_New_GRUPO)
@@ -304,14 +322,17 @@ End Sub
 Public Sub FinalizarGrupo(ByVal LiderIndex As Integer)
     On Error GoTo FinalizarGrupo_Err
     Dim i As Integer
+
     For i = 1 To UserList(LiderIndex).Grupo.CantidadMiembros
         Dim MemberIndex As Integer: MemberIndex = UserList(LiderIndex).Grupo.Miembros(i).ArrayIndex
         With UserList(MemberIndex)
             Dim j As Integer
+
             For j = 1 To UserList(LiderIndex).Grupo.CantidadMiembros
                 Call WriteUbicacion(MemberIndex, j, 0)
             Next j
-            Call modSendData.SendData(ToIndex, MemberIndex, PrepareUpdateGroupInfo(MemberIndex))
+
+            Call modSendData.SendData(SendTarget.ToIndex, MemberIndex, PrepareUpdateGroupInfo(MemberIndex))
             .Grupo.EnGrupo = False
             .Grupo.Id = -1
             Call SetUserRef(.Grupo.Lider, 0)
@@ -329,6 +350,7 @@ Public Sub FinalizarGrupo(ByVal LiderIndex As Integer)
             End If
         End With
     Next i
+
     UserList(LiderIndex).Grupo.CantidadMiembros = 0
     Exit Sub
 FinalizarGrupo_Err:
@@ -343,11 +365,13 @@ Public Sub CompartirUbicacion(ByVal UserIndex As Integer)
     Dim Lider   As t_User
     With UserList(UserIndex)
         Lider = UserList(.Grupo.Lider.ArrayIndex)
+
         For a = 1 To Lider.Grupo.CantidadMiembros
             If Lider.Grupo.Miembros(a).ArrayIndex = UserIndex Then
                 indexpj = a
             End If
         Next a
+
         For i = 1 To Lider.Grupo.CantidadMiembros
             If Lider.Grupo.Miembros(i).ArrayIndex <> UserIndex Then
                 If UserList(Lider.Grupo.Miembros(i).ArrayIndex).pos.Map = .pos.Map Then
@@ -362,6 +386,7 @@ Public Sub CompartirUbicacion(ByVal UserIndex As Integer)
                 End If
             End If
         Next i
+
     End With
     Exit Sub
 CompartirUbicacion_Err:
@@ -379,19 +404,23 @@ End Sub
 Public Sub AddUserToGRoup(ByVal UserIndex As Integer, ByVal GroupLiderIndex As Integer)
     On Error GoTo AddUserToGRoup_Err
     Dim Index As Byte
+
     For Index = 1 To UserList(GroupLiderIndex).Grupo.CantidadMiembros
         If UserList(GroupLiderIndex).Grupo.Miembros(Index).ArrayIndex = UserIndex Then
             Exit Sub
         End If
     Next Index
+
     UserList(GroupLiderIndex).Grupo.CantidadMiembros = UserList(GroupLiderIndex).Grupo.CantidadMiembros + 1
     Call SetUserRef(UserList(GroupLiderIndex).Grupo.Miembros(UserList(GroupLiderIndex).Grupo.CantidadMiembros), UserIndex)
     Call SetUserRef(UserList(UserIndex).Grupo.Lider, GroupLiderIndex)
     UserList(UserIndex).Grupo.EnGrupo = True
     UserList(UserIndex).Grupo.Id = UserList(GroupLiderIndex).Grupo.Id
+
     For Index = 2 To UserList(GroupLiderIndex).Grupo.CantidadMiembros - 1
         Call WriteLocaleMsg(UserList(GroupLiderIndex).Grupo.Miembros(Index).ArrayIndex, "40", e_FontTypeNames.FONTTYPE_INFOIAO, UserList(UserIndex).name)
     Next Index
+
     Call WriteLocaleMsg(UserList(UserIndex).Grupo.PropuestaDe.ArrayIndex, "40", e_FontTypeNames.FONTTYPE_INFOIAO, UserList(UserIndex).name)
     Call WriteLocaleMsg(UserIndex, 2066, e_FontTypeNames.FONTTYPE_INFOIAO) ' Msg2066="¡Has sido añadido al grupo!"
     Call RefreshCharStatus(GroupLiderIndex)

@@ -227,6 +227,7 @@ Private Sub ApplyEffectToArea(ByVal Area As Integer)
     h = Min(h, 99)
     Dim i, j As Integer
     Dim Effect As IBaseEffectOverTime
+
     For i = y To h
         For j = x To w
             'we can't taunt someone already taunted
@@ -244,4 +245,5 @@ Private Sub ApplyEffectToArea(ByVal Area As Integer)
             End If
         Next j
     Next i
+
 End Sub

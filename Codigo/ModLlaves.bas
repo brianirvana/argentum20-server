@@ -33,6 +33,7 @@ Public Sub SacarLlaveDeLLavero(ByVal UserIndex As Integer, ByVal Llave As Intege
     On Error GoTo ErrHandler
     With UserList(UserIndex)
         Dim i As Integer
+
         For i = 1 To MAXKEYS
             If .Keys(i) = Llave Then
                 .Keys(i) = 0
@@ -40,6 +41,7 @@ Public Sub SacarLlaveDeLLavero(ByVal UserIndex As Integer, ByVal Llave As Intege
                 Exit Sub
             End If
         Next
+
     End With
     Exit Sub
 ErrHandler:
@@ -50,11 +52,13 @@ Public Sub EnviarLlaves(ByVal UserIndex As Integer)
     On Error GoTo EnviarLlaves_Err
     With UserList(UserIndex)
         Dim i As Integer
+
         For i = 1 To MAXKEYS
             If .Keys(i) <> 0 Then
                 Call WriteUpdateUserKey(UserIndex, i, .Keys(i))
             End If
         Next
+
     End With
     Exit Sub
 EnviarLlaves_Err:

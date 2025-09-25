@@ -314,6 +314,7 @@ Sub ApagarFogatas()
     Dim MapaActual As Long
     Dim y          As Long
     Dim x          As Long
+
     For MapaActual = 1 To NumMaps
         For y = YMinMapSize To YMaxMapSize
             For x = XMinMapSize To XMaxMapSize
@@ -326,6 +327,7 @@ Sub ApagarFogatas()
             Next x
         Next y
     Next MapaActual
+
     Exit Sub
 ErrHandler:
     Call LogError("Error producido al apagar las fogatas de " & x & "-" & y & " del mapa: " & MapaActual & "    -" & Err.Description)
@@ -519,10 +521,12 @@ Sub Main()
     Call ResetLastLogoutAndIsLogged
     'Comentado porque hay worldsave en ese mapa!
     Dim LoopC As Integer
+
     'Resetea las conexiones de los usuarios
     For LoopC = 1 To MaxUsers
         UserList(LoopC).ConnectionDetails.ConnIDValida = False
     Next LoopC
+
     With frmMain
         .Minuto.Enabled = True
         .TimerGuardarUsuarios.Enabled = True
@@ -578,7 +582,9 @@ Sub Main()
         Call UnitClient.Init
         Call UnitClient.Connect("127.0.0.1", "7667")
     #End If
+
     While (True)
+
         GlobalFrameTime = GetTickCount()
         Dim PerformanceTimer As Long
         Call PerformanceTestStart(PerformanceTimer)
@@ -592,7 +598,6 @@ Sub Main()
         Call PerformTimeLimitCheck(PerformanceTimer, "General modNetwork.Tick")
         Call UpdateEffectOverTime
         Call PerformTimeLimitCheck(PerformanceTimer, "General Update Effects over time")
-        DoEvents
         Call PerformTimeLimitCheck(PerformanceTimer, "Do events")
         Call AntiCheatUpdate
         Call PerformTimeLimitCheck(PerformanceTimer, "Update anti cheat")
@@ -603,7 +608,11 @@ Sub Main()
         #If UNIT_TEST = 1 Then
             Call UnitClient.Poll
         #End If
+        Sleep 1
+        DoEvents
+
     Wend
+
     Call LogThis(0, "Closing the server " & Now, vbLogEventTypeInformation)
     Exit Sub
 Handler:
@@ -627,10 +636,12 @@ Function ReadField(ByVal pos As Integer, ByRef Text As String, ByVal SepASCII As
     Dim currentPos As Long
     Dim delimiter  As String * 1
     delimiter = Chr$(SepASCII)
+
     For i = 1 To pos
         LastPos = currentPos
         currentPos = InStr(LastPos + 1, Text, delimiter, vbBinaryCompare)
     Next i
+
     If currentPos = 0 Then
         ReadField = mid$(Text, LastPos + 1, Len(Text) - LastPos)
     Else
@@ -664,15 +675,19 @@ Sub Restart()
     If frmMain.Visible Then frmMain.txStatus.Caption = "Reiniciando."
     Dim LoopC As Long
     Call modNetwork.Disconnect
+
     For LoopC = 1 To MaxUsers
         Call CloseSocket(LoopC)
     Next
+
     'Initialize statistics!!
     'Call Statistics.Initialize
     ReDim UserList(1 To MaxUsers) As t_User
+
     For LoopC = 1 To MaxUsers
         UserList(LoopC).ConnectionDetails.ConnIDValida = False
     Next LoopC
+
     Call InitializeUserIndexHeap(MaxUsers)
     LastUser = 0
     NumUsers = 0
@@ -713,6 +728,7 @@ End Function
 Public Sub TiempoInvocacion(ByVal UserIndex As Integer)
     On Error GoTo TiempoInvocacion_Err
     Dim i As Integer
+
     For i = 1 To MAXMASCOTAS
         If UserList(UserIndex).MascotasIndex(i).ArrayIndex > 0 Then
             If Not IsValidNpcRef(UserList(UserIndex).MascotasIndex(i)) Then
@@ -727,6 +743,7 @@ Public Sub TiempoInvocacion(ByVal UserIndex As Integer)
             End If
         End If
     Next i
+
     Exit Sub
 TiempoInvocacion_Err:
     Call TraceError(Err.Number, Err.Description, "General.TiempoInvocacion", Erl)
@@ -778,8 +795,7 @@ Public Sub EfectoStamina(ByVal UserIndex As Integer)
     Dim bEnviarStats_STA As Boolean
     With UserList(UserIndex)
         HambreOSed = .Stats.MinHam = 0 Or .Stats.MinAGU = 0
-        'if hunger or thirst = 0 and not in combat
-        If Not HambreOSed And .Counters.EnCombate = 0 Then
+        If Not HambreOSed Then 'Si no tiene hambre ni sed
             If .Stats.MinHp < .Stats.MaxHp Then
                 Call Sanar(UserIndex, bEnviarStats_HP, IIf(.flags.Descansar, SanaIntervaloDescansar, SanaIntervaloSinDescansar))
             End If
@@ -1118,7 +1134,7 @@ Public Sub EfectoVeneno(ByVal UserIndex As Integer)
             'Msg47=Estás envenenado, si no te curas morirás.
             Call WriteLocaleMsg(UserIndex, "47", e_FontTypeNames.FONTTYPE_VENENO)
             UserList(UserIndex).Counters.timeFx = 3
-            Call SendData(SendTarget.ToPCAliveArea, UserIndex, PrepareMessageParticleFX(.Char.charindex, e_ParticleEffects.PoisonGas, 30, False, , UserList(UserIndex).pos.x, _
+            Call SendData(SendTarget.ToPCAliveArea, UserIndex, PrepareMessageParticleFX(.Char.charindex, e_ParticulasIndex.Envenena, 30, False, , UserList(UserIndex).pos.x, _
                     UserList(UserIndex).pos.y))
             .Counters.Veneno = 0
             ' El veneno saca un porcentaje de vida random.
@@ -1182,9 +1198,11 @@ Public Sub DuracionPociones(ByVal UserIndex As Integer)
             UserList(UserIndex).flags.TipoPocion = 0
             'volvemos los atributos al estado normal
             Dim LoopX As Integer
+
             For LoopX = 1 To NUMATRIBUTOS
                 UserList(UserIndex).Stats.UserAtributos(LoopX) = UserList(UserIndex).Stats.UserAtributosBackUP(LoopX)
             Next
+
             Call WriteFYA(UserIndex)
         End If
     End If
@@ -1241,7 +1259,7 @@ Public Sub Sanar(ByVal UserIndex As Integer, ByRef EnviarStats As Boolean, ByVal
     If UserList(UserIndex).Counters.HPCounter < Intervalo Then
         UserList(UserIndex).Counters.HPCounter = UserList(UserIndex).Counters.HPCounter + 1
     Else
-        mashit = RandomNumber(Porcentaje(UserList(UserIndex).Stats.MaxHp, 5), Porcentaje(UserList(UserIndex).Stats.MaxHp, 10)) * UserMod.GetSelfHealingBonus(UserList(UserIndex))
+        mashit = RandomNumber(2, Porcentaje(UserList(UserIndex).Stats.MaxSta, 5)) * UserMod.GetSelfHealingBonus(UserList(UserIndex))
         UserList(UserIndex).Counters.HPCounter = 0
         Call UserMod.ModifyHealth(UserIndex, mashit)
         ' Msg519=Has sanado.
@@ -1263,12 +1281,14 @@ Public Sub CargaNpcsDat(Optional ByVal ActualizarNPCsExistentes As Boolean = Fal
     ' Actualizamos la informacion de los NPC's ya spawneados.
     If ActualizarNPCsExistentes Then
         Dim i As Long
+
         For i = 1 To NumNPCs
             If NpcList(i).flags.NPCActive Then
                 Call OpenNPC(CInt(i), False, True)
             End If
             DoEvents
         Next i
+
     End If
     Exit Sub
 CargaNpcsDat_Err:
@@ -1295,6 +1315,7 @@ Sub PasarSegundo()
         Call InstanciaCaptura.PasarSegundo
     End If
     segundos = segundos + 1
+
     For i = 1 To LastUser
         With UserList(i)
             If .flags.UserLogged Then
@@ -1379,7 +1400,7 @@ Sub PasarSegundo()
                         Mapa = .flags.PortalM
                         x = .flags.PortalX
                         y = .flags.PortalY
-                        Call SendData(SendTarget.toMap, .flags.PortalM, PrepareMessageParticleFXToFloor(x, y, e_GraphicEffects.TpVerde, 0))
+                        Call SendData(SendTarget.toMap, .flags.PortalM, PrepareMessageParticleFXToFloor(x, y, e_ParticulasIndex.TpVerde, 0))
                         Call SendData(SendTarget.toMap, .flags.PortalM, PrepareMessageLightFXToFloor(x, y, 0, 105))
                         If MapData(Mapa, x, y).TileExit.Map > 0 Then
                             MapData(Mapa, x, y).TileExit.Map = 0
@@ -1433,6 +1454,7 @@ Sub PasarSegundo()
             End If ' If UserLogged
         End With
     Next i
+
     ' **********************************
     ' **********  Invasiones  **********
     ' **********************************
@@ -1456,6 +1478,7 @@ Sub PasarSegundo()
             End If
         End With
     Next
+
     Exit Sub
 ErrHandler:
     Call TraceError(Err.Number, Err.Description, "General.PasarSegundo", Erl)
@@ -1467,16 +1490,19 @@ Sub GuardarUsuarios()
     Call SendData(SendTarget.ToAll, 0, PrepareMessagePauseToggle())
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1657, vbNullString, e_FontTypeNames.FONTTYPE_SERVER)) 'Msg1657=Servidor » Grabando Personajes
     Dim i As Long
+
     For i = 1 To LastUser
         If UserList(i).flags.UserLogged Then
             Call modNetwork.Poll
         End If
     Next i
+
     For i = 1 To LastUser
         If UserList(i).flags.UserLogged Then
             Call SaveUser(i)
         End If
     Next i
+
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1658, vbNullString, e_FontTypeNames.FONTTYPE_SERVER)) 'Msg1658=Servidor » Personajes Grabados
     Call SendData(SendTarget.ToAll, 0, PrepareMessagePauseToggle())
     haciendoBK = False
@@ -1489,10 +1515,12 @@ Public Sub FreeNPCs()
     On Error GoTo FreeNPCs_Err
     'Releases all NPC Indexes
     Dim LoopC As Long
+
     ' Free all NPC indexes
     For LoopC = 1 To MaxNPCs
         Call ReleaseNpc(LoopC, e_DeleteSource.eReleaseAll)
     Next LoopC
+
     Exit Sub
 FreeNPCs_Err:
     Call TraceError(Err.Number, Err.Description, "General.FreeNPCs", Erl)
@@ -1520,9 +1548,11 @@ Function RandomString(cb As Integer, Optional ByVal OnlyUpper As Boolean = False
     End If
     rgch = rgch & "0123456789"  ' & "#@!~$()-_"
     Dim i As Long
+
     For i = 1 To cb
         RandomString = RandomString & mid$(rgch, Int(Rnd() * Len(rgch) + 1), 1)
     Next
+
     Exit Function
 RandomString_Err:
     Call TraceError(Err.Number, Err.Description, "General.RandomString", Erl)
@@ -1539,9 +1569,11 @@ Function RandomName(cb As Integer, Optional ByVal OnlyUpper As Boolean = False) 
         rgch = rgch & UCase$(rgch)
     End If
     Dim i As Long
+
     For i = 1 To cb
         RandomName = RandomName & mid$(rgch, Int(Rnd() * Len(rgch) + 1), 1)
     Next
+
     Exit Function
 RandomString_Err:
     Call TraceError(Err.Number, Err.Description, "General.RandomString", Erl)
@@ -1561,6 +1593,7 @@ Public Function CheckMailString(ByVal sString As String) As Boolean
     If (lPos <> 0) Then
         '2do test: Busca un simbolo . después de @ + 1
         If Not (InStr(lPos, sString, ".", vbBinaryCompare) > lPos + 1) Then Exit Function
+
         '3er test: Recorre todos los caracteres y los valída
         For lX = 0 To Len(sString) - 1
             If Not (lX = (lPos - 1)) Then   'No chequeamos la '@'
@@ -1568,6 +1601,7 @@ Public Function CheckMailString(ByVal sString As String) As Boolean
                 If Not CMSValidateChar_(iAsc) Then Exit Function
             End If
         Next lX
+
         'Finale
         CheckMailString = True
     End If
@@ -1602,11 +1636,13 @@ Public Sub CerrarServidor()
     ' Limpieza del socket del servidor.
     Call modNetwork.Disconnect
     Dim LoopC As Long
+
     For LoopC = 1 To MaxUsers
         If UserList(LoopC).ConnectionDetails.ConnIDValida Then
             Call CloseSocket(LoopC)
         End If
     Next
+
     Call UnloadAntiCheat
     If Database_Enabled Then Database_Close
     End
@@ -1618,6 +1654,7 @@ Public Function PonerPuntos(ByVal Numero As Long) As String
     Dim Cifra As String
     Cifra = str$(Numero)
     Cifra = Right$(Cifra, Len(Cifra) - 1)
+
     For i = 0 To 4
         If Len(Cifra) - 3 * i >= 3 Then
             If mid$(Cifra, Len(Cifra) - (2 + 3 * i), 3) <> "" Then
@@ -1630,6 +1667,7 @@ Public Function PonerPuntos(ByVal Numero As Long) As String
             Exit For
         End If
     Next
+
     PonerPuntos = Left$(PonerPuntos, Len(PonerPuntos) - 1)
     Exit Function
 PonerPuntos_Err:
@@ -1697,7 +1735,9 @@ Public Function GetProcessCount(ByVal processName As String) As Byte
     Dim processCount As Byte
     Dim oWMI         As Object: Set oWMI = GetObject("winmgmts:")
     Dim oServices    As Object: Set oServices = oWMI.InstancesOf("win32_process")
+
     For Each oService In oServices
+
         servicename = CStr(oService.name)
         If StrComp(servicename, processName, vbTextCompare) = 0 Then
             ' Para matar un proceso adentro de este loop usar.
@@ -1705,17 +1745,20 @@ Public Function GetProcessCount(ByVal processName As String) As Byte
             processCount = processCount + 1
         End If
     Next
+
     GetProcessCount = processCount
 End Function
 
 Public Function EsMapaInterdimensional(ByVal Map As Integer) As Boolean
     Dim i As Integer
+
     For i = 1 To UBound(MapasInterdimensionales)
         If Map = MapasInterdimensionales(i) Then
             EsMapaInterdimensional = True
             Exit Function
         End If
     Next
+
 End Function
 
 Public Function IsValidIPAddress(ByVal IP As String) As Boolean
@@ -1723,10 +1766,12 @@ Public Function IsValidIPAddress(ByVal IP As String) As Boolean
     Dim varAddress As Variant, n As Long, lCount As Long
     varAddress = Split(IP, ".", 4, vbTextCompare)
     If IsArray(varAddress) Then
+
         For n = LBound(varAddress) To UBound(varAddress)
             lCount = lCount + 1
             varAddress(n) = CByte(varAddress(n))
         Next
+
         IsValidIPAddress = (lCount = 4)
     End If
 Handler:
@@ -1798,6 +1843,7 @@ Public Sub LoadDBMigrations()
     End If
     Dim sFilename As String
     sFilename = dir(App.Path & "/ScriptsDB/")
+
     Do While sFilename <> ""
         If Len(sFilename) > 11 Then
             Dim date_ As String
@@ -1816,6 +1862,7 @@ Public Sub LoadDBMigrations()
         End If
         sFilename = dir()
     Loop
+
     Exit Sub
 LoadDBMigrations_Err:
     Call TraceError(Err.Number, Err.Description, "modGuilds.LoadDBMigrations", Erl)

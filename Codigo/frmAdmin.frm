@@ -121,6 +121,7 @@ Public Sub ActualizaListaPjs()
     Dim LoopC As Long
     With cboPjs
         .Clear
+
         For LoopC = 1 To LastUser
             If UserList(LoopC).flags.UserLogged And UserList(LoopC).ConnectionDetails.ConnIDValida Then
                 If UserList(LoopC).flags.Privilegios And e_PlayerType.User Then
@@ -129,6 +130,7 @@ Public Sub ActualizaListaPjs()
                 End If
             End If
         Next LoopC
+
     End With
     Exit Sub
 ActualizaListaPjs_Err:

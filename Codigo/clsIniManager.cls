@@ -86,9 +86,11 @@ Private Sub Class_Terminate()
     Dim i As Long
     'Clean up
     If MainNodes Then
+
         For i = 1 To MainNodes - 1
             Erase fileData(i).values
         Next i
+
         Erase fileData
     End If
     MainNodes = 0
@@ -113,6 +115,7 @@ Public Sub Initialize(ByVal File As String)
     'Get a free handle and start reading line by line until the end
     handle = FreeFile
     Open File For Input As handle
+
     Do Until EOF(handle)
         Line Input #handle, Text
         'Is it null??
@@ -145,15 +148,18 @@ Public Sub Initialize(ByVal File As String)
             End If
         End If
     Loop
+
     Close handle
     If MainNodes Then
         'Sort main nodes to allow binary search
         Call SortMainNodes(0, MainNodes - 1)
         'Sort values of each node to allow binary search
         Dim i As Long
+
         For i = 0 To MainNodes - 1
             If fileData(i).numValues Then Call SortChildNodes(fileData(i), 0, fileData(i).numValues - 1)
         Next i
+
     End If
     Exit Sub
 Initialize_Err:
@@ -179,13 +185,16 @@ Private Sub SortChildNodes(ByRef Node As MainNode, ByVal First As Integer, ByVal
     max = Last
     With Node
         comp = .values((Min + max) \ 2).key
+
         Do While Min <= max
             Do While .values(Min).key < comp And Min < Last
                 Min = Min + 1
             Loop
+
             Do While .values(max).key > comp And max > First
                 max = max - 1
             Loop
+
             If Min <= max Then
                 Temp = .values(Min)
                 .values(Min) = .values(max)
@@ -194,6 +203,7 @@ Private Sub SortChildNodes(ByRef Node As MainNode, ByVal First As Integer, ByVal
                 max = max - 1
             End If
         Loop
+
     End With
     If First < max Then SortChildNodes Node, First, max
     If Min < Last Then SortChildNodes Node, Min, Last
@@ -218,13 +228,16 @@ Private Sub SortMainNodes(ByVal First As Integer, ByVal Last As Integer)
     Min = First
     max = Last
     comp = fileData((Min + max) \ 2).name
+
     Do While Min <= max
         Do While fileData(Min).name < comp And Min < Last
             Min = Min + 1
         Loop
+
         Do While fileData(max).name > comp And max > First
             max = max - 1
         Loop
+
         If Min <= max Then
             Temp = fileData(Min)
             fileData(Min) = fileData(max)
@@ -233,6 +246,7 @@ Private Sub SortMainNodes(ByVal First As Integer, ByVal Last As Integer)
             max = max - 1
         End If
     Loop
+
     If First < max Then SortMainNodes First, max
     If Min < Last Then SortMainNodes Min, Last
     Exit Sub
@@ -311,6 +325,7 @@ Private Function FindKey(ByRef Node As MainNode, ByVal key As String) As Long
     Dim mid As Long
     Min = 0
     max = Node.numValues - 1
+
     Do While Min <= max
         mid = (Min + max) \ 2
         If Node.values(mid).key < key Then
@@ -323,6 +338,7 @@ Private Function FindKey(ByRef Node As MainNode, ByVal key As String) As Long
             Exit Function
         End If
     Loop
+
     'Not found, return the negation of the position where it should be
     '(all higher values are to the right of the list and lower values are to the left)
     FindKey = Not Min
@@ -345,6 +361,7 @@ Private Function FindMain(ByVal name As String) As Long
     Dim mid As Long
     Min = 0
     max = MainNodes - 1
+
     Do While Min <= max
         mid = (Min + max) \ 2
         If fileData(mid).name < name Then
@@ -357,6 +374,7 @@ Private Function FindMain(ByVal name As String) As Long
             Exit Function
         End If
     Loop
+
     'Not found, return the negation of the position where it should be
     '(all higher values are to the right of the list and lower values are to the left)
     FindMain = Not Min
@@ -389,10 +407,12 @@ Private Function AddNode(ByRef name As String) As Long
     If MainNodes Then
         i = MainNodes - 1
         MainPos = Not FindMain(name)
+
         Do While i >= MainPos
             fileData(i + 1) = fileData(i)
             i = i - 1
         Loop
+
         fileData(MainPos).numValues = 0
         Erase fileData(MainPos).values
     End If
@@ -419,10 +439,12 @@ Private Function AddKey(ByRef Main As String, ByRef key As String, Optional ByRe
         If .numValues > 0 Then
             i = .numValues - 1
             KeyPos = Not FindKey(fileData(MainPos), key)
+
             Do While i >= KeyPos
                 .values(i + 1) = .values(i)
                 i = i - 1
             Loop
+
         End If
         .values(KeyPos).key = key
         .values(KeyPos).value = value
@@ -441,15 +463,19 @@ Public Sub DumpFile(ByRef File As String)
     Dim j     As Long
     hFile = FreeFile()
     Open File For Output As hFile
+
     For i = 0 To MainNodes - 1
         With fileData(i)
             Print #hFile, "[" & .name & "]"
+
             For j = 0 To .numValues - 1
                 Print #hFile, .values(j).key & "=" & .values(j).value
             Next j
+
             Print #hFile, ""
         End With
     Next i
+
     Close hFile
     Exit Sub
 DumpFile_Err:

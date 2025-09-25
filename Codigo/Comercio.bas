@@ -128,11 +128,13 @@ Public Sub Comercio(ByVal Modo As eModoComercio, ByVal UserIndex As Integer, ByV
             'Agrego que si vende el item, lo compre tambien.
             Dim LoVende As Boolean
             Dim i       As Integer
+
             For i = 1 To NpcList(NpcIndex).invent.NroItems
                 If NpcList(NpcIndex).invent.Object(i).ObjIndex = Objeto.ObjIndex Then
                     LoVende = True
                 End If
             Next i
+
             If Not LoVende Then
                 'Msg1086= Lo siento, no estoy interesado en este tipo de objetos.
                 Call WriteLocaleMsg(UserIndex, "1086", e_FontTypeNames.FONTTYPE_TALK)
@@ -205,6 +207,7 @@ Private Function SlotEnNPCInv(ByVal NpcIndex As Integer, ByVal Objeto As Integer
         Dim firstEmptySpace As Integer
         ' Recorro el inventario buscando el objeto a agregar y espacios vacios
         firstEmptySpace = 0
+
         For Slot = 1 To MAX_INVENTORY_SLOTS
             If .Object(Slot).ObjIndex = Objeto Then
                 matchingSlots.Add (Slot)
@@ -212,15 +215,19 @@ Private Function SlotEnNPCInv(ByVal NpcIndex As Integer, ByVal Objeto As Integer
                 firstEmptySpace = Slot
             End If
         Next Slot
+
         ' Recorro los slots donde hay objetos que matcheen con el objeto a agregar y si alguno tiene espacio, lo agrego ahi. Si no, se descarta
         If matchingSlots.count <> 0 Then
             Dim i As Variant
+
             For Each i In matchingSlots
+
                 If .Object(i).amount < MAX_INVENTORY_OBJS Then
                     SlotEnNPCInv = i
                     Exit Function
                 End If
             Next i
+
             SlotEnNPCInv = 0
             Exit Function
         End If
@@ -266,6 +273,7 @@ Private Sub UpdateNpcInv(ByVal UpdateAll As Boolean, ByVal UserIndex As Integer,
             Call WriteChangeNPCInventorySlot(UserIndex, Slot, obj, val)
         End With
     Else
+
         'Actualiza todos los slots
         For LoopC = 1 To MAX_INVENTORY_SLOTS
             With NpcList(NpcIndex).invent.Object(LoopC)
@@ -277,6 +285,7 @@ Private Sub UpdateNpcInv(ByVal UpdateAll As Boolean, ByVal UserIndex As Integer,
                 Call WriteChangeNPCInventorySlot(UserIndex, LoopC, obj, val)
             End With
         Next LoopC
+
     End If
     Exit Sub
 EnviarNpcInv_Err:
@@ -293,6 +302,7 @@ Public Sub UpdateNpcInvToAll(ByVal UpdateAll As Boolean, ByVal NpcIndex As Integ
     '***************************************************
     On Error GoTo ErrHandler:
     Dim LoopC As Long
+
     ' Recorremos todos los usuarios
     For LoopC = 1 To LastUser
         With UserList(LoopC)
@@ -306,6 +316,7 @@ Public Sub UpdateNpcInvToAll(ByVal UpdateAll As Boolean, ByVal NpcIndex As Integ
             End If
         End With
     Next
+
     Exit Sub
 ErrHandler:
     Call TraceError(Err.Number, Err.Description, "modSistemaComercio.UpdateNpcInvToAll")

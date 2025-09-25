@@ -1692,9 +1692,11 @@ Public Function cnvBytesMid(Bytes() As Byte, nOffset As Long, Optional nBytes As
     End If
     If nToCopy > nRest Then nToCopy = nRest
     ReDim MyBytes(nToCopy - 1)
+
     For i = 0 To nToCopy - 1
         MyBytes(i) = Bytes(i + nOffset)
     Next
+
     cnvBytesMid = MyBytes
 End Function
 

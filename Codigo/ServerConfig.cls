@@ -53,10 +53,13 @@ Private Sub DumpSettings()
     Debug.Assert Not mSettings Is Nothing
     Dim key
     Dim value
+
     For Each key In mSettings.Keys
+
         value = mSettings.Item(key)
         Debug.Print "[Settings] " & key & " -> " & value
     Next key
+
 End Sub
 
 Public Function LoadSettings(ByVal Filename As String) As Long
