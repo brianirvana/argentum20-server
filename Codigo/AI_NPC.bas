@@ -202,21 +202,21 @@ Private Sub AttackFromPos(ByVal NpcIndex As Integer)
 
     With NpcList(NpcIndex)
         Dim NearTarget As Integer
-        If Not IsSet(.flags.StatusMask, eTaunted) Or Not IsValidUserRef(.targetUser) Then
+        If Not IsSet(.flags.StatusMask, eTaunted) Or Not IsValidUserRef(.TargetUser) Then
             Dim Distance As Single
             NearTarget = SelectNearestUser(NpcIndex, Distance)
         Else
-            NearTarget = .targetUser.ArrayIndex
+            NearTarget = .TargetUser.ArrayIndex
         End If
         If NearTarget > 0 Then
-            Call SetUserRef(.targetUser, NearTarget)
+            Call SetUserRef(.TargetUser, NearTarget)
             Dim TargetHeading As Integer
             TargetHeading = GetHeadingFromWorldPos(.pos, UserList(NearTarget).pos)
             If TargetHeading <> .Char.Heading Then
                 Call ChangeNPCChar(NpcIndex, .Char.body, .Char.head, TargetHeading)
             End If
             If .flags.LanzaSpells And IntervaloPermiteLanzarHechizo(NpcIndex) Then
-                If NpcLanzaSpellInmovilizado(NpcIndex, .targetUser.ArrayIndex) Then
+                If NpcLanzaSpellInmovilizado(NpcIndex, .TargetUser.ArrayIndex) Then
                     Call NpcLanzaUnSpell(NpcIndex)
                 End If
             ElseIf NPCHasAUserInFront(NpcIndex, NearTarget) Then
@@ -280,19 +280,19 @@ Public Function SelectCurrentTarget(ByVal NpcIndex, ByVal NearestUser As Integer
         If IsSet(.flags.StatusMask, eTaunted) Then
             Exit Function
         End If
-        Call ClearUserRef(.targetUser)
+        Call ClearUserRef(.TargetUser)
         If .flags.AttackedBy <> vbNullString Then
-            .targetUser = NameIndex(.flags.AttackedBy)
-            If Not IsValidUserRef(.targetUser) Then
-                Call ClearUserRef(.targetUser)
-            ElseIf Not EnRangoVision(NpcIndex, .targetUser.ArrayIndex) Then
-                Call ClearUserRef(.targetUser)
+            .TargetUser = NameIndex(.flags.AttackedBy)
+            If Not IsValidUserRef(.TargetUser) Then
+                Call ClearUserRef(.TargetUser)
+            ElseIf Not EnRangoVision(NpcIndex, .TargetUser.ArrayIndex) Then
+                Call ClearUserRef(.TargetUser)
             End If
         End If
-        If NearestUser > 0 And Not IsValidUserRef(.targetUser) Then
-            Call SetUserRef(.targetUser, NearestUser)
+        If NearestUser > 0 And Not IsValidUserRef(.TargetUser) Then
+            Call SetUserRef(.TargetUser, NearestUser)
         End If
-        If Not CastUserToAnyRef(.targetUser, CurrentTarget) Then
+        If Not CastUserToAnyRef(.TargetUser, CurrentTarget) Then
             Call CastNpcToAnyRef(.TargetNPC, CurrentTarget)
         End If
     End With
@@ -427,22 +427,22 @@ Private Function NpcLanzaSpellInmovilizado(ByVal NpcIndex As Integer, ByVal tInd
         If Not NPCs.CanMove(.Contadores, .flags) Then
             Select Case .Char.Heading
                 Case e_Heading.NORTH
-                    If .Pos.X = UserList(tIndex).Pos.X And .Pos.Y > UserList(tIndex).Pos.Y Then
+                    If .pos.x = UserList(tIndex).pos.x And .pos.y > UserList(tIndex).pos.y Then
                         NpcLanzaSpellInmovilizado = True
                         Exit Function
                     End If
                 Case e_Heading.EAST
-                    If .Pos.Y = UserList(tIndex).Pos.Y And .Pos.X < UserList(tIndex).Pos.X Then
+                    If .pos.y = UserList(tIndex).pos.y And .pos.x < UserList(tIndex).pos.x Then
                         NpcLanzaSpellInmovilizado = True
                         Exit Function
                     End If
                 Case e_Heading.SOUTH
-                    If .Pos.X = UserList(tIndex).Pos.X And .Pos.Y < UserList(tIndex).Pos.Y Then
+                    If .pos.x = UserList(tIndex).pos.x And .pos.y < UserList(tIndex).pos.y Then
                         NpcLanzaSpellInmovilizado = True
                         Exit Function
                     End If
                 Case e_Heading.WEST
-                    If .Pos.Y = UserList(tIndex).Pos.Y And .Pos.X > UserList(tIndex).Pos.X Then
+                    If .pos.y = UserList(tIndex).pos.y And .pos.x > UserList(tIndex).pos.x Then
                         NpcLanzaSpellInmovilizado = True
                         Exit Function
                     End If
@@ -484,7 +484,7 @@ Public Function NPCHasAUserInFront(ByVal NpcIndex As Integer, ByRef UserIndex As
         Exit Function
     End If
     NextPosNPC = ComputeNextHeadingPos(NpcIndex)
-    UserIndex = MapData(NextPosNPC.Map, NextPosNPC.X, NextPosNPC.Y).UserIndex
+    UserIndex = MapData(NextPosNPC.Map, NextPosNPC.x, NextPosNPC.y).UserIndex
     NPCHasAUserInFront = (UserIndex > 0)
 End Function
 
@@ -612,7 +612,7 @@ Public Sub AI_BgTankBehavior(ByVal NpcIndex As Integer)
         TargetPos = ModReferenceUtils.GetPosition(CurrentTarget)
         If IsValidRef(CurrentTarget) And InRangoVisionNPC(NpcIndex, TargetPos.x, TargetPos.y) Then
             If CurrentTarget.RefType = eUser Then
-                Call SetUserRef(.targetUser, CurrentTarget.ArrayIndex)
+                Call SetUserRef(.TargetUser, CurrentTarget.ArrayIndex)
                 AI_AtacarUsuarioObjetivo (NpcIndex)
             Else
                 Call SetNpcRef(.TargetNPC, CurrentTarget.ArrayIndex)
@@ -727,7 +727,7 @@ Public Sub AI_BGBossBehavior(ByVal NpcIndex As Integer)
         Dim TargetPos As t_WorldPos
         TargetPos = ModReferenceUtils.GetPosition(CurrentTarget)
         Dim DistanceFromOrigin As Integer
-        DistanceFromOrigin = distance(.Orig.x, .Orig.y, .pos.x, .pos.y)
+        DistanceFromOrigin = Distance(.Orig.x, .Orig.y, .pos.x, .pos.y)
         If DistanceFromOrigin > 10 Then
             .Movement = BGBossReturnToOrigin
             Call IncreaseSingle(NpcList(NpcIndex).Modifiers.MovementSpeed, 0.5)
@@ -1161,7 +1161,7 @@ UsuarioAtacableConMelee_Err:
     Call TraceError(Err.Number, Err.Description, "AI.UsuarioAtacableConMelee", Erl)
 End Function
 
-Private Function CanCastSpell(ByRef npc As t_Npc, ByVal Slot As Integer) As Boolean
+Private Function CanCastSpell(ByRef Npc As t_Npc, ByVal Slot As Integer) As Boolean
     CanCastSpell = GlobalFrameTime - Npc.Spells(Slot).LastUse > (Npc.Spells(Slot).Cd * 1000)
 End Function
 
