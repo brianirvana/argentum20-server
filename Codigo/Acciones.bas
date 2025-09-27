@@ -27,7 +27,7 @@ Attribute VB_Name = "Acciones"
 '
 Option Explicit
 
-Public Function get_map_name(ByVal map As Long) As String
+Public Function get_map_name(ByVal Map As Long) As String
     On Error GoTo get_map_name_Err
     get_map_name = MapInfo(Map).map_name
     Exit Function
@@ -106,7 +106,7 @@ PuedeUsarObjeto_Err:
     Call TraceError(Err.Number, Err.Description, "Acciones.PuedeUsarObjeto", Erl)
 End Function
 
-Function LevelCanUseItem(ByVal UserIndex As Integer, ByRef Obj As t_ObjData) As Boolean
+Function LevelCanUseItem(ByVal UserIndex As Integer, ByRef obj As t_ObjData) As Boolean
 
     With UserList(UserIndex)
         If obj.MaxLEV <> 0 Then
@@ -223,12 +223,12 @@ Public Sub CompletarAccionFin(ByVal UserIndex As Integer)
                     End If
                     If Resu Then
                         UserList(UserIndex).Counters.TimerBarra = 5
-                        Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticulasIndex.Resucitar, UserList( _
+                        Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticleEffects.Resucitar, UserList( _
                                 UserIndex).Counters.TimerBarra, False))
                         Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageBarFx(UserList(UserIndex).Char.charindex, UserList(UserIndex).Counters.TimerBarra, _
                                 e_AccionBarra.Resucitar))
                         UserList(UserIndex).Accion.AccionPendiente = True
-                        UserList(UserIndex).Accion.Particula = e_ParticulasIndex.Resucitar
+                        UserList(UserIndex).Accion.Particula = e_ParticleEffects.Resucitar
                         UserList(UserIndex).Accion.TipoAccion = e_AccionBarra.Resucitar
                         Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave("104", UserList(UserIndex).pos.x, UserList(UserIndex).pos.y))
                         'Msg82=El Cura lanza unas palabras al aire. Comienzas a sentir como tu cuerpo se vuelve a formar...
@@ -313,7 +313,7 @@ Public Sub CompletarAccionFin(ByVal UserIndex As Integer)
                 Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave(Hechizos(uh).wav, UserList(UserIndex).flags.TargetX, UserList(UserIndex).flags.TargetY))  'Esta linea faltaba. Pablo (ToxicWaste)
                 'Msg1069= ¡Has abierto la puerta a intermundia!
                 Call WriteLocaleMsg(UserIndex, "1069", e_FontTypeNames.FONTTYPE_INFO)
-                Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticulasIndex.Runa, -1, True))
+                Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticleEffects.Runa, -1, True))
                 UserList(UserIndex).flags.Portal = 10
                 UserList(UserIndex).flags.PortalMDestino = Mapaf
                 UserList(UserIndex).flags.PortalYDestino = Xf
@@ -322,12 +322,12 @@ Public Sub CompletarAccionFin(ByVal UserIndex As Integer)
                 Mapa = UserList(UserIndex).flags.PortalM
                 x = UserList(UserIndex).flags.PortalX
                 y = UserList(UserIndex).flags.PortalY
-                MapData(Mapa, x, y).Particula = e_ParticulasIndex.TpVerde
+                MapData(Mapa, x, y).Particula = e_ParticleEffects.TpVerde
                 MapData(Mapa, x, y).TimeParticula = -1
                 MapData(Mapa, x, y).TileExit.Map = UserList(UserIndex).flags.PortalMDestino
                 MapData(Mapa, x, y).TileExit.x = UserList(UserIndex).flags.PortalXDestino
                 MapData(Mapa, x, y).TileExit.y = UserList(UserIndex).flags.PortalYDestino
-                Call SendData(SendTarget.toMap, UserList(UserIndex).flags.PortalM, PrepareMessageParticleFXToFloor(x, y, e_ParticulasIndex.TpVerde, -1))
+                Call SendData(SendTarget.toMap, UserList(UserIndex).flags.PortalM, PrepareMessageParticleFXToFloor(x, y, e_ParticleEffects.TpVerde, -1))
                 Call SendData(SendTarget.toMap, UserList(UserIndex).flags.PortalM, PrepareMessageLightFXToFloor(x, y, &HFF80C0, 105))
             End If
             UserList(UserIndex).Accion.Particula = 0
@@ -340,7 +340,7 @@ Public Sub CompletarAccionFin(ByVal UserIndex As Integer)
         Case e_AccionBarra.Resucitar
             ' Msg585=¡Has sido resucitado!
             Call WriteLocaleMsg(UserIndex, "585", e_FontTypeNames.FONTTYPE_INFO)
-            Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticulasIndex.Resucitar, 250, True))
+            Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticleEffects.Resucitar, 250, True))
             Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave("117", UserList(UserIndex).pos.x, UserList(UserIndex).pos.y))
             Call RevivirUsuario(UserIndex, True)
             UserList(UserIndex).Accion.Particula = 0
@@ -449,7 +449,7 @@ Sub Accion(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal x As Integer,
                     ' Msg585=¡Has sido resucitado!
                     Call WriteLocaleMsg(UserIndex, "585", e_FontTypeNames.FONTTYPE_INFO)
                     Call RevivirUsuario(UserIndex)
-                    Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticulasIndex.Resucitar, 30, False))
+                    Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticleEffects.Resucitar, 30, False))
                     Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave("117", UserList(UserIndex).pos.x, UserList(UserIndex).pos.y))
                 Else
                     'curamos totalmente
@@ -460,9 +460,9 @@ Sub Accion(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal x As Integer,
                         Call WriteLocaleMsg(UserIndex, "83", e_FontTypeNames.FONTTYPE_INFOIAO)
                         Call WriteUpdateUserStats(UserIndex)
                         If Status(UserIndex) = 4 Or Status(UserIndex) = 2 Or Status(UserIndex) = 0 Then
-                            Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticulasIndex.CurarCrimi, 100, False))
+                            Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticleEffects.CurarCrimi, 100, False))
                         Else
-                            Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticulasIndex.Curar, 100, False))
+                            Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticleEffects.Curar, 100, False))
                         End If
                     End If
                 End If
