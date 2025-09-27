@@ -1433,6 +1433,7 @@ Sub PasarSegundo()
             End If ' If UserLogged
         End With
     Next i
+
     ' **********************************
     ' **********  Invasiones  **********
     ' **********************************
@@ -1467,16 +1468,19 @@ Sub GuardarUsuarios()
     Call SendData(SendTarget.ToAll, 0, PrepareMessagePauseToggle())
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1657, vbNullString, e_FontTypeNames.FONTTYPE_SERVER)) 'Msg1657=Servidor » Grabando Personajes
     Dim i As Long
+
     For i = 1 To LastUser
         If UserList(i).flags.UserLogged Then
             Call modNetwork.Poll
         End If
     Next i
+
     For i = 1 To LastUser
         If UserList(i).flags.UserLogged Then
             Call SaveUser(i)
         End If
     Next i
+
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1658, vbNullString, e_FontTypeNames.FONTTYPE_SERVER)) 'Msg1658=Servidor » Personajes Grabados
     Call SendData(SendTarget.ToAll, 0, PrepareMessagePauseToggle())
     haciendoBK = False
@@ -1542,6 +1546,7 @@ Function RandomName(cb As Integer, Optional ByVal OnlyUpper As Boolean = False) 
     For i = 1 To cb
         RandomName = RandomName & mid$(rgch, Int(Rnd() * Len(rgch) + 1), 1)
     Next
+
     Exit Function
 RandomString_Err:
     Call TraceError(Err.Number, Err.Description, "General.RandomString", Erl)
@@ -1561,6 +1566,7 @@ Public Function CheckMailString(ByVal sString As String) As Boolean
     If (lPos <> 0) Then
         '2do test: Busca un simbolo . después de @ + 1
         If Not (InStr(lPos, sString, ".", vbBinaryCompare) > lPos + 1) Then Exit Function
+
         '3er test: Recorre todos los caracteres y los valída
         For lX = 0 To Len(sString) - 1
             If Not (lX = (lPos - 1)) Then   'No chequeamos la '@'
@@ -1568,6 +1574,7 @@ Public Function CheckMailString(ByVal sString As String) As Boolean
                 If Not CMSValidateChar_(iAsc) Then Exit Function
             End If
         Next lX
+
         'Finale
         CheckMailString = True
     End If

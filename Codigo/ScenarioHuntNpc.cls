@@ -226,6 +226,7 @@ Private Sub StartGame()
             SpawnNpc (MatchNpc(key).NpcId)
         Next i
     Next key
+
     LastFrameTime = GetTickCount()
     BroadCastInterval = 60000
     Call SendData(SendTarget.toMap, MapNumber, PrepareMessageLocaleMsg(1730, "", e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1730=Â¡Que inicie la cacerÃ­a!
@@ -484,15 +485,19 @@ Sub GiveRewards()
                         End If
                     End If
                 Next j
+
                 RewardStr = ", ganaron " & PonerPuntos(Reward) & " Modenas de oro cada uno."
             End If
             Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1823, i & "Â¬" & Teams(Ranking(i).PlayerIndex) & "Â¬" & Ranking(i).Score & "Â¬" & RewardStr, _
                     e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1823=Â¬1) Â¬2: Â¬3 puntosÂ¬4
         Next i
+
     Else
         Ranking = Board.GetRanking(3)
+
         For i = 0 To UBound(Ranking) - 1
             If LobbyList(LobbyIndex).AvailableInscriptionMoney > 0 Then
+
                 For j = 0 To LobbyList(LobbyIndex).RegisteredPlayers - 1
                     If IsValidUserRef(LobbyList(LobbyIndex).Players(j).User) Then
                         If LobbyList(LobbyIndex).Players(j).User.ArrayIndex = Ranking(i).PlayerIndex Then
@@ -501,11 +506,13 @@ Sub GiveRewards()
                         End If
                     End If
                 Next j
+
                 RewardStr = ", gano " & PonerPuntos(Rewards(i + 1)) & " Modenas de oro."
             End If
             Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1824, (i + 1) & "Â¬" & UserList(Ranking(i).PlayerIndex).name & "Â¬" & Ranking(i).Score & "Â¬" & RewardStr, _
                     e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1824=Â¬1) Â¬2: Â¬3 puntosÂ¬4
         Next i
+
     End If
     Exit Sub
 GiveRewards_Err:

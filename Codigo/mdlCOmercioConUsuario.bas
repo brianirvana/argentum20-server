@@ -88,6 +88,7 @@ Public Sub EnviarObjetoTransaccion(ByVal AQuien As Integer, ByVal UserIndex As I
                 cantidadTotalItem = cantidadTotalItem + UserList(UserIndex).ComUsu.itemsAenviar(j).amount
             End If
         Next j
+
         cantidadTotalItem = cantidadTotalItem + ObjAEnviar.amount
         If Not TieneObjetos(ObjAEnviar.ObjIndex, cantidadTotalItem, UserIndex, ObjAEnviar.ElementalTags) Then
             Call WriteConsoleMsg(UserIndex, PrepareMessageLocaleMsg(1997, vbNullString, e_FontTypeNames.FONTTYPE_INFO)) ' Msg1997=No tienes esa cantidad disponible para agregar.
@@ -95,6 +96,7 @@ Public Sub EnviarObjetoTransaccion(ByVal AQuien As Integer, ByVal UserIndex As I
         End If
         'Si es un item recorro todo el array para ver si ese elemento ya está agregado y de paso me guardo la primer posición vacía
         Dim i As Long
+
         For i = 1 To UBound(UserList(UserIndex).ComUsu.itemsAenviar)
             'Si encuentro el item y tiene lugar pongo Found en la posición que lo encontré
             If UserList(UserIndex).ComUsu.itemsAenviar(i).ObjIndex = ObjAEnviar.ObjIndex And UserList(UserIndex).ComUsu.itemsAenviar(i).ElementalTags = ObjAEnviar.ElementalTags _
@@ -114,6 +116,7 @@ Public Sub EnviarObjetoTransaccion(ByVal AQuien As Integer, ByVal UserIndex As I
                 FirstEmptyPos = i
             End If
         Next i
+
         With UserList(UserIndex).ComUsu
             'Si tengo una posición encontrada con un item y a su ves 1 slot vacío para agregar los restantes de ese item
             If FoundPos > 0 And FirstEmptyPos > 0 Then

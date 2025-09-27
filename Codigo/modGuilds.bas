@@ -275,6 +275,7 @@ Public Function CrearNuevoClan(ByVal FundadorIndex As Integer, _
         For i = 1 To CANTIDADDECLANES - 1
             Call guilds(i).ProcesarFundacionDeOtroClan
         Next i
+
     Else
         refError = 2022 'No hay más slots para fundar clanes. Consulte a un administrador.
         Exit Function
@@ -1041,7 +1042,9 @@ Sub CheckClanExp(ByVal UserIndex As Integer, ByVal ExpDar As Integer)
         End If
         Dim MemberIndex As Byte
         MemberIndex = modGuilds.m_Iterador_ProximoUserIndex(.GuildIndex)
+
         While MemberIndex > 0
+
             If UserList(MemberIndex).ConnectionDetails.ConnIDValida Then
                 If UserList(MemberIndex).ChatCombate = 1 Then
                     Call SendData(SendTarget.ToIndex, MemberIndex, PrepareMessageLocaleMsg(1789, ExpDar, e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1789=Clan> El clan ha ganado ¬1 puntos de experiencia.

@@ -138,6 +138,7 @@ Public Sub BanearCuenta(ByVal BannerIndex As Integer, ByVal username As String, 
     Call LogGM(UserList(BannerIndex).name, "Baneó la cuenta de " & username & " por: " & Reason)
     ' Echo a todos los logueados en esta cuenta
     Dim i As Long
+
     For i = 1 To LastUser
         If UserList(i).AccountID = CuentaID Then
             Call WriteShowMessageBox(i, 1785, Reason) 'Msg1785=Has sido baneado del servidor. Motivo: ¬1

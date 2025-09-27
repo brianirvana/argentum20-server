@@ -1587,9 +1587,11 @@ Private Sub CalcularDarExpGrupal(ByVal UserIndex As Integer, ByVal NpcIndex As I
                 End If
             End If
         Next
+
         ' Verificar si el líder está en otro mapa
         If UserList(LiderIndex).pos.Map <> .pos.Map Then
             CantidadMiembrosValidos = CantidadMiembrosValidos + 1 ' Se cuenta como un miembro más para dividir la exp
+
             ' Avisamos a los miembros del grupo
             For i = 1 To UserList(LiderIndex).Grupo.CantidadMiembros
                 If IsValidUserRef(UserList(LiderIndex).Grupo.Miembros(i)) Then

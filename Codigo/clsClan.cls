@@ -254,6 +254,7 @@ End Sub
 Public Sub DesConectarMiembro(ByVal UserIndex As Integer)
     On Error GoTo DesConectarMiembro_Err
     Dim i As Integer
+
     For i = 1 To p_OnlineMembers.count
         If p_OnlineMembers.Item(i) = UserIndex Then
             p_OnlineMembers.Remove i

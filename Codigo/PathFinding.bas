@@ -221,9 +221,11 @@ Public Function SeekPath(ByVal NpcIndex As Integer, Optional ByVal Closest As Bo
     Dim max_steps As Integer
     max_steps = SvrConfig.GetValue("NPC_PATHFINDING_MAX_STEPS")
     Debug.Assert max_steps < MAX_PATH_LENGTH
+
     Do While (VertexCount > 0 And pasos < max_steps)
         pasos = pasos + 1
         MinTotalDistance = MAX_INTEGER
+
         ' Buscamos en la cola la posición con menor distancia total
         For Index = 0 To VertexCount - 1
             With OpenVertices(Index)
@@ -233,6 +235,7 @@ Public Function SeekPath(ByVal NpcIndex As Integer, Optional ByVal Closest As Bo
                 End If
             End With
         Next
+
         Vertex = OpenVertices(BestVertexIndex)
         With Vertex
             ' Si es la posición objetivo
@@ -249,13 +252,16 @@ Public Function SeekPath(ByVal NpcIndex As Integer, Optional ByVal Closest As Bo
             Table(.x, .y).Closed = True
             ' Si aún podemos seguir procesando más lejos
             If Table(.x, .y).Distance < MaxDistance Then
+
                 ' Procesamos adyacentes
                 For Heading = e_Heading.NORTH To e_Heading.WEST
                     Call ProcessAdjacent(NpcIndex, .x, .y, Heading, PosTarget)
                 Next
+
             End If
         End With
     Loop
+
     ' No hay más nodos por procesar. O bien no existe un camino válido o el NPC no es suficientemente inteligente.
     ' Si debemos retornar la posición más cercana al objetivo
     If Closest Then
@@ -304,6 +310,7 @@ Private Sub InitializeTable(ByRef Table() As t_IntermidiateWork, ByRef PosNPC As
     ' Solo limpiamos el campo de visión del NPC.
     On Error GoTo InitializeTable_Err
     Dim x As Integer, y As Integer
+
     For y = PosNPC.y - RangoVision To PosNPC.y + RangoVision
         For x = PosNPC.x - RangoVision To PosNPC.x + RangoVision
             If InsideLimits(x, y) Then

@@ -648,6 +648,7 @@ Private Sub Command20_Click()
     Dim LoopC As Long
     If MsgBox("Esta seguro que desea reiniciar los sockets ? Se cerrarán todas las conexiones activas.", vbYesNo, "Reiniciar Sockets") = vbYes Then
         Call modNetwork.Disconnect
+
         For LoopC = 1 To MaxUsers
             Call CloseSocket(LoopC)
         Next

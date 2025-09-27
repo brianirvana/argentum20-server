@@ -130,8 +130,10 @@ Public Sub PasarSegundo()
             Call SendData(SendTarget.ToJugadoresCaptura, 0, PrepareMessageLocaleMsg(1711, tiempo_ronda, e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1711=Eventos» La ronda comienza en ¬1.
         ElseIf tiempo_ronda = 0 Then
             Call SendData(SendTarget.ToJugadoresCaptura, 0, PrepareMessageLocaleMsg(1712, vbNullString, e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1712=Eventos» ¡¡¡Yaaa!!!
+
             'Cambias triggers de los mapas para dejar pasar a los usuarios.
             For Each participante In participantes
+
                 If participante.IsValid Then
                     Call enviarUsuarioBase(participante.PlayerIndex)
                 End If
@@ -217,8 +219,10 @@ Private Sub iniciarCaptura()
     Set sortedParticipantes = sortParticipantes()
     team = 1
     counter = 1
+
     'Armamos los equipos segun level para que sea lo mas parejo.
     For Each participante In sortedParticipantes
+
         If participante.IsValid Then
             participante.team = team
             UserList(participante.PlayerIndex).flags.CurrentTeam = team
@@ -386,7 +390,9 @@ Private Sub iniciarRonda()
     tiempo_ronda = CAPTURA_TIEMPO_INICIO_RONDA
     Call SendData(SendTarget.ToJugadoresCaptura, 0, PrepareMessageLocaleMsg(1720, ronda_actual & "¬" & tiempo_ronda, e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1720=Eventos» La ronda ¬1 dará comienzo en ¬2 segundos.
     Dim participante As clsCapturaParticipante
+
     For Each participante In participantes
+
         If participante.IsValid Then
             Call SendData(SendTarget.ToAll, participante.PlayerIndex, PrepareMessageUpdateFlag(0, UserList(participante.PlayerIndex).Char.charindex))
             UserList(participante.PlayerIndex).flags.jugando_captura_muertes = 0
@@ -419,20 +425,25 @@ Public Sub finalizarCaptura(Optional team As Integer = e_CancelarCaptura.Cancela
     If team = e_CancelarCaptura.FaltaJugadoresInscripcion Then
         Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1684, vbNullString, e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1684=Eventos» Se ha cancelado el evento de captura la bandera por falta de participantes.
         Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1685, vbNullString, e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1685=Eventos» El evento de captura la bandera ha sido cancelado. Se te ha devuelto el precio de inscripción.
+
         For Each participante In participantes
+
             If participante.IsValid Then
                 UserList(participante.PlayerIndex).Stats.GLD = UserList(participante.PlayerIndex).Stats.GLD + precio
                 Call WriteUpdateGold(participante.PlayerIndex)
             End If
         Next participante
+
     ElseIf team = 0 Then 'Hubo empate
         Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1686, vbNullString, e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1686=Eventos» ¡El evento de captura la bandera ha terminado en empate!
     Else
         ' La recompensa para cada ganador será su inscripción de vuelta + el precio de inscripción de un perdedor
         Dim recompensa As Long
         recompensa = precio * 2  ' Tu inscripción + la inscripción de un perdedor
+
         ' Entregamos premio al equipo ganador
         For Each participante In participantes
+
             If participante.IsValid Then
                 If participante.team = team Then
                     UserList(participante.PlayerIndex).Stats.GLD = UserList(participante.PlayerIndex).Stats.GLD + recompensa
@@ -441,11 +452,15 @@ Public Sub finalizarCaptura(Optional team As Integer = e_CancelarCaptura.Cancela
                 End If
             End If
         Next participante
+
         Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1687, colorEquipo(team), e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1687=Eventos> ¡El evento de captura la bandera ha terminado! Ganador el equipo ¬1.
     End If
+
     For Each participante In participantes
+
         Call eliminarParticipante(participante)
     Next participante
+
     'Destruyo la instancia
     Set InstanciaCaptura = Nothing
 End Sub

@@ -103,6 +103,7 @@ Public Sub CrearReto(ByVal UserIndex As Integer, JugadoresStr As String, ByVal A
             Dim i       As Integer, tIndex As t_UserReference
             Dim Equipo1 As String, Equipo2 As String
             Equipo1 = UserList(UserIndex).name
+
             For i = 0 To UBound(.Jugadores)
                 With .Jugadores(i)
                     If EsGmChar(Jugadores(i)) Then
@@ -132,6 +133,7 @@ Public Sub CrearReto(ByVal UserIndex As Integer, JugadoresStr As String, ByVal A
                     End If
                 End With
             Next
+
             Dim Texto1 As String, Texto2 As String, Texto3 As String
             Texto1 = UserList(UserIndex).name & "(" & UserList(UserIndex).Stats.ELV & ") te invita a jugar el siguiente reto:"
             Texto2 = Equipo1 & " vs " & Equipo2 & ". Apuesta: " & PonerPuntos(Apuesta) & " monedas de oro" & IIf(CaenItems, " y los items.", ".")
@@ -139,6 +141,7 @@ Public Sub CrearReto(ByVal UserIndex As Integer, JugadoresStr As String, ByVal A
             If PocionesMaximas >= 0 Then
                 Texto2 = Texto2 & " Máximo " & PocionesMaximas & " pociones rojas."
             End If
+
             For i = 0 To UBound(.Jugadores)
                 With .Jugadores(i)
                     Call WriteConsoleMsg(.CurIndex.ArrayIndex, Texto1, e_FontTypeNames.FONTTYPE_INFO)
@@ -201,6 +204,7 @@ Public Sub AceptarReto(ByVal UserIndex As Integer, OferenteName As String)
         Call WriteConsoleMsg(UserIndex, PrepareMessageLocaleMsg(1964, UserList(Oferente.ArrayIndex).name, e_FontTypeNames.FONTTYPE_INFO)) ' Msg1964=Has aceptado el reto de ¬1.
         Dim FaltanAceptar As String
         Dim i             As Integer
+
         For i = 0 To UBound(.Jugadores)
             If Not .Jugadores(i).Aceptado Then
                 FaltanAceptar = FaltanAceptar & .Jugadores(i).nombre & " - "
@@ -293,6 +297,7 @@ Private Sub IniciarReto(ByVal Oferente As Integer, ByVal Sala As Integer)
             CurIndex = CurIndex + 1
         End If
         Dim i As Integer
+
         ' Agregamos los jugadores alternando 1 y 1 (en los índices pares está el equipo izquierdo y en los impares el derecho - el array empieza en cero)
         For i = 0 To UBound(.Jugadores)
             Retos.Salas(Sala).Jugadores(CurIndex) = .Jugadores(i).CurIndex
@@ -300,6 +305,7 @@ Private Sub IniciarReto(ByVal Oferente As Integer, ByVal Sala As Integer)
             ' Reset flag
             Call SetUserRef(UserList(.Jugadores(i).CurIndex.ArrayIndex).flags.AceptoReto, 0)
         Next
+
         If Moneda = 1 Then
             ' Agregamos al oferente al final (su equipo juega a la derecha)
             Call SetUserRef(Retos.Salas(Sala).Jugadores(CurIndex), Oferente)
@@ -315,6 +321,7 @@ Private Sub IniciarReto(ByVal Oferente As Integer, ByVal Sala As Integer)
         .TiempoRestante = Retos.DuracionMaxima
         .CaenItems = UserList(Oferente).flags.SolicitudReto.CaenItems
         Dim tUser As t_UserReference
+
         For i = 0 To UBound(.Jugadores)
             tUser = .Jugadores(i)
             ' Le cobramos
@@ -340,6 +347,7 @@ Private Sub IniciarReto(ByVal Oferente As Integer, ByVal Sala As Integer)
             Call WriteConsoleMsg(tUser.ArrayIndex, PrepareMessageLocaleMsg(1967, vbNullString, e_FontTypeNames.FONTTYPE_New_Rojo_Salmon)) ' Msg1967=¡Ha comenzado el reto!
             Call WriteConsoleMsg(tUser.ArrayIndex, PrepareMessageLocaleMsg(1968, vbNullString, e_FontTypeNames.FONTTYPE_New_Gris)) ' Msg1968=Para admitir la derrota escribe /ABANDONAR.
         Next
+
     End With
     Retos.SalasLibres = Retos.SalasLibres - 1
     Call iniciarRonda(Sala)
@@ -351,6 +359,7 @@ End Sub
 Private Sub iniciarRonda(ByVal Sala As Integer)
     With Retos.Salas(Sala)
         Dim i As Integer, tUser As t_UserReference
+
         For i = 0 To UBound(.Jugadores)
             tUser = .Jugadores(i)
             If tUser.ArrayIndex <> 0 Then
@@ -373,6 +382,7 @@ Private Sub iniciarRonda(ByVal Sala As Integer)
                 Call WriteConsoleMsg(tUser.ArrayIndex, PrepareMessageLocaleMsg(1969, .Ronda, e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1969=Comienza la ronda Nº¬1
             End If
         Next
+
     End With
 End Sub
 
@@ -387,6 +397,7 @@ Public Sub MuereEnReto(ByVal UserIndex As Integer)
         Dim CurIndex As Integer
         ' El equipo derecho está en índices pares
         If Equipo = e_EquipoReto.Derecha Then CurIndex = 1
+
         For CurIndex = CurIndex To UBound(.Jugadores) Step 2
             If .Jugadores(CurIndex).ArrayIndex <> 0 Then
                 ' Si todavía hay alguno vivo del equipo
@@ -395,6 +406,7 @@ Public Sub MuereEnReto(ByVal UserIndex As Integer)
                 End If
             End If
         Next
+
         ' Están todos muertos, ganó el equipo contrario
         Call ProcesarRondaGanada(Sala, EquipoContrario(Equipo))
     End With
@@ -425,6 +437,7 @@ Private Sub ProcesarRondaGanada(ByVal Sala As Integer, ByVal Equipo As e_EquipoR
         TamañoEquipo2 = TamañoEquipo * 2
         ' Obtenemos los nombres del equipo ganador
         Dim i As Integer, nombres As String
+
         For i = IIf(Equipo = e_EquipoReto.Izquierda, 0, 1) To TamañoEquipo2 - 1 Step 2
             If .Jugadores(i).ArrayIndex <> 0 Then
                 nombres = nombres & UserList(.Jugadores(i).ArrayIndex).name
@@ -433,6 +446,7 @@ Private Sub ProcesarRondaGanada(ByVal Sala As Integer, ByVal Equipo As e_EquipoR
                 End If
             End If
         Next
+
         ' Informamos el ganador de esta ronda
         For i = 0 To UBound(.Jugadores)
             If .Jugadores(i).ArrayIndex <> 0 Then
@@ -440,6 +454,7 @@ Private Sub ProcesarRondaGanada(ByVal Sala As Integer, ByVal Equipo As e_EquipoR
                 Call WriteConsoleMsg(.Jugadores(i).ArrayIndex, "", 0) ' Dejamos un espacio vertical
             End If
         Next
+
         ' Iniciamos la próxima ronda
         Call iniciarRonda(Sala)
     End With
@@ -507,6 +522,7 @@ Public Sub FinalizarReto(ByVal Sala As Integer, Optional ByVal TiempoAgotado As 
                     End If
                 End If
             Next
+
             ' Anuncio global
             Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1670, Equipo1 & "¬" & Equipo2, e_FontTypeNames.FONTTYPE_INFO)) 'Msg1670=Retos » ¬1 vs ¬2. Ninguno pudo vencer a su rival.
             Call SalaLiberada(Sala)
@@ -525,6 +541,7 @@ Public Sub FinalizarReto(ByVal Sala As Integer, Optional ByVal TiempoAgotado As 
             ' Pagamos a los ganadores que no abandonaron
             Oro = OroTotal \ ObtenerTamañoEquipo(Sala, Ganador)
             OroStr = PonerPuntos(Oro)
+
             For i = 0 To UBound(.Jugadores)
                 tUser = .Jugadores(i)
                 If IsValidUserRef(tUser) Then
@@ -568,6 +585,7 @@ Public Sub FinalizarReto(ByVal Sala As Integer, Optional ByVal TiempoAgotado As 
                     End If
                 End If
             Next
+
             Dim equipoGanador As String, equipoPerdedor As String
             equipoGanador = IIf(Ganador = e_EquipoReto.Izquierda, Equipo1, Equipo2)
             equipoPerdedor = IIf(Ganador = e_EquipoReto.Izquierda, Equipo2, Equipo1)

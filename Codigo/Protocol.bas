@@ -2908,6 +2908,7 @@ Private Sub HandleModifySkills(ByVal UserIndex As Integer)
         Dim i                      As Long
         Dim count                  As Integer
         Dim points(1 To NUMSKILLS) As Byte
+
         'Codigo para prevenir el hackeo de los skills
         '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         For i = 1 To NUMSKILLS
@@ -2920,6 +2921,7 @@ Private Sub HandleModifySkills(ByVal UserIndex As Integer)
             End If
             count = count + points(i)
         Next i
+
         If count > .Stats.SkillPts Then
             Call LogSecurity(.name & " IP:" & .ConnectionDetails.IP & " trató de hackear los skills.")
             Call CloseSocket(UserIndex)
@@ -4495,6 +4497,7 @@ Private Sub HandleCouncilMessage(ByVal UserIndex As Integer)
             For i = 1 To UBound(.flags.ChatHistory) - 1
                 .flags.ChatHistory(i) = .flags.ChatHistory(i + 1)
             Next
+
             .flags.ChatHistory(UBound(.flags.ChatHistory)) = chat
             If .Faccion.Status = e_Facciones.consejo Then
                 Call SendData(SendTarget.ToConsejo, UserIndex, PrepareMessageLocaleMsg(1812, .name & "¬" & chat, e_FontTypeNames.FONTTYPE_CONSEJO)) ' Msg1812=(Consejo) ¬1> ¬2
@@ -4753,9 +4756,11 @@ Private Sub HandleGuildMemberList(ByVal UserIndex As Integer)
             End If
             Dim MembersId() As Long
             MembersId = GetGuildMemberList(guild)
+
             For i = LBound(MembersId) To UBound(MembersId)
                 Call WriteConsoleMsg(UserIndex, PrepareMessageLocaleMsg(1993, GetUserName(MembersId(i)) & "¬" & guild, e_FontTypeNames.FONTTYPE_INFO)) ' Msg1993=¬1 <¬2>
             Next i
+
         End If
     End With
     Exit Sub
@@ -4783,6 +4788,7 @@ Private Sub HandleOnlineRoyalArmy(ByVal UserIndex As Integer)
                 End If
             End If
         Next i
+
     End With
     If Len(list) > 0 Then
         'Msg1289= Armadas conectados: ¬1
@@ -4816,6 +4822,7 @@ Private Sub HandleOnlineChaosLegion(ByVal UserIndex As Integer)
                 End If
             End If
         Next i
+
     End With
     If Len(list) > 0 Then
         'Msg1290= Caos conectados: ¬1
@@ -5280,6 +5287,7 @@ Private Sub HandleGuildBan(ByVal UserIndex As Integer)
                 'baneamos a los miembros
                 Call LogGM(.name, "BANCLAN a " & UCase$(GuildName))
                 cantMembers = val(GetVar(tFile, "INIT", "NroMembers"))
+
                 For LoopC = 1 To cantMembers
                     'member es la victima
                     member = GetVar(tFile, "Members", "Member" & LoopC)
@@ -6594,6 +6602,7 @@ Private Sub HandleResponderPregunta(ByVal UserIndex As Integer)
                                 End If
                             Next j
                         Next i
+
                         Dim charindexstr As Integer
                         charindexstr = str(NpcList(UserList(UserIndex).flags.TargetNPC.ArrayIndex).Char.charindex)
                         If charindexstr > 0 Then
@@ -6791,6 +6800,7 @@ Private Sub HandleEventoInfo(ByVal UserIndex As Integer)
                     Exit For
                 End If
             Next i
+
         End If
         If encontre Then
             'Msg1256= Eventos> El proximo evento ¬1
@@ -7624,6 +7634,7 @@ Private Sub HandleRomperCania(ByVal UserIndex As Integer)
         obj.ObjIndex = .invent.EquippedWorkingToolObjIndex
         caniaOld = .invent.EquippedWorkingToolObjIndex
         obj.amount = 1
+
         For LoopC = 1 To MAX_INVENTORY_SLOTS
             'Rastreo la caña que está usando en el inventario y se la rompo
             If .invent.Object(LoopC).ObjIndex = .invent.EquippedWorkingToolObjIndex Then

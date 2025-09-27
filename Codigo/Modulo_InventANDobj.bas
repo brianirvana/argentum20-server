@@ -250,6 +250,7 @@ Public Sub DropObjQuest(ByRef Npc As t_Npc, ByRef UserIndex As Integer)
     Dim Dropeo       As t_Obj
     Dim Probabilidad As Long
     Dim i            As Byte
+
     For i = 1 To Npc.NumDropQuest
         With Npc.DropQuest(i)
             If .QuestIndex > 0 <> 0 Then

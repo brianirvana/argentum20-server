@@ -686,6 +686,7 @@ Function EntrarCuenta(ByVal UserIndex As Integer, ByVal CuentaEmail As String, B
     Dim laCuentaEsDeAdmin As Boolean
     If ServerSoloGMs > 0 Then
         laCuentaEsDeAdmin = False
+
         For adminIdx = 0 To AdministratorAccounts.count - 1
             ' Si el e-mail está declarado junto al nick de la cuenta donde esta el PJ GM en el Server.ini te dejo entrar.
             If UCase$(AdministratorAccounts.Items(adminIdx)) = UCase$(CuentaEmail) Then
@@ -1144,26 +1145,20 @@ End Sub
 ' Last Date : 18/9/2025
 ' Purpose   :
 '---------------------------------------------------------------------------------------
-
 Sub ResetUserSkinsSpells(ByVal UserIndex As Integer)
+    Dim LoopC As Byte
+    On Error GoTo ResetUserSkinsSpells_Err
+    With UserList(UserIndex)
 
-Dim LoopC                       As Byte
+        For LoopC = 1 To MAX_SKINSSPELLS_SLOTS
+            .Stats.UserSkinsHechizos(LoopC) = 0
+        Next LoopC
 
-10  On Error GoTo ResetUserSkinsSpells_Err
-
-20  With UserList(UserIndex)
-30      For LoopC = 1 To MAX_SKINSSPELLS_SLOTS
-40          .Stats.UserSkinsHechizos(LoopC) = 0
-50      Next LoopC
-60      Exit Sub
-70  End With
-
+        Exit Sub
+    End With
 ResetUserSkinsSpells_Err:
-80  Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSkinsSpells", Erl)
-
+    Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSkinsSpells", Erl)
 End Sub
-
-
 
 Sub ResetUserSkills(ByVal UserIndex As Integer)
     On Error GoTo ResetUserSkills_Err
@@ -1277,8 +1272,7 @@ Sub ResetUserSlot(ByVal UserIndex As Integer)
     Call ReleaseUser(UserIndex)
     Exit Sub
 ResetUserSlot_Err:
-610 Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSlot", Erl)
-
+    Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSlot", Erl)
 End Sub
 
 Sub ClearAndSaveUser(ByVal UserIndex As Integer)

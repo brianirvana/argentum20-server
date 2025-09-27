@@ -186,6 +186,7 @@ Sub QuitarNewbieObj(ByVal UserIndex As Integer)
             End If
         End If
     Next j
+
     'Si el usuario dejó de ser Newbie, y estaba en el Newbie Dungeon
     'Mandamos a la Isla de la Fortuna
     Call WarpUserChar(UserIndex, Renacimiento.Map, Renacimiento.x, Renacimiento.y, True)
@@ -2156,6 +2157,7 @@ Sub UseInvItem(ByVal UserIndex As Integer, ByVal Slot As Byte, ByVal ByClick As 
                                         e_FontTypeNames.FONTTYPE_INFOBOLD))
                             End If
                         Next i
+
                 End Select
             Case e_OBJType.otKeys
                 If UserList(UserIndex).flags.Muerto = 1 Then
@@ -3103,12 +3105,14 @@ Sub EliminarLlaves(ByVal ClaveLlave As Integer, ByVal UserIndex As Integer)
     Dim Objeto          As Integer
     Dim LlaveEncontrada As Boolean
     LlaveEncontrada = False
+
     ' Leer cada línea del archivo
     Do Until EOF(1) Or LlaveEncontrada
         Line Input #1, Linea
         If InStr(Linea, "Clave=" & ClaveLlave) > 0 Then
             ' Se encontró la llave con la clave buscada
             LlaveEncontrada = True
+
             Do Until EOF(1)
                 Line Input #1, Linea
                 If InStr(Linea, "Objeto=") > 0 Then

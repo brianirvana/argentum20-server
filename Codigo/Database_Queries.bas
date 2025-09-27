@@ -381,13 +381,13 @@ End Sub
 ' Last Date : 18/9/2025
 ' Purpose   : Verificar si existe un registro de manera genérica.
 '---------------------------------------------------------------------------------------
-
-Function Exists(ByRef sTable As String, ByRef sField As String, ByRef sValue As String, _
-                Optional ByRef sExtraField = vbNullString, Optional ByRef sExtraValue = vbNullString) As Boolean
-
-    Dim RS As ADODB.Recordset
+Function Exists(ByRef sTable As String, _
+                ByRef sField As String, _
+                ByRef sValue As String, _
+                Optional ByRef sExtraField = vbNullString, _
+                Optional ByRef sExtraValue = vbNullString) As Boolean
+    Dim RS  As ADODB.Recordset
     Dim SQL As String
-
     If sExtraField <> vbNullString And sExtraValue <> vbNullString Then
         SQL = "SELECT " & sField & " FROM " & sTable & " WHERE " & sField & " = ? AND " & sExtraField & " = ?"
         Set RS = Query(SQL, sValue, sExtraValue)

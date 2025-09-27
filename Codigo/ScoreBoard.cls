@@ -142,11 +142,14 @@ Friend Sub PublishScoreboard(ByVal Audience As Integer, ByVal AudienceIndex, ByR
     If Lobby.TeamSize > 1 Then
         rank = GetTeamRanking(Lobby)
         Call SendData(Audience, AudienceIndex, PrepareMessageLocaleMsg(1838, vbNullString, e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1838=Posiciones:
+
         For i = 1 To UBound(rank)
             Call SendData(Audience, AudienceIndex, PrepareMessageLocaleMsg(1839, rank(i).PlayerIndex & "¬" & rank(i).Score, e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1839=Equipo ¬1: ¬2
         Next i
+
     Else
         rank = GetRanking(5)
+
         For i = 0 To UBound(rank) - 1
             If rank(i).Score <= 0 Then
                 Exit Sub
@@ -157,6 +160,7 @@ Friend Sub PublishScoreboard(ByVal Audience As Integer, ByVal AudienceIndex, ByR
             Call SendData(Audience, AudienceIndex, PrepareMessageLocaleMsg(1824, (i + 1) & "¬" & UserList(rank(i).PlayerIndex).name & "¬" & rank(i).Score & "¬", _
                     e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1824=¬1) ¬2: ¬3 puntos¬4
         Next i
+
     End If
 End Sub
 
@@ -169,7 +173,9 @@ Friend Sub PublishTeamScore(ByVal Audience As Integer, ByVal AudienceIndex, ByRe
     Dim key            As Variant
     Dim i              As Integer
     Call SendData(Audience, AudienceIndex, PrepareMessageLocaleMsg(1840, Winner & "¬" & rank(1).Score, e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1840=Ganador equipo ¬1: ¬2
+
     For Each key In PlayersScore.Keys
+
         For i = 0 To Lobby.RegisteredPlayers - 1
             If Lobby.Players(i).User.ArrayIndex = key And Lobby.Players(i).team = Winner Then
                 TeamPlayerList = TeamPlayerList & UserList(key).name & " (" & PlayersScore.Item(key) & ") "

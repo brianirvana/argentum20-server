@@ -407,6 +407,7 @@ Public Function AddPlayerOrGroup(ByRef instance As t_Lobby, ByVal UserIndex As I
                 Exit Function
             End If
             Dim i As Integer
+
             For i = 1 To UBound(.Grupo.Miembros)
                 If IsValidUserRef(.Grupo.Miembros(i)) Then
                     AddPlayerOrGroup = CanPlayerJoin(instance, .Grupo.Miembros(i).ArrayIndex)
@@ -613,6 +614,7 @@ Public Sub UpdateWaitingForPlayers(ByVal frametime As Long, ByRef instance As t_
                                 instance.MaxPlayers & "¬" & instance.MinPlayers, e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1728=En este momento hay ¬1 / ¬2 y se requiere un minimo de ¬3 para que pueda iniciar
                     End If
                 Next i
+
             End If
         End If
     End If
