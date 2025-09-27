@@ -322,12 +322,12 @@ Public Sub CompletarAccionFin(ByVal UserIndex As Integer)
                 Mapa = UserList(UserIndex).flags.PortalM
                 x = UserList(UserIndex).flags.PortalX
                 y = UserList(UserIndex).flags.PortalY
-                MapData(Mapa, x, y).Particula = e_ParticleEffects.TpVerde
+                MapData(Mapa, x, y).Particula = e_ParticleEffects.HaloGreen
                 MapData(Mapa, x, y).TimeParticula = -1
                 MapData(Mapa, x, y).TileExit.Map = UserList(UserIndex).flags.PortalMDestino
                 MapData(Mapa, x, y).TileExit.x = UserList(UserIndex).flags.PortalXDestino
                 MapData(Mapa, x, y).TileExit.y = UserList(UserIndex).flags.PortalYDestino
-                Call SendData(SendTarget.toMap, UserList(UserIndex).flags.PortalM, PrepareMessageParticleFXToFloor(x, y, e_ParticleEffects.TpVerde, -1))
+                Call SendData(SendTarget.toMap, UserList(UserIndex).flags.PortalM, PrepareMessageParticleFXToFloor(x, y, e_ParticleEffects.HaloGreen, -1))
                 Call SendData(SendTarget.toMap, UserList(UserIndex).flags.PortalM, PrepareMessageLightFXToFloor(x, y, &HFF80C0, 105))
             End If
             UserList(UserIndex).Accion.Particula = 0

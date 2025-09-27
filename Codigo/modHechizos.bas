@@ -966,13 +966,13 @@ Sub HechizoPortal(ByVal UserIndex As Integer, ByRef b As Boolean)
     Else
         If Hechizos(uh).TeleportX = 1 Then
             If UserList(UserIndex).flags.Portal = 0 Then
-                Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticulasIndex.Runa, -1, False))
+                Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticleEffects.Runa, -1, False))
                 UserList(UserIndex).flags.PortalM = UserList(UserIndex).pos.Map
                 UserList(UserIndex).flags.PortalX = UserList(UserIndex).flags.TargetX
                 UserList(UserIndex).flags.PortalY = UserList(UserIndex).flags.TargetY
                 Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageBarFx(UserList(UserIndex).Char.charindex, 600, e_AccionBarra.Intermundia))
                 UserList(UserIndex).Accion.AccionPendiente = True
-                UserList(UserIndex).Accion.Particula = e_ParticulasIndex.Runa
+                UserList(UserIndex).Accion.Particula = e_ParticleEffects.Runa
                 UserList(UserIndex).Accion.TipoAccion = e_AccionBarra.Intermundia
                 UserList(UserIndex).Accion.HechizoPendiente = uh
                 If UserList(UserIndex).flags.NoPalabrasMagicas = 0 Then
