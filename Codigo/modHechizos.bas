@@ -51,7 +51,7 @@ Sub NpcLanzaSpellSobreUser(ByVal NpcIndex As Integer, ByVal UserIndex As Integer
         If IsSet(Hechizos(Spell).Effects, e_SpellEffects.eDoHeal) Then
             Damage = RandomNumber(Hechizos(Spell).MinHp, Hechizos(Spell).MaxHp)
             Damage = Damage * NPCs.GetMagicHealingBonus(NpcList(NpcIndex))
-            Damage = Damage * UserMod.GetSelfHealingBonus(UserList(UserIndex))
+            Damage = Damage * UserMod.GetSelfHealingBonus()
             If Damage > 0 Then
                 Call UserMod.DoDamageOrHeal(UserIndex, NpcIndex, eNpc, Damage, e_DamageSourceType.e_magic, Spell)
                 DamageStr = PonerPuntos(Damage)
@@ -116,7 +116,7 @@ Sub NpcLanzaSpellSobreUser(ByVal NpcIndex As Integer, ByVal UserIndex As Integer
         End If
         If IsSet(Hechizos(Spell).Effects, e_SpellEffects.RemoveDebuff) Then
             Dim NegativeEffect As IBaseEffectOverTime
-            Set NegativeEffect = EffectsOverTime.FindEffectOfTypeOnTarget(UserList(UserIndex).EffectOverTime, eDebuff)
+            Set NegativeEffect = EffectsOverTime.FindEffectOfTypeOnTarget(.EffectOverTime, eDebuff)
             If Not NegativeEffect Is Nothing Then
                 NegativeEffect.RemoveMe = True
                 Exit Sub

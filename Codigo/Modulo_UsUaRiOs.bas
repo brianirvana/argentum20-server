@@ -2585,7 +2585,7 @@ End Function
 
 
 Public Function StunPlayer(ByVal UserIndex As Integer, ByRef Counters As t_UserCounters) As Boolean
-    On Error GoTo EH
+    On Error GoTo eh
     StunPlayer = False
 
     ' (Optional) your CanMove signature might be (counters, flags) — adjust order if needed
@@ -2605,7 +2605,7 @@ Public Function StunPlayer(ByVal UserIndex As Integer, ByRef Counters As t_UserC
         StunPlayer = True
     End If
     Exit Function
-EH:
+eh:
 End Function
 
 
