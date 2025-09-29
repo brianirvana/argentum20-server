@@ -2532,19 +2532,31 @@ Private Sub InfoHechizo(ByVal UserIndex As Integer)
                 Call SendData(SendTarget.ToPCAliveArea, UserIndex, PrepareMessagePlayWave(Hechizos(h).wav, .flags.TargetX, .flags.TargetY))    'Esta linea faltaba. Pablo (ToxicWaste)
             End If
         End If
-        If .ChatCombate = 1 Then
-            If Hechizos(h).Target = e_TargetType.uTerreno Then
-                Call WriteConsoleMsg(UserIndex, "ProMSG*" & h, e_FontTypeNames.FONTTYPE_FIGHT)
-            ElseIf IsValidUserRef(.flags.TargetUser) Then
-                'Optimizacion de protocolo por Ladder
-                If UserIndex <> .flags.TargetUser.ArrayIndex Then
-                    Call WriteConsoleMsg(UserIndex, "HecMSGU*" & h & "*" & UserList(.flags.TargetUser.ArrayIndex).name, e_FontTypeNames.FONTTYPE_FIGHT)
-                    Call WriteConsoleMsg(.flags.TargetUser.ArrayIndex, "HecMSGA*" & h & "*" & .name, e_FontTypeNames.FONTTYPE_FIGHT)
-                Else
-                    Call WriteConsoleMsg(UserIndex, "ProMSG*" & h, e_FontTypeNames.FONTTYPE_FIGHT)
-                End If
-            ElseIf .flags.TargetNPC.ArrayIndex > 0 Then
-                Call WriteConsoleMsg(UserIndex, "HecMSG*" & h, e_FontTypeNames.FONTTYPE_FIGHT)
+        If Hechizos(h).ParticleViaje = 0 Then
+            Call SendData(SendTarget.ToNPCAliveArea, UserList(UserIndex).flags.TargetNPC.ArrayIndex, PrepareMessagePlayWave(Hechizos(h).wav, NpcList(UserList( _
+                    UserIndex).flags.TargetNPC.ArrayIndex).pos.x, NpcList(UserList(UserIndex).flags.TargetNPC.ArrayIndex).pos.y))
+        End If
+    Else ' Entonces debe ser sobre el terreno
+        If Hechizos(h).FXgrh > 0 Then 'Envio Fx?
+            Call modSendData.SendToAreaByPos(UserList(UserIndex).pos.Map, UserList(UserIndex).flags.TargetX, UserList(UserIndex).flags.TargetY, PrepareMessageFxPiso(Hechizos( _
+                    h).FXgrh, UserList(UserIndex).flags.TargetX, UserList(UserIndex).flags.TargetY))
+        End If
+        If Hechizos(h).Particle > 0 Then 'Envio Particula?
+            Call SendData(SendTarget.ToPCAliveArea, UserIndex, PrepareMessageParticleFXToFloor(UserList(UserIndex).flags.TargetX, UserList(UserIndex).flags.TargetY, Hechizos( _
+                    h).Particle, Hechizos(h).TimeParticula))
+        End If
+        If Hechizos(h).wav <> 0 Then
+            Call SendData(SendTarget.ToPCAliveArea, UserIndex, PrepareMessagePlayWave(Hechizos(h).wav, UserList(UserIndex).flags.TargetX, UserList(UserIndex).flags.TargetY)) 'Esta linea faltaba. Pablo (ToxicWaste)
+           End If
+    End If
+    If UserList(UserIndex).ChatCombate = 1 Then
+        If Hechizos(h).Target = e_TargetType.uTerreno Then
+            Call WriteConsoleMsg(UserIndex, "ProMSG*" & h, e_FontTypeNames.FONTTYPE_FIGHT)
+        ElseIf IsValidUserRef(UserList(UserIndex).flags.TargetUser) Then
+            'Optimizacion de protocolo por Ladder
+            If UserIndex <> UserList(UserIndex).flags.TargetUser.ArrayIndex Then
+                Call WriteConsoleMsg(UserIndex, "HecMSGU*" & h & "*" & UserList(UserList(UserIndex).flags.TargetUser.ArrayIndex).name, e_FontTypeNames.FONTTYPE_FIGHT)
+                Call WriteConsoleMsg(UserList(UserIndex).flags.TargetUser.ArrayIndex, "HecMSGA*" & h & "*" & UserList(UserIndex).name, e_FontTypeNames.FONTTYPE_FIGHT)
             Else
                 Call WriteConsoleMsg(UserIndex, "ProMSG*" & h, e_FontTypeNames.FONTTYPE_FIGHT)
             End If
@@ -2880,7 +2892,7 @@ Sub HechizoPropUsuario(ByVal UserIndex As Integer, ByRef b As Boolean, ByRef IsA
             ' Resto el porcentaje total
             Damage = Damage - Porcentaje(Damage, PorcentajeRM)
         End If
-        Call EffectsOverTime.TartgetWillAtack(UserList(UserIndex).EffectOverTime, tempChr, eUser, e_DamageSourceType.e_magic)
+        Call EffectsOverTime.TargetWillAttack(UserList(UserIndex).EffectOverTime, tempChr, eUser, e_DamageSourceType.e_magic)
         Damage = Damage * UserMod.GetMagicDamageModifier(UserList(UserIndex))
         Damage = Damage * UserMod.GetMagicDamageReduction(UserList(tempChr))
         ' Prevengo daño negativo
@@ -2891,7 +2903,7 @@ Sub HechizoPropUsuario(ByVal UserIndex As Integer, ByRef b As Boolean, ByRef IsA
         End If
         Call InfoHechizo(UserIndex)
         IsAlive = UserMod.DoDamageOrHeal(tempChr, UserIndex, eUser, -Damage, e_DamageSourceType.e_magic, h) = eStillAlive
-        Call EffectsOverTime.TartgetDidHit(UserList(UserIndex).EffectOverTime, tempChr, eUser, e_DamageSourceType.e_magic)
+        Call EffectsOverTime.TargetDidHit(UserList(UserIndex).EffectOverTime, tempChr, eUser, e_DamageSourceType.e_magic)
         Call SubirSkill(tempChr, Resistencia)
         b = True
     End If
@@ -3134,7 +3146,7 @@ Sub HechizoCombinados(ByVal UserIndex As Integer, ByRef b As Boolean, ByRef IsAl
                 Damage = Damage - Porcentaje(Damage, MR)
             End If
         End If
-        Call EffectsOverTime.TartgetWillAtack(UserList(UserIndex).EffectOverTime, tempChr, eUser, e_DamageSourceType.e_magic)
+        Call EffectsOverTime.TargetWillAttack(UserList(UserIndex).EffectOverTime, targetUserIndex, eUser, e_DamageSourceType.e_magic)
         Damage = Damage * UserMod.GetMagicDamageModifier(UserList(UserIndex))
         Damage = Damage * UserMod.GetMagicDamageReduction(UserList(tempChr))
         ' Prevengo daño negativo
@@ -3143,9 +3155,9 @@ Sub HechizoCombinados(ByVal UserIndex As Integer, ByRef b As Boolean, ByRef IsAl
             Call UsuarioAtacadoPorUsuario(UserIndex, tempChr)
         End If
         enviarInfoHechizo = True
-        IsAlive = UserMod.DoDamageOrHeal(tempChr, UserIndex, eUser, -Damage, e_DamageSourceType.e_magic, h) = eStillAlive
-        Call EffectsOverTime.TartgetDidHit(UserList(UserIndex).EffectOverTime, tempChr, eUser, e_DamageSourceType.e_magic)
-        Call SubirSkill(tempChr, Resistencia)
+        IsAlive = UserMod.DoDamageOrHeal(targetUserIndex, UserIndex, eUser, -Damage, e_DamageSourceType.e_magic, h) = eStillAlive
+        Call EffectsOverTime.TargetDidHit(UserList(UserIndex).EffectOverTime, targetUserIndex, eUser, e_DamageSourceType.e_magic)
+        Call SubirSkill(targetUserIndex, Resistencia)
         b = True
     End If
     Dim tU As Integer
