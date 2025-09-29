@@ -20,6 +20,8 @@ Begin VB.Form frmMain
    ForeColor       =   &H80000004&
    Icon            =   "frmMain.frx":0000
    LinkTopic       =   "Form1"
+   MaxButton       =   0   'False
+   MinButton       =   0   'False
    PaletteMode     =   1  'UseZOrder
    ScaleHeight     =   6255
    ScaleWidth      =   8595
