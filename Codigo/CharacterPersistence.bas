@@ -219,9 +219,9 @@ Function LoadSkinsInventory(ByVal UserIndex As Integer) As Boolean
                 i = i + 1
                 RS.MoveNext
             Loop
-            .Invent_Skins.Count = RS.RecordCount
+            .Invent_Skins.count = RS.RecordCount
         Else
-            .Invent_Skins.Count = 0
+            .Invent_Skins.count = 0
         End If
     End With
     Set RS = Nothing
@@ -461,7 +461,7 @@ Private Sub SetupUserBankInventory(ByRef User As t_User)
     Dim RS      As ADODB.Recordset
     Dim counter As Long
     counter = 0
-    Set RS = Query("SELECT number, item_id, amount, elemental_tags FROM bank_item WHERE user_id = ?;", User.ID)
+    Set RS = Query("SELECT number, item_id, amount, elemental_tags FROM bank_item WHERE user_id = ?;", User.Id)
     If Not RS Is Nothing Then
         While Not RS.EOF
             With User.BancoInvent.Object(RS!Number)
