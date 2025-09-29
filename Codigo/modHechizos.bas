@@ -1222,7 +1222,7 @@ Sub HandleHechizoUsuario(ByVal UserIndex As Integer, ByVal uh As Integer)
         If b Then
             If Hechizos(uh).EotId > 0 And IsAlive Then
                 If Effect Is Nothing Then
-                    Call CreateEffect(UserIndex, eUser, UserList(UserIndex).flags.TargetUser.ArrayIndex, eUser, Hechizos(uh).EotId)
+                    Call CreateEffect(UserIndex, eUser, .flags.TargetUser.ArrayIndex, eUser, Hechizos(uh).EotId)
                 Else
                     If Not Effect.Reset(UserIndex, eUser, Hechizos(uh).EotId) Then
                         Exit Sub
@@ -1232,18 +1232,18 @@ Sub HandleHechizoUsuario(ByVal UserIndex As Integer, ByVal uh As Integer)
             If Not IsSet(Hechizos(uh).SpellRequirementMask, eIsSkill) Then
                 Call SubirSkill(UserIndex, Magia)
             End If
-            UserList(UserIndex).Stats.MinMAN = UserList(UserIndex).Stats.MinMAN - ManaHechizoPorClase(UserIndex, Hechizos(uh), uh)
-            If UserList(UserIndex).Stats.MinMAN < 0 Then UserList(UserIndex).Stats.MinMAN = 0
+            .Stats.MinMAN = .Stats.MinMAN - ManaHechizoPorClase(UserIndex, Hechizos(uh), uh)
+            If .Stats.MinMAN < 0 Then .Stats.MinMAN = 0
             If Hechizos(uh).RequiredHP > 0 Then
                 Call UserMod.ModifyHealth(UserIndex, -Hechizos(uh).RequiredHP, 1)
             End If
-            UserList(UserIndex).Stats.MinSta = UserList(UserIndex).Stats.MinSta - Hechizos(uh).StaRequerido
-            If UserList(UserIndex).Stats.MinSta < 0 Then UserList(UserIndex).Stats.MinSta = 0
+            .Stats.MinSta = .Stats.MinSta - Hechizos(uh).StaRequerido
+            If .Stats.MinSta < 0 Then .Stats.MinSta = 0
             If IsSet(Hechizos(uh).Effects, e_SpellEffects.Resurrect) Then
-                If Not PeleaSegura(UserIndex, UserList(UserIndex).flags.TargetUser.ArrayIndex) Then
-                    If MapInfo(UserList(UserIndex).pos.Map).Seguro = 0 Then
+                If Not PeleaSegura(UserIndex, .flags.TargetUser.ArrayIndex) Then
+                    If MapInfo(.pos.Map).Seguro = 0 Then
                         Dim costoVidaResu As Long
-                        costoVidaResu = UserList(UserList(UserIndex).flags.TargetUser.ArrayIndex).Stats.ELV * 1.5 + UserList(UserIndex).Stats.MinHp * 0.45
+                        costoVidaResu = UserList(.flags.TargetUser.ArrayIndex).Stats.ELV * 1.5 + .Stats.MinHp * 0.45
                         Call UserMod.ModifyHealth(UserIndex, -costoVidaResu, 1)
                     End If
                 End If

@@ -304,7 +304,7 @@ Public Sub CompletarAccionFin(ByVal UserIndex As Integer)
                 Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave(Hechizos(uh).wav, UserList(UserIndex).flags.TargetX, UserList(UserIndex).flags.TargetY))  'Esta linea faltaba. Pablo (ToxicWaste)
                 'Msg1069= ¡Has abierto la puerta a intermundia!
                 Call WriteLocaleMsg(UserIndex, "1069", e_FontTypeNames.FONTTYPE_INFO)
-                Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_ParticleEffects.Runa, -1, True))
+                Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageParticleFX(UserList(UserIndex).Char.charindex, e_GraphicEffects.Runa, -1, True))
                 UserList(UserIndex).flags.Portal = 10
                 UserList(UserIndex).flags.PortalMDestino = Mapaf
                 UserList(UserIndex).flags.PortalYDestino = Xf
