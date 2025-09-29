@@ -213,7 +213,6 @@ Sub MuereNpc(ByVal NpcIndex As Integer, ByVal UserIndex As Integer)
             With UserList(UserIndex).QuestStats.Quests(i)
                 If .QuestIndex Then
                     If QuestList(.QuestIndex).RequiredNPCs Then
-
                         For j = 1 To QuestList(.QuestIndex).RequiredNPCs
                             If QuestList(.QuestIndex).RequiredNPC(j).NpcIndex = MiNPC.Numero Then
                                 If QuestList(.QuestIndex).RequiredNPC(j).amount >= .NPCsKilled(j) Then
@@ -436,7 +435,6 @@ Sub QuitarNPC(ByVal NpcIndex As Integer, ByVal releaseReason As e_DeleteSource)
                     NpcIndex).flags.Summoner.ArrayIndex).Contadores.CriaturasInvocadas - 1
             'También lo saco de la lista
             Dim LoopC As Long
-
             For LoopC = 1 To NpcList(NpcList(NpcIndex).flags.Summoner.ArrayIndex).Stats.CantidadInvocaciones
                 If NpcList(NpcList(NpcIndex).flags.Summoner.ArrayIndex).Stats.NpcsInvocados(LoopC).ArrayIndex = NpcIndex Then
                     Call ClearNpcRef(NpcList(NpcList(NpcIndex).flags.Summoner.ArrayIndex).Stats.NpcsInvocados(LoopC))
@@ -508,7 +506,6 @@ Public Function CrearNPC(NroNPC As Integer, Mapa As Integer, OrigPos As t_WorldP
             .Orig = OrigPos
             .pos = OrigPos
         Else
-
             ' Primera búsqueda: buscamos una posición ideal hasta llegar al máximo de iteraciones
             Do
                 .pos.Map = Mapa
@@ -517,7 +514,6 @@ Public Function CrearNPC(NroNPC As Integer, Mapa As Integer, OrigPos As t_WorldP
                 .pos = ClosestLegalPosNPC(NpcIndex, 10, , True)     'Nos devuelve la posicion valida mas cercana
                 Iteraciones = Iteraciones + 1
             Loop While .pos.x = 0 And .pos.y = 0 And Iteraciones < MAXSPAWNATTEMPS
-
             ' Si no encontramos una posición válida en la primera instancia
             If Iteraciones >= MAXSPAWNATTEMPS Then
                 ' Hacemos una búsqueda exhaustiva partiendo desde el centro del mapa
@@ -855,7 +851,6 @@ Function NPCHostiles(ByVal Map As Integer) As Integer
     Dim cont     As Integer
     'Contador
     cont = 0
-
     For NpcIndex = 1 To LastNPC
         '¿esta vivo?
         If NpcList(NpcIndex).flags.NPCActive And NpcList(NpcIndex).pos.Map = Map And NpcList(NpcIndex).Hostile = 1 Then
