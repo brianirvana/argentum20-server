@@ -1119,13 +1119,6 @@ ResetAccionesPendientes_Err:
     Call TraceError(Err.Number, Err.Description, "TCP.ResetAccionesPendientes", Erl)
 End Sub
 
-'---------------------------------------------------------------------------------------
-' Procedure : ResetUserSpells
-' Last Author : [/About] Brian Sabatier (brian.sabatier87@gmail.com - https://github.com/brianirvana/brianirvana)
-' Last Date : 18/9/2025
-' Purpose   :
-'---------------------------------------------------------------------------------------
-
 Sub ResetUserSpells(ByVal UserIndex As Integer)
     On Error GoTo ResetUserSpells_Err
     Dim LoopC As Long
