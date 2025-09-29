@@ -115,7 +115,6 @@ Public Sub Trabajar(ByVal UserIndex As Integer, ByVal Skill As e_Skill)
                                     Else
                                         Call DoPescar(UserIndex, False)
                                     End If
-                                    Call DoPescar(UserIndex, False)
                                 Else
                                     Call WriteLocaleMsg(UserIndex, "1436", e_FontTypeNames.FONTTYPE_INFO)
                                     Call WriteMacroTrabajoToggle(UserIndex, False)
