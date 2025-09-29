@@ -58,6 +58,7 @@ Sub NpcLanzaSpellSobreUser(ByVal NpcIndex As Integer, ByVal UserIndex As Integer
                 Call WriteLocaleMsg(UserIndex, 32, e_FontTypeNames.FONTTYPE_FIGHT, NpcList(NpcIndex).name & "¬" & DamageStr)
             End If
         ElseIf IsSet(Hechizos(Spell).Effects, e_SpellEffects.eDoDamage) Then
+            .Counters.EnCombate = IntervaloEnCombate
             Damage = RandomNumber(Hechizos(Spell).MinHp, Hechizos(Spell).MaxHp)
             Damage = Damage * (1 + NpcList(NpcIndex).Stats.MagicBonus)
             ' Si el hechizo no ignora la RM
@@ -480,13 +481,13 @@ Private Function PuedeLanzar(ByVal UserIndex As Integer, ByVal HechizoIndex As I
     With UserList(UserIndex)
         'Si lanza a un npc y este es solo atacable para clanes y el usuario no tiene clan, le avisa y sale de la funcion
         If IsValidNpcRef(.flags.TargetNPC) Then
-            If NpcList(.flags.TargetNPC.ArrayIndex).OnlyForGuilds = 1 And UserList(UserIndex).GuildIndex <= 0 Then
+            If NpcList(.flags.TargetNPC.ArrayIndex).OnlyForGuilds = 1 And .GuildIndex <= 0 Then
                 'Msg2001=Debes pertenecer a un clan para atacar a este NPC
                 Call WriteLocaleMsg(UserIndex, "2001", e_FontTypeNames.FONTTYPE_WARNING)
                 Exit Function
             End If
         End If
-        If UserList(UserIndex).flags.EnConsulta Then
+        If .flags.EnConsulta Then
             'Msg778= No puedes lanzar hechizos si estas en consulta.
             Call WriteLocaleMsg(UserIndex, "778", e_FontTypeNames.FONTTYPE_INFO)
             Exit Function
@@ -502,10 +503,10 @@ Private Function PuedeLanzar(ByVal UserIndex As Integer, ByVal HechizoIndex As I
             Call WriteLocaleMsg(UserIndex, 77, e_FontTypeNames.FONTTYPE_INFO)
             Exit Function
         End If
-        If IsSet(Hechizos(HechizoIndex).Effects, e_SpellEffects.CancelActiveEffect) And Hechizos(HechizoIndex).EotId > 0 And IsValidUserRef(UserList(UserIndex).flags.TargetUser) _
+        If IsSet(Hechizos(HechizoIndex).Effects, e_SpellEffects.CancelActiveEffect) And Hechizos(HechizoIndex).EotId > 0 And IsValidUserRef(.flags.TargetUser) _
                 Then
             Dim Effect As IBaseEffectOverTime
-            Set Effect = FindEffectOnTarget(UserIndex, UserList(UserList(UserIndex).flags.TargetUser.ArrayIndex).EffectOverTime, Hechizos(HechizoIndex).EotId)
+            Set Effect = FindEffectOnTarget(UserIndex, UserList(.flags.TargetUser.ArrayIndex).EffectOverTime, Hechizos(HechizoIndex).EotId)
             If Not Effect Is Nothing Then
                 If Effect.EotId = Hechizos(HechizoIndex).EotId Then
                     Effect.RemoveMe = True
