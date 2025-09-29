@@ -277,7 +277,7 @@ SaveInventorySkins_Error:
     Call Logging.TraceError(Err.Number, Err.Description, "CharacterPersistence.SaveInventorySkins", Erl())
 End Function
 
-Public Function LoadCharacterFromDB(ByVal userIndex As Integer) As Boolean
+Public Function LoadCharacterFromDB(ByVal UserIndex As Integer) As Boolean
     On Error GoTo ErrorHandler
     Dim RS      As ADODB.Recordset
     Dim counter As Long
@@ -605,7 +605,6 @@ Public Sub LoadPatronCreditsFromDB(ByVal UserIndex As Integer)
     End With
 End Sub
 
-Public Sub SaveCharacterDB(ByVal userIndex As Integer)
     On Error GoTo ErrorHandler
     Dim PerformanceTimer As Long
     Call PerformanceTestStart(PerformanceTimer)
@@ -832,14 +831,14 @@ Public Sub SaveCharacterDB(ByVal userIndex As Integer)
             Call Builder.Clear
         End If
         Call SaveInventorySkins(UserIndex)
-        Call PerformTimeLimitCheck(PerformanceTimer, "save character id:" & .id, 50)
+        Call PerformTimeLimitCheck(PerformanceTimer, "save character id:" & .Id, 50)
     End With
     Exit Sub
 ErrorHandler:
     Call LogDatabaseError("Error en SaveUserDatabase. UserName: " & UserList(UserIndex).name & ". " & Err.Number & " - " & Err.Description)
 End Sub
 
-Public Sub SaveNewCharacterDB(ByVal userIndex As Integer)
+Public Sub SaveNewCharacterDB(ByVal UserIndex As Integer)
     On Error GoTo ErrorHandler
     Dim LoopC    As Long
     Dim ParamC   As Integer
