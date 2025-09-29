@@ -75,12 +75,12 @@ Sub NpcLanzaSpellSobreUser(ByVal NpcIndex As Integer, ByVal UserIndex As Integer
             Call WriteLocaleMsg(UserIndex, 1627, e_FontTypeNames.FONTTYPE_FIGHT, NpcList(NpcIndex).name & "¬" & DamageStr) 'Msg1627=¬1 te ha quitado ¬2 puntos de vida.
             Call SubirSkill(UserIndex, Resistencia)
             If NpcList(NpcIndex).Char.CastAnimation > 0 Then Call SendData(SendTarget.ToNPCAliveArea, NpcIndex, PrepareMessageCharAtaca(NpcList(NpcIndex).Char.charindex, _
-                    UserList(UserIndex).Char.charindex, DamageStr, NpcList(NpcIndex).Char.CastAnimation))
+                    .Char.charindex, DamageStr, NpcList(NpcIndex).Char.CastAnimation))
         End If
         If IsAlive Then
             Dim Effect As IBaseEffectOverTime
             If Hechizos(Spell).EotId > 0 Then
-                Set Effect = FindEffectOnTarget(NpcIndex, UserList(UserIndex).EffectOverTime, Hechizos(Spell).EotId)
+                Set Effect = FindEffectOnTarget(NpcIndex, .EffectOverTime, Hechizos(Spell).EotId)
                 If Effect Is Nothing Then
                     Call CreateEffect(NpcIndex, eNpc, UserIndex, eUser, Hechizos(Spell).EotId)
                 Else
@@ -123,7 +123,7 @@ Sub NpcLanzaSpellSobreUser(ByVal NpcIndex As Integer, ByVal UserIndex As Integer
         End If
         If IsSet(Hechizos(Spell).Effects, e_SpellEffects.StealBuff) Then
             Dim TargetBuff As IBaseEffectOverTime
-            Set TargetBuff = EffectsOverTime.FindEffectOfTypeOnTarget(UserList(UserIndex).EffectOverTime, eBuff)
+            Set TargetBuff = EffectsOverTime.FindEffectOfTypeOnTarget(.EffectOverTime, eBuff)
             If Not TargetBuff Is Nothing Then
                 Call EffectsOverTime.ChangeOwner(UserIndex, eUser, NpcIndex, eNpc, TargetBuff)
             End If
@@ -222,7 +222,7 @@ Sub NpcLanzaSpellSobreUser(ByVal NpcIndex As Integer, ByVal UserIndex As Integer
             Call SendData(SendTarget.ToNPCAliveArea, NpcIndex, PrepareMessageChatOverHead("PMAG*" & Spell, .Char.charindex, vbCyan, True, .pos.x, .pos.y, _
                     RequiredSpellDisplayTime, MaxInvisibleSpellDisplayTime))
         End If
-        If UserList(UserIndex).ChatCombate = 1 Then
+        If .ChatCombate = 1 Then
             Call WriteConsoleMsg(UserIndex, "HecMSGA*" & Spell & "*" & .name, e_FontTypeNames.FONTTYPE_FIGHT)
         End If
     End With
