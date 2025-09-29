@@ -19,7 +19,6 @@ Begin VB.Form frmMain
    EndProperty
    ForeColor       =   &H80000004&
    Icon            =   "frmMain.frx":0000
-   KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
    PaletteMode     =   1  'UseZOrder
    ScaleHeight     =   6255
