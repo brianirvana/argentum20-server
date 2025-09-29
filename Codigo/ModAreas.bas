@@ -69,7 +69,6 @@ Public Sub InitAreas()
     For LoopC = 0 To 9
         AreasRecive(LoopC) = (2 ^ LoopC) Or IIf(LoopC <> 0, 2 ^ (LoopC - 1), 0) Or IIf(LoopC <> AREA_DIM, 2 ^ (LoopC + 1), 0)
     Next LoopC
-
     For LoopC = 1 To 100
         For LoopX = 1 To 100
             'Usamos 81 IDs de area para saber si pasasamos de area "más rápido"

@@ -1165,7 +1165,6 @@ Sub GiveRewards()
             End If
         End If
     Next i
-
     If Winner = -1 Then
         Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(MsgNavalBattleEvenBroadcast, Team1 & "¬" & Team2, e_FontTypeNames.FONTTYPE_GUILD))
     ElseIf Winner = 1 Then

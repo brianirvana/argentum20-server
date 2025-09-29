@@ -148,7 +148,6 @@ Public Function Existe(ByVal nombre As String) As Boolean
     Dim i                  As Integer
     Dim NombreEnMayusculas As String
     NombreEnMayusculas = UCase$(nombre)
-
     For i = 1 To Me.Longitud
         v = UCase$(ReadField(1, Me.VerElemento(i), Asc("Ø")))
         If v = NombreEnMayusculas Then
@@ -168,7 +167,6 @@ Public Sub Quitar(ByVal nombre As String)
     Dim mensajeSinTimestamp       As String
     Dim posicionUltimoDelimitador As Integer
     Dim i                         As Integer
-
     For i = 1 To Me.Longitud
         mensajeEncoladoCompleto = Me.VerElemento(i)
         posicionUltimoDelimitador = InStrRev(mensajeEncoladoCompleto, "Ø")

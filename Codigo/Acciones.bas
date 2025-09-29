@@ -47,11 +47,8 @@ Public Function PuedeUsarObjeto(ByVal UserIndex As Integer, ByVal ObjIndex As In
         If EsGM(UserIndex) Then
             PuedeUsarObjeto = 0
             Msg = vbNullString
-
             Exit Function
-
         End If
-
         ' Keep the original priority: first match wins
         If Objeto.Newbie = 1 And Not EsNewbie(UserIndex) Then
             PuedeUsarObjeto = 7
@@ -85,29 +82,23 @@ Public Function PuedeUsarObjeto(ByVal UserIndex As Integer, ByVal ObjIndex As In
                 PuedeUsarObjeto = 0
                 Msg = vbNullString
             End If
-
         Else
             PuedeUsarObjeto = 0
             Msg = vbNullString
         End If
-
         ' Only emit when we actually have a message
         If Msg <> vbNullString Then
             If writeInConsole Then
                 Call WriteLocaleMsg(UserIndex, Msg, e_FontTypeNames.FONTTYPE_INFO, Extra)
             End If
         End If
-
     End With
-
     Exit Function
-
 PuedeUsarObjeto_Err:
     Call TraceError(Err.Number, Err.Description, "Acciones.PuedeUsarObjeto", Erl)
 End Function
 
 Function LevelCanUseItem(ByVal UserIndex As Integer, ByRef obj As t_ObjData) As Boolean
-
     With UserList(UserIndex)
         If obj.MaxLEV <> 0 Then
             LevelCanUseItem = .Stats.ELV >= obj.MinELV And .Stats.ELV <= obj.MaxLEV
@@ -575,7 +566,6 @@ Sub Accion(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal x As Integer,
                 Dim OroTotal            As Long
                 CantPecesEspeciales = UBound(PecesEspeciales)
                 If CantPecesEspeciales > 0 Then
-
                     For i = 1 To MAX_INVENTORY_SLOTS
                         For j = 1 To CantPecesEspeciales
                             If UserList(UserIndex).invent.Object(i).ObjIndex = PecesEspeciales(j).ObjIndex Then
@@ -584,7 +574,6 @@ Sub Accion(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal x As Integer,
                             End If
                         Next j
                     Next i
-
                 End If
                 If PuntosTotales > 0 Then
                     UserList(UserIndex).flags.pregunta = 5

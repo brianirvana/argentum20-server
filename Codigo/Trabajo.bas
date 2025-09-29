@@ -31,25 +31,21 @@ Public Const FISHING_NET_FX As Long = 12
 Public Const NET_INMO_DURATION = 10
 
 Function ExpectObjectTypeAt(ByVal objectType As Integer, ByVal Map As Integer, ByVal MapX As Byte, ByVal MapY As Byte) As Boolean
-    Dim objIndex As Integer
-    objIndex = MapData(Map, MapX, MapY).ObjInfo.objIndex
-    If objIndex = 0 Then
+    Dim ObjIndex As Integer
+    ObjIndex = MapData(Map, MapX, MapY).ObjInfo.ObjIndex
+    If ObjIndex = 0 Then
         ExpectObjectTypeAt = False
         Exit Function
-
     End If
-
-    ExpectObjectTypeAt = ObjData(objIndex).OBJType = objectType
-
+    ExpectObjectTypeAt = ObjData(ObjIndex).OBJType = objectType
 End Function
 
-Function IsUserAtPos(ByVal map As Integer, ByVal X As Byte, ByVal y As Byte) As Boolean
-    IsUserAtPos = MapData(map, X, y).UserIndex > 0
-
+Function IsUserAtPos(ByVal Map As Integer, ByVal x As Byte, ByVal y As Byte) As Boolean
+    IsUserAtPos = MapData(Map, x, y).UserIndex > 0
 End Function
 
-Function IsNpcAtPos(ByVal map As Integer, ByVal X As Byte, ByVal y As Byte)
-    IsNpcAtPos = MapData(map, X, y).npcIndex > 0
+Function IsNpcAtPos(ByVal Map As Integer, ByVal x As Byte, ByVal y As Byte)
+    IsNpcAtPos = MapData(Map, x, y).NpcIndex > 0
 End Function
 
 Sub HandleFishingNet(ByVal UserIndex As Integer)
@@ -529,13 +525,11 @@ Function TieneObjetos(ByVal ItemIndex As Integer, ByVal cant As Integer, ByVal U
     If (ItemIndex = GOLD_OBJ_INDEX) Then
         total = UserList(UserIndex).Stats.GLD
     End If
-
     For i = 1 To UserList(UserIndex).CurrentInventorySlots
         If UserList(UserIndex).invent.Object(i).ObjIndex = ItemIndex And UserList(UserIndex).invent.Object(i).ElementalTags = ElementalTags Then
             total = total + UserList(UserIndex).invent.Object(i).amount
         End If
     Next i
-
     If cant <= total Then
         TieneObjetos = True
         Exit Function
@@ -549,7 +543,6 @@ Function QuitarObjetos(ByVal ItemIndex As Integer, ByVal cant As Integer, ByVal 
     On Error GoTo QuitarObjetos_Err
     With UserList(UserIndex)
         Dim i As Long
-
         For i = 1 To .CurrentInventorySlots
             If .invent.Object(i).ObjIndex = ItemIndex And .invent.Object(i).ElementalTags = ElementalTags Then
                 .invent.Object(i).amount = .invent.Object(i).amount - cant
@@ -571,7 +564,6 @@ Function QuitarObjetos(ByVal ItemIndex As Integer, ByVal cant As Integer, ByVal 
                 End If
             End If
         Next i
-
         If (ItemIndex = GOLD_OBJ_INDEX And cant > 0) Then
             .Stats.GLD = .Stats.GLD - cant
             If (.Stats.GLD < 0) Then
@@ -1048,32 +1040,26 @@ Public Function PuedeConstruirHerreria(ByVal ItemIndex As Integer) As Boolean
     Dim i As Long
     Select Case ObjData(ItemIndex).OBJType
         Case e_OBJType.otWeapon
-
             For i = 1 To UBound(ArmasHerrero)
                 If ArmasHerrero(i) = ItemIndex Then
                     PuedeConstruirHerreria = True
                     Exit Function
                 End If
             Next i
-
         Case e_OBJType.otArmor, e_OBJType.otHelmet, e_OBJType.otShield, e_OBJType.otAmulets, e_OBJType.otRingAccesory
-
             For i = 1 To UBound(ArmadurasHerrero)
                 If ArmadurasHerrero(i) = ItemIndex Then
                     PuedeConstruirHerreria = True
                     Exit Function
                 End If
             Next i
-
         Case e_OBJType.otElementalRune
-
             For i = 1 To UBound(BlackSmithElementalRunes)
                 If BlackSmithElementalRunes(i) = ItemIndex Then
                     PuedeConstruirHerreria = True
                     Exit Function
                 End If
             Next i
-
     End Select
     PuedeConstruirHerreria = False
     Exit Function
@@ -1131,14 +1117,12 @@ End Sub
 Public Function PuedeConstruirCarpintero(ByVal ItemIndex As Integer) As Boolean
     On Error GoTo PuedeConstruirCarpintero_Err
     Dim i As Long
-
     For i = 1 To UBound(ObjCarpintero)
         If ObjCarpintero(i) = ItemIndex Then
             PuedeConstruirCarpintero = True
             Exit Function
         End If
     Next i
-
     PuedeConstruirCarpintero = False
     Exit Function
 PuedeConstruirCarpintero_Err:
@@ -1148,14 +1132,12 @@ End Function
 Public Function PuedeConstruirAlquimista(ByVal ItemIndex As Integer) As Boolean
     On Error GoTo PuedeConstruirAlquimista_Err
     Dim i As Long
-
     For i = 1 To UBound(ObjAlquimista)
         If ObjAlquimista(i) = ItemIndex Then
             PuedeConstruirAlquimista = True
             Exit Function
         End If
     Next i
-
     PuedeConstruirAlquimista = False
     Exit Function
 PuedeConstruirAlquimista_Err:
@@ -1165,14 +1147,12 @@ End Function
 Public Function PuedeConstruirSastre(ByVal ItemIndex As Integer) As Boolean
     On Error GoTo PuedeConstruirSastre_Err
     Dim i As Long
-
     For i = 1 To UBound(ObjSastre)
         If ObjSastre(i) = ItemIndex Then
             PuedeConstruirSastre = True
             Exit Function
         End If
     Next i
-
     PuedeConstruirSastre = False
     Exit Function
 PuedeConstruirSastre_Err:
@@ -1252,17 +1232,14 @@ Public Sub AlquimistaConstruirItem(ByVal UserIndex As Integer, ByVal ItemIndex A
         Call TraceError(1001, "UserIndex out of range: " & UserIndex, "AlquimistaConstruirItem", Erl)
         Exit Sub
     End If
-
     ' Check if ItemIndex is valid
     If ItemIndex < LBound(ObjData) Or ItemIndex > UBound(ObjData) Then
         Call TraceError(1002, "ItemIndex out of range: " & ItemIndex, "AlquimistaConstruirItem", Erl)
         Exit Sub
     End If
-
     ' Check if the equipped tool index is valid
     Dim ToolIndex As Integer
     ToolIndex = UserList(UserIndex).invent.EquippedWorkingToolObjIndex
-
     If ToolIndex < LBound(ObjData) Or ToolIndex > UBound(ObjData) Then
         Call TraceError(1003, "EquippedWorkingToolObjIndex out of range: " & ToolIndex, "AlquimistaConstruirItem", Erl)
         Exit Sub
@@ -1681,14 +1658,12 @@ Public Sub DoPescar(ByVal UserIndex As Integer, Optional ByVal RedDePesca As Boo
                 ' Resto los recursos que saqué
                 MapData(.pos.Map, .Trabajo.Target_X, .Trabajo.Target_Y).ObjInfo.amount = MapData(.pos.Map, .Trabajo.Target_X, .Trabajo.Target_Y).ObjInfo.amount - MiObj.amount
             End If
-
             ' Verifico si el pescado es especial o no
             For i = 1 To UBound(PecesEspeciales)
                 If PecesEspeciales(i).ObjIndex = MiObj.ObjIndex Then
                     esEspecial = True
                 End If
             Next i
-
             ' Si no es especial, actualizo el UserIndex
             If Not esEspecial Then
                 Call SendData(SendTarget.ToIndex, UserIndex, PrepareMessageParticleFX(.Char.charindex, 253, 25, False, ObjData(MiObj.ObjIndex).GrhIndex))
@@ -1711,7 +1686,6 @@ Public Sub DoPescar(ByVal UserIndex As Integer, Optional ByVal RedDePesca As Boo
             ' Al pescar también podés sacar cosas raras (se setean desde RecursosEspeciales.dat)
             ' Por cada drop posible
             Dim res As Long
-
             For i = 1 To UBound(EspecialesPesca)
                 ' Tiramos al azar entre 1 y la probabilidad
                 res = RandomNumber(1, IIf(RedDePesca, EspecialesPesca(i).data * 2, EspecialesPesca(i).data)) ' Red de pesca chance x2 (revisar)
@@ -1724,7 +1698,6 @@ Public Sub DoPescar(ByVal UserIndex As Integer, Optional ByVal RedDePesca As Boo
                     Call WriteLocaleMsg(UserIndex, "1457", e_FontTypeNames.FONTTYPE_INFO)  ' Msg1457=¡Has conseguido ¬1!
                 End If
             Next
-
         Else
             Call SendData(SendTarget.ToIndex, UserIndex, PrepareMessageParticleFX(.Char.charindex, 253, 25, False, GRH_FALLO_PESCA))
         End If
@@ -1982,7 +1955,6 @@ Private Sub RobarObjeto(ByVal LadronIndex As Integer, ByVal VictimaIndex As Inte
     With UserList(VictimaIndex)
         If RandomNumber(1, 12) < 6 Then 'Comenzamos por el principio o el final del inventario?
             i = 1
-
             Do While Not Flag And i <= .CurrentInventorySlots
                 'Hay objeto en este slot?
                 If .invent.Object(i).ObjIndex > 0 Then
@@ -1992,10 +1964,8 @@ Private Sub RobarObjeto(ByVal LadronIndex As Integer, ByVal VictimaIndex As Inte
                 End If
                 If Not Flag Then i = i + 1
             Loop
-
         Else
             i = .CurrentInventorySlots
-
             Do While Not Flag And i > 0
                 'Hay objeto en este slot?
                 If .invent.Object(i).ObjIndex > 0 Then
@@ -2005,7 +1975,6 @@ Private Sub RobarObjeto(ByVal LadronIndex As Integer, ByVal VictimaIndex As Inte
                 End If
                 If Not Flag Then i = i - 1
             Loop
-
         End If
         If Flag Then
             Dim MiObj     As t_Obj
@@ -2054,7 +2023,7 @@ QuitarSta_Err:
     Call TraceError(Err.Number, Err.Description, "Trabajo.QuitarSta", Erl)
 End Sub
 
-Public Sub DoRaices(ByVal UserIndex As Integer, ByVal X As Byte, ByVal Y As Byte)
+Public Sub DoRaices(ByVal UserIndex As Integer, ByVal x As Byte, ByVal y As Byte)
     On Error GoTo ErrHandler
     Dim Suerte As Integer
     Dim res    As Integer
@@ -2176,7 +2145,6 @@ Public Sub DoTalar(ByVal UserIndex As Integer, ByVal x As Byte, ByVal y As Byte,
             End If
             ' Al talar también podés dropear cosas raras (se setean desde RecursosEspeciales.dat)
             Dim i As Integer
-
             ' Por cada drop posible
             For i = 1 To UBound(EspecialesTala)
                 ' Tiramos al azar entre 1 y la probabilidad
@@ -2189,7 +2157,6 @@ Public Sub DoTalar(ByVal UserIndex As Integer, ByVal x As Byte, ByVal y As Byte,
                     Call TirarItemAlPiso(.pos, MiObj)
                 End If
             Next i
-
         Else
             Call SendData(SendTarget.ToPCAliveArea, UserIndex, PrepareMessagePlayWave(64, .pos.x, .pos.y))
         End If
@@ -2266,7 +2233,6 @@ Public Sub DoMineria(ByVal UserIndex As Integer, ByVal x As Byte, ByVal y As Byt
             End If
             ' Al minar también puede dropear una gema
             Dim i As Integer
-
             ' Por cada drop posible
             For i = 1 To Yacimiento.CantItem
                 ' Tiramos al azar entre 1 y la probabilidad
@@ -2281,7 +2247,6 @@ Public Sub DoMineria(ByVal UserIndex As Integer, ByVal x As Byte, ByVal y As Byt
                     Call WriteLocaleMsg(UserIndex, "1465", e_FontTypeNames.FONTTYPE_INFO)  ' Msg1465=¡Has conseguido ¬1!
                 End If
             Next
-
         Else
             Call SendData(SendTarget.ToPCAliveArea, UserIndex, PrepareMessagePlayWave(2185, .pos.x, .pos.y))
         End If
@@ -2417,7 +2382,7 @@ DoMontar_Err:
     Call TraceError(Err.Number, Err.Description, "Trabajo.DoMontar", Erl)
 End Sub
 
-Public Sub ActualizarRecurso(ByVal Map As Integer, ByVal X As Integer, ByVal Y As Integer)
+Public Sub ActualizarRecurso(ByVal Map As Integer, ByVal x As Integer, ByVal y As Integer)
     On Error GoTo ActualizarRecurso_Err
     Dim ObjIndex As Integer
     ObjIndex = MapData(Map, x, y).ObjInfo.ObjIndex
@@ -2475,14 +2440,12 @@ Function FreeMascotaIndex(ByVal UserIndex As Integer) As Integer
     '02/03/09: ZaMa - Busca un indice libre de mascotas, revisando los types y no los indices de los npcs
     '***************************************************
     Dim j As Integer
-
     For j = 1 To MAXMASCOTAS
         If UserList(UserIndex).MascotasType(j) = 0 Then
             FreeMascotaIndex = j
             Exit Function
         End If
     Next j
-
     FreeMascotaIndex = -1
     Exit Function
 FreeMascotaIndex_Err:
@@ -2587,13 +2550,11 @@ Private Function PuedeDomarMascota(ByVal UserIndex As Integer, ByVal NpcIndex As
     '***************************************************
     Dim i           As Long
     Dim numMascotas As Long
-
     For i = 1 To MAXMASCOTAS
         If UserList(UserIndex).MascotasType(i) = NpcList(NpcIndex).Numero Then
             numMascotas = numMascotas + 1
         End If
     Next i
-
     If numMascotas <= 1 Then PuedeDomarMascota = True
     Exit Function
 PuedeDomarMascota_Err:
@@ -2601,23 +2562,17 @@ PuedeDomarMascota_Err:
 End Function
 
 Public Function EntregarPezEspecial(ByVal UserIndex As Integer)
-
     With UserList(UserIndex)
-
         If .flags.PescandoEspecial Then
-
             Dim obj As t_Obj
-
             obj.amount = 1
             obj.ObjIndex = .Stats.NumObj_PezEspecial
-
             If Not MeterItemEnInventario(UserIndex, obj) Then
                 .Stats.NumObj_PezEspecial = 0
                 .flags.PescandoEspecial = False
                 Exit Function
             End If
-
-            Call SendData(SendTarget.ToIndex, UserIndex, PrepareMessageParticleFX(.Char.CharIndex, 253, 25, False, ObjData(obj.ObjIndex).GrhIndex))
+            Call SendData(SendTarget.ToIndex, UserIndex, PrepareMessageParticleFX(.Char.charindex, 253, 25, False, ObjData(obj.ObjIndex).GrhIndex))
             'Msg922=Felicitaciones has pescado un pez de gran porte ( " & ObjData(obj.ObjIndex).name & " )
             Call WriteLocaleMsg(UserIndex, "922", e_FontTypeNames.FONTTYPE_FIGHT, ObjData(obj.ObjIndex).name)
             .Stats.NumObj_PezEspecial = 0
@@ -2733,11 +2688,8 @@ ThrowNetToTarget_Err:
 End Sub
 
 Public Function GetExtractResourceForLevel(ByVal level As Integer) As Integer
-
     Dim upper As Long
-
     Dim lower As Long
-
     lower = Int(CDbl(level + 0.000001) / 3.6)
     upper = Int(CDbl(level + 0.000001) / 2)
     GetExtractResourceForLevel = RandomNumber(lower, upper)

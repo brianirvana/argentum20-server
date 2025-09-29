@@ -395,14 +395,11 @@ Function Exists(ByRef sTable As String, _
         SQL = "SELECT " & sField & " FROM " & sTable & " WHERE " & sField & " = ?"
         Set RS = Query(SQL, sValue)
     End If
-
     If RS Is Nothing Then
         Exists = False
     Else
         Exists = Not RS.EOF
         RS.Close
     End If
-
     Set RS = Nothing
 End Function
-

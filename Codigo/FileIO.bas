@@ -412,17 +412,14 @@ Public Function TxtDimension(ByVal name As String) As Long
     If FileExist(name, vbArchive) Then
         Open name For Input As #n
         Tam = 0
-
         Do While Not EOF(n)
             Tam = Tam + 1
             Line Input #n, cad
         Loop
-
         Close n
     Else
-        Debug.print "No existe el archivo " & name
+        Debug.Print "No existe el archivo " & name
     End If
-
     TxtDimension = Tam
     Exit Function
 TxtDimension_Err:
@@ -902,7 +899,6 @@ Sub LoadBalance()
             ElementalMatrixForNpcs(i + 1, j + 1) = val(vals(j))
         Next j
     Next i
-
     '--------------------
     Set BalanceIni = Nothing
     AgregarAConsola "Se cargó el balance (Balance.dat)"
@@ -1327,7 +1323,6 @@ Sub LoadOBJData()
             'CHECK: !!! Esto es provisorio hasta que los de Dateo cambien los valores de string a numerico  -  Nunca más papu
             Dim n As Integer
             Dim s As String
-
             For i = 1 To NUMCLASES
                 s = UCase$(Leer.GetValue(ObjKey, "CP" & i))
                 n = 1
@@ -2594,10 +2589,8 @@ Public Sub LoadPesca()
             If (nivel > MaxLvlCania) Then nivel = MaxLvlCania
             Peces(i).amount = nivel
         Next
-
         ' Los ordeno segun nivel de caña (quick sort)
         Call QuickSortPeces(1, count)
-
         ' Sumo los pesos
         For i = 1 To count
             For j = Peces(i).amount To MaxLvlCania
@@ -2690,7 +2683,6 @@ Public Sub LoadRangosFaccion()
         ' Los rangos de la Armada se guardan en los indices impar, y los del caos en indices pares.
         ' Luego, para acceder es tan facil como usar el Rango directamente para la Armada, y multiplicar por 2 para el Caos.
         ReDim RangosFaccion(1 To MaxRangoFaccion * 2) As t_RangoFaccion
-
         For i = 1 To MaxRangoFaccion
             '<N>Rango=<NivelRequerido>-<AsesinatosRequeridos>-<Título>
             rankData = Split(IniFile.GetValue("ArmadaReal", i & "Rango"), "-", , vbTextCompare)

@@ -791,12 +791,10 @@ Public Function PrepareLocalizedChatOverHead(ByVal MsgID As Integer, ByVal chari
     Dim finalText As String
     Dim i         As Long
     finalText = "LOCMSG*" & MsgID & "*"
-
     For i = LBound(Args) To UBound(Args)
         If i > LBound(Args) Then finalText = finalText & "¬"
         finalText = finalText & CStr(Args(i))
     Next
-
     PrepareLocalizedChatOverHead = PrepareMessageChatOverHead(finalText, charindex, Color)
 End Function
 
@@ -2794,7 +2792,6 @@ Public Sub WriteDatosGrupo(ByVal UserIndex As Integer)
         If .Grupo.EnGrupo = True Then
             Call Writer.WriteInt8(UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros)
             If .Grupo.Lider.ArrayIndex = UserIndex Then
-
                 For i = 1 To UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros
                     If i = 1 Then
                         Call Writer.WriteString8(UserList(.Grupo.Miembros(i).ArrayIndex).name & "(Líder)")
@@ -2802,9 +2799,7 @@ Public Sub WriteDatosGrupo(ByVal UserIndex As Integer)
                         Call Writer.WriteString8(UserList(.Grupo.Miembros(i).ArrayIndex).name)
                     End If
                 Next i
-
             Else
-
                 For i = 1 To UserList(.Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros
                     If i = 1 Then
                         Call Writer.WriteString8(UserList(UserList(.Grupo.Lider.ArrayIndex).Grupo.Miembros(i).ArrayIndex).name & "(Líder)")
@@ -2876,7 +2871,6 @@ Public Sub WriteQuestDetails(ByVal UserIndex As Integer, ByVal QuestIndex As Int
     'Enviamos la cantidad de npcs requeridos
     Call Writer.WriteInt8(QuestList(QuestIndex).RequiredNPCs)
     If QuestList(QuestIndex).RequiredNPCs Then
-
         'Si hay npcs entonces enviamos la lista
         For i = 1 To QuestList(QuestIndex).RequiredNPCs
             Call Writer.WriteInt16(QuestList(QuestIndex).RequiredNPC(i).amount)
@@ -2937,7 +2931,6 @@ Public Sub WriteQuestListSend(ByVal UserIndex As Integer)
                 tmpStr = tmpStr & QuestList(.QuestStats.Quests(i).QuestIndex).nombre & ";"
             End If
         Next i
-
         'Escribimos la cantidad de quests
         Call Writer.WriteInt8(tmpByte)
         'Escribimos la lista de quests (sacamos el íltimo caracter)
@@ -2969,7 +2962,6 @@ Public Sub WriteNpcQuestListSend(ByVal UserIndex As Integer, ByVal NpcIndex As I
         'Enviamos la cantidad de npcs requeridos
         Call Writer.WriteInt8(QuestList(QuestIndex).RequiredNPCs)
         If QuestList(QuestIndex).RequiredNPCs Then
-
             'Si hay npcs entonces enviamos la lista
             For i = 1 To QuestList(QuestIndex).RequiredNPCs
                 Call Writer.WriteInt16(QuestList(QuestIndex).RequiredNPC(i).amount)
@@ -4225,7 +4217,6 @@ Public Sub WriteShopInit(ByVal UserIndex As Integer)
     Call Writer.WriteInt16(cant_obj_shop)
     Call LoadPatronCreditsFromDB(UserIndex)
     Call Writer.WriteInt32(UserList(UserIndex).Stats.Creditos)
-
     'Envío todos los objetos.
     For i = 1 To cant_obj_shop
         Call Writer.WriteInt32(ObjShop(i).ObjNum)

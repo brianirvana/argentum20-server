@@ -810,7 +810,6 @@ End Sub
 Private Sub Invasion_Timer()
     On Error GoTo Handler
     Dim i As Integer
-
     ' **********************************
     ' **********  Invasiones  **********
     ' **********************************
@@ -883,7 +882,6 @@ Private Sub tControlHechizos_Timer()
                 UserList(UserIndex).Counters.controlHechizos.HechizosCasteados = 0
             End With
         Next UserIndex
-
         tHechizosMinutesCounter = 0
     End If
 End Sub
@@ -974,7 +972,6 @@ Private Sub UpdateBarcoForgatNix()
     If MapData(BarcoNavegandoForgatNix.Map, BarcoNavegandoForgatNix.DockX, BarcoNavegandoForgatNix.DockY).NpcIndex = 0 Then
         Exit Sub
     End If
-
     ' Desembarcar: bajamos del barco a los usuarios que llegan a Nix
     ' Para cada tile en el área del barco
     For TileX = BarcoNavegandoForgatNix.startX To BarcoNavegandoForgatNix.EndX
@@ -988,7 +985,6 @@ Private Sub UpdateBarcoForgatNix()
             End If
         Next TileY
     Next TileX
-
     ' Embarcacar: subimos al barco a los usuarios que salen de Forgat
     ' Para cada tile en el área del muelle de Forgat
     For TileX = ForgatDock.startX To ForgatDock.EndX
@@ -1025,7 +1021,6 @@ Private Sub UpdateBarcoNixArghal()
     If MapData(BarcoNavegandoNixArghal.Map, BarcoNavegandoNixArghal.DockX, BarcoNavegandoNixArghal.DockY).NpcIndex = 0 Then
         Exit Sub
     End If
-
     ' Desembarcar: bajamos del barco a los usuarios que llegan a Arghal
     ' Para cada tile en el área del barco
     For TileX = BarcoNavegandoNixArghal.startX To BarcoNavegandoNixArghal.EndX
@@ -1039,7 +1034,6 @@ Private Sub UpdateBarcoNixArghal()
             End If
         Next TileY
     Next TileX
-
     ' Embarcacar: subimos al barco a los usuarios que salen de Nix
     ' Para cada tile en el área del muelle de Nix
     For TileX = NixDock.startX To NixDock.EndX
@@ -1076,7 +1070,6 @@ Private Sub UpdateBarcoArghalForgat()
     If MapData(BarcoNavegandoArghalForgat.Map, BarcoNavegandoArghalForgat.DockX, BarcoNavegandoArghalForgat.DockY).NpcIndex = 0 Then
         Exit Sub
     End If
-
     ' Desembarcar: bajamos del barco a los usuarios que llegan a Forgat
     ' Para cada tile en el área del barco
     For TileX = BarcoNavegandoArghalForgat.startX To BarcoNavegandoArghalForgat.EndX
@@ -1090,7 +1083,6 @@ Private Sub UpdateBarcoArghalForgat()
             End If
         Next TileY
     Next TileX
-
     ' Embarcacar: subimos al barco a los usuarios que salen de Arghal
     ' Para cada tile en el área del muelle de Arghal
     For TileX = ArghalDock.startX To ArghalDock.EndX
@@ -1111,7 +1103,6 @@ Private Sub UpdateBarcoArghalForgat()
             End If
         Next TileY
     Next TileX
-
 End Sub
 
 Private Sub TimerGuardarUsuarios_Timer()
@@ -1312,7 +1303,6 @@ Private Sub EstadoTimer_Timer()
     Dim i                As Long
     Dim PerformanceTimer As Long
     Call PerformanceTestStart(PerformanceTimer)
-
     For i = 1 To Baneos.count
         If Baneos(i).FechaLiberacion <= Now Then
             Call SendData(SendTarget.ToAdmins, 0, PrepareMessageLocaleMsg(1787, Baneos(i).name, e_FontTypeNames.FONTTYPE_SERVER)) ' Msg1787=Servidor » Se ha concluido la sentencia de ban para ¬1.
@@ -1591,12 +1581,9 @@ Private Sub mnuCerrar_Click()
     On Error GoTo mnuCerrar_Click_Err
     If MsgBox("¡¡Atencion!! Si cierra el servidor puede provocar la perdida de datos. ¿Desea hacerlo de todas maneras?", vbYesNo) = vbYes Then
         Dim f
-
         For Each f In Forms
-
             Unload f
         Next
-
     End If
     Exit Sub
 mnuCerrar_Click_Err:

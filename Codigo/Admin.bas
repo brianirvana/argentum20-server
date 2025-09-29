@@ -167,7 +167,6 @@ Sub WorldSave()
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg("1732", vbNullString, e_FontTypeNames.FONTTYPE_SERVER)) 'Msg1732=Servidor » Iniciando WorldSave
     Call ReSpawnOrigPosNpcs 'respawn de los guardias en las pos originales
     Dim j As Integer, K As Integer
-
     For j = 1 To NumMaps
         If MapInfo(j).backup_mode = 1 Then K = K + 1
     Next j

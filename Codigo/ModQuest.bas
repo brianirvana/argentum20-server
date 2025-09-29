@@ -190,7 +190,6 @@ Public Sub FinishQuest(ByVal UserIndex As Integer, ByVal QuestIndex As Integer, 
         End If
         'Si hay recompensa de objetos, se entregan.
         If .RewardOBJs > 0 Then
-
             For i = 1 To .RewardOBJs
                 If .RewardOBJ(i).amount Then
                     Call MeterItemEnInventario(UserIndex, .RewardOBJ(i))

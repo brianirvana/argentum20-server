@@ -592,7 +592,6 @@ Sub ClosestStablePos(pos As t_WorldPos, ByRef nPos As t_WorldPos)
             Notfound = True
             Exit Do
         End If
-
         For tY = pos.y - LoopC To pos.y + LoopC
             For tX = pos.x - LoopC To pos.x + LoopC
                 If LegalPos(nPos.Map, tX, tY) And MapData(nPos.Map, tX, tY).TileExit.Map = 0 Then
@@ -1396,7 +1395,6 @@ Public Sub resetPj(ByVal UserIndex As Integer, Optional ByVal borrarHechizos As 
             For i = 1 To 4
                 .Stats.UserAtributos(i) = .Stats.UserAtributosBackUP(i)
             Next i
-
             Call WriteFYA(UserIndex)
         End If
         .flags.DuracionEfecto = 0
@@ -1405,7 +1403,6 @@ Public Sub resetPj(ByVal UserIndex As Integer, Optional ByVal borrarHechizos As 
         Call RellenarInventario(UserIndex)
         'Agrego la poción
         Dim slot_libre As Byte
-
         For i = 1 To MAX_INVENTORY_SLOTS
             If .invent.Object(i).amount = 0 Then
                 slot_libre = i

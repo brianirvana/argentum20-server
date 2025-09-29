@@ -84,7 +84,6 @@ Public Sub IniciarTorneo()
                 inscriptos = inscriptos + 1
             End If
         Next i
-
     End If
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1674, Torneo.nombre & "¬" & Torneo.NivelMinimo & "¬" & Torneo.NivelMaximo & "¬" & inscriptos & "¬" & Torneo.cupos _
             & "¬" & PonerPuntos(Torneo.costo) & "¬" & Torneo.reglas, e_FontTypeNames.FONTTYPE_CITIZEN)) 'Msg1674=Evento> Están abiertas las inscripciones para: ¬1: características: Nivel entre: ¬2/¬3. Inscriptos: ¬4/¬5. Precio de inscripción: ¬6 monedas de oro. Reglas: ¬7.
@@ -148,7 +147,6 @@ Public Sub ComenzarTorneoOk()
         Call FindLegalPos(Torneo.IndexParticipantes(i), Torneo.Mapa, x, y)
         Call WarpUserChar(Torneo.IndexParticipantes(i), Torneo.Mapa, x, y, True)
     Next i
-
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1676, nombres, e_FontTypeNames.FONTTYPE_CITIZEN)) 'Msg1676=Evento> Los elegidos para participar son: ¬1 damos inicio al evento.
     Exit Sub
 ComenzarTorneoOk_Err:

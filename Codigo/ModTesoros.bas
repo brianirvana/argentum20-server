@@ -166,7 +166,6 @@ Public Sub PerderTesoro()
             TesoroNumMapa = TesoroMapa(RandomNumber(1, UBound(TesoroMapa)))
         End If
     Loop
-
     BusquedaTesoroActiva = True
     Call MakeObj(TesoroRegalo(RandomNumber(1, UBound(TesoroRegalo))), TesoroNumMapa, TesoroX, TesoroY, False)
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1567, get_map_name(TesoroNumMapa) & "¬" & TesoroNumMapa, e_FontTypeNames.FONTTYPE_TALK))  'Msg1699=Eventos> Rondan rumores que hay un tesoro enterrado en el mapa: ¬1(¬2) ¿Quien será el afortunado que lo encuentre?
@@ -204,7 +203,6 @@ Public Sub PerderRegalo()
             RegaloNumMapa = RegaloMapa(RandomNumber(1, UBound(RegaloMapa)))
         End If
     Loop
-
     BusquedaRegaloActiva = True
     Call MakeObj(RegaloRegalo(RandomNumber(1, UBound(RegaloRegalo))), RegaloNumMapa, RegaloX, RegaloY, False)
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1568, get_map_name(RegaloNumMapa) & "¬" & RegaloNumMapa, e_FontTypeNames.FONTTYPE_TALK))  'Msg1700=Eventos> De repente ha surgido un item maravilloso en el mapa: ¬1(¬2) ¿Quien será el valiente que lo encuentre? ¡MUCHO CUIDADO!

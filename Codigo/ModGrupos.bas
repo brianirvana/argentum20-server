@@ -127,7 +127,6 @@ Public Sub EcharMiembro(ByVal UserIndex As Integer, ByVal Indice As Byte)
             Call WriteLocaleMsg(UserIndex, 2053, e_FontTypeNames.FONTTYPE_New_GRUPO) ' Msg2053="No podés expulsarte a ti mismo."
             Exit Sub
         End If
-
         For i = 1 To UBound(.Miembros)
             If UserIndexEchar = .Miembros(i).ArrayIndex Then
                 Call ClearUserRef(.Miembros(i))
@@ -145,7 +144,6 @@ Public Sub EcharMiembro(ByVal UserIndex As Integer, ByVal Indice As Byte)
         For a = 1 To .CantidadMiembros
             Call WriteUbicacion(.Miembros(a).ArrayIndex, indexviejo, 0)
         Next a
-
     End With
     With UserList(UserIndexEchar)
         Call WriteLocaleMsg(UserIndex, 2054, .name, e_FontTypeNames.FONTTYPE_New_GRUPO) ' Msg2054="¬1 fue expulsado del grupo."
@@ -350,7 +348,6 @@ Public Sub CompartirUbicacion(ByVal UserIndex As Integer)
                 indexpj = a
             End If
         Next a
-
         For i = 1 To Lider.Grupo.CantidadMiembros
             If Lider.Grupo.Miembros(i).ArrayIndex <> UserIndex Then
                 If UserList(Lider.Grupo.Miembros(i).ArrayIndex).pos.Map = .pos.Map Then
@@ -395,7 +392,6 @@ Public Sub AddUserToGRoup(ByVal UserIndex As Integer, ByVal GroupLiderIndex As I
     For Index = 2 To UserList(GroupLiderIndex).Grupo.CantidadMiembros - 1
         Call WriteLocaleMsg(UserList(GroupLiderIndex).Grupo.Miembros(Index).ArrayIndex, "40", e_FontTypeNames.FONTTYPE_INFOIAO, UserList(UserIndex).name)
     Next Index
-
     Call WriteLocaleMsg(UserList(UserIndex).Grupo.PropuestaDe.ArrayIndex, "40", e_FontTypeNames.FONTTYPE_INFOIAO, UserList(UserIndex).name)
     Call WriteLocaleMsg(UserIndex, 2066, e_FontTypeNames.FONTTYPE_INFOIAO) ' Msg2066="¡Has sido añadido al grupo!"
     Call RefreshCharStatus(GroupLiderIndex)

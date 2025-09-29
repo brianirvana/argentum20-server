@@ -6,7 +6,6 @@ Function ValidWordsDescription(ByVal cad As String) As Boolean
     cad = LCase$(cad)
     ' Agregamos espacios al inicio y final para asegurar coincidencias exactas de palabras/frases
     cad = " " & NormalizeText(cad) & " "
-
     ' Verificamos si alguna palabra/frase prohibida está contenida en la descripción
     For i = LBound(BlockedWordsDescription) To UBound(BlockedWordsDescription)
         If InStr(1, cad, " " & BlockedWordsDescription(i) & " ", vbTextCompare) > 0 Then
@@ -29,12 +28,10 @@ Private Function NormalizeText(ByVal cad As String) As String
     PunctuationMarks = ".,;:!?()[]<>-/_\"
     ' Convertimos todo el texto a minúsculas para evitar diferencias por mayúsculas
     cad = LCase$(cad)
-
     ' Recorremos cada signo y lo reemplazamos por un espacio
     For i = 1 To Len(PunctuationMarks)
         cad = Replace(cad, mid$(PunctuationMarks, i, 1), " ")
     Next i
-
     ' Reemplazamos espacios dobles (o múltiples) por espacios simples
     Do While InStr(cad, "  ") > 0
         cad = Replace(cad, "  ", " ")

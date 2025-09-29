@@ -684,19 +684,15 @@ Sub GiveRewards()
                         End If
                     End If
                 Next j
-
                 RewardStr = ", ganaron " & PonerPuntos(Reward) & " Modenas de oro cada uno."
             End If
             Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1744, i & "¬" & Teams(Ranking(i).PlayerIndex) & "¬" & Ranking(i).Score & "¬" & RewardStr, _
                     e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1744=¬1) ¬2: ¬3 puntos¬4
         Next i
-
     Else
         Ranking = Board.GetRanking(3)
-
         For i = 0 To UBound(Ranking) - 1
             If LobbyList(LobbyIndex).AvailableInscriptionMoney > 0 Then
-
                 For j = 0 To LobbyList(LobbyIndex).RegisteredPlayers - 1
                     If IsValidUserRef(LobbyList(LobbyIndex).Players(j).User) Then
                         If LobbyList(LobbyIndex).Players(j).User.ArrayIndex = Ranking(i).PlayerIndex Then
@@ -705,7 +701,6 @@ Sub GiveRewards()
                         End If
                     End If
                 Next j
-
                 RewardStr = ", gano " & PonerPuntos(Rewards(i + 1)) & " Modenas de oro."
             End If
             If Ranking(i).PlayerIndex > 0 Then
@@ -713,7 +708,6 @@ Sub GiveRewards()
                         RewardStr, e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1824=¬1) ¬2: ¬3 puntos¬4
             End If
         Next i
-
     End If
     Exit Sub
 GiveRewards_Err:

@@ -686,7 +686,6 @@ Function EntrarCuenta(ByVal UserIndex As Integer, ByVal CuentaEmail As String, B
     Dim laCuentaEsDeAdmin As Boolean
     If ServerSoloGMs > 0 Then
         laCuentaEsDeAdmin = False
-
         For adminIdx = 0 To AdministratorAccounts.count - 1
             ' Si el e-mail está declarado junto al nick de la cuenta donde esta el PJ GM en el Server.ini te dejo entrar.
             If UCase$(AdministratorAccounts.Items(adminIdx)) = UCase$(CuentaEmail) Then
@@ -1131,7 +1130,6 @@ ResetUserSpells_Err:
     Call TraceError(Err.Number, Err.Description, "TCP.ResetUserSpells", Erl)
 End Sub
 
-
 '---------------------------------------------------------------------------------------
 ' Procedure : ResetUserSpells
 ' Last Author : [/About] Brian Sabatier (brian.sabatier87@gmail.com - https://github.com/brianirvana/brianirvana)
@@ -1142,11 +1140,9 @@ Sub ResetUserSkinsSpells(ByVal UserIndex As Integer)
     Dim LoopC As Byte
     On Error GoTo ResetUserSkinsSpells_Err
     With UserList(UserIndex)
-
         For LoopC = 1 To MAX_SKINSSPELLS_SLOTS
             .Stats.UserSkinsHechizos(LoopC) = 0
         Next LoopC
-
         Exit Sub
     End With
 ResetUserSkinsSpells_Err:

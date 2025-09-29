@@ -39,7 +39,6 @@ Public Sub HandleOnline(ByVal UserIndex As Integer)
                 count = count + 1
             End If
         Next i
-
         If EsGM(UserIndex) Then
             Call WriteLocaleMsg(UserIndex, "1468", e_FontTypeNames.FONTTYPE_INFOIAO, count) ' Msg1468=Número de usuarios: ¬1 conectados.
             Call WriteLocaleMsg(UserIndex, "1469", e_FontTypeNames.FONTTYPE_INFOIAO, RecordUsuarios) ' Msg1469=Record de usuarios en simultaneo: ¬1.
@@ -299,14 +298,12 @@ Public Sub HandleDenounce(ByVal UserIndex As Integer)
         Dim Denuncia As String, HayChat As Boolean
         Denuncia = "[Últimos mensajes de " & UserList(tUser.ArrayIndex).name & "]" & vbNewLine
         Dim i As Integer
-
         For i = 1 To UBound(UserList(tUser.ArrayIndex).flags.ChatHistory)
             If LenB(UserList(tUser.ArrayIndex).flags.ChatHistory(i)) <> 0 Then
                 Denuncia = Denuncia & UserList(tUser.ArrayIndex).flags.ChatHistory(i) & vbNewLine
                 HayChat = True
             End If
         Next
-
         If Not HayChat Then
             ' Msg533=El usuario no ha escrito nada. Recordá que las denuncias inválidas pueden ser motivo de advertencia.
             Call WriteLocaleMsg(UserIndex, "533", e_FontTypeNames.FONTTYPE_INFO)
@@ -397,13 +394,10 @@ Public Sub HandleGoNearby(ByVal UserIndex As Integer)
                                     End If
                                 End If
                             Next y
-
                             If Found Then Exit For  ' Feo, pero hay que abortar 3 fors sin usar GoTo
                         Next x
-
                         If Found Then Exit For  ' Feo, pero hay que abortar 3 fors sin usar GoTo
                     Next i
-
                     'No space found??
                     If Not Found Then
                         ' Msg537=Todos los lugares están ocupados.
@@ -467,7 +461,6 @@ Public Sub HandleCreaturesInMap(ByVal UserIndex As Integer)
         Map = reader.ReadInt16()
         If .flags.Privilegios And e_PlayerType.User Then Exit Sub
         If MapaValido(Map) Then
-
             For i = 1 To LastNPC
                 'VB isn't lazzy, so we put more restrictive condition first to speed up the process
                 If NpcList(i).pos.Map = Map Then
@@ -530,7 +523,6 @@ Public Sub HandleCreaturesInMap(ByVal UserIndex As Integer)
                 For j = 0 To NPCcount1 - 1
                     Call WriteConsoleMsg(UserIndex, NPCcant1(j) & " " & List1(j), e_FontTypeNames.FONTTYPE_INFO)
                 Next j
-
             End If
             ' Msg738=Otros Npcs en mapa:
             Call WriteLocaleMsg(UserIndex, "738", e_FontTypeNames.FONTTYPE_WARNING)
@@ -538,7 +530,6 @@ Public Sub HandleCreaturesInMap(ByVal UserIndex As Integer)
                 ' Msg739=No hay más NPCS
                 Call WriteLocaleMsg(UserIndex, "739", e_FontTypeNames.FONTTYPE_INFO)
             Else
-
                 For j = 0 To NPCcount2 - 1
                     Call WriteConsoleMsg(UserIndex, NPCcant2(j) & " " & List2(j), e_FontTypeNames.FONTTYPE_INFO)
                 Next j
@@ -856,7 +847,6 @@ Public Sub HandleHiding(ByVal UserIndex As Integer)
                 Users = Users & UserList(i).name & ", "
             End If
         Next i
-
         If LenB(Users) <> 0 Then
             Users = Left$(Users, Len(Users) - 2)
             Call WriteLocaleMsg(UserIndex, "1476", e_FontTypeNames.FONTTYPE_INFO, Users)   ' Msg1476=Usuarios ocultandose: ¬1
@@ -1145,7 +1135,6 @@ Public Sub HandleEditChar(ByVal UserIndex As Integer)
                 For LoopC = 1 To NUMSKILLS
                     If Tilde(Replace$(SkillsNames(LoopC), " ", "+")) = Tilde(Arg1) Then Exit For
                 Next LoopC
-
                 If LoopC > NUMSKILLS Then
                     ' Msg544=Skill Inexistente!
                     Call WriteLocaleMsg(UserIndex, "544", e_FontTypeNames.FONTTYPE_INFO)
@@ -1652,7 +1641,6 @@ Public Sub HandleOnlineMap(ByVal UserIndex As Integer)
                 If UserList(LoopC).flags.Privilegios And priv Then list = list & UserList(LoopC).name & ", "
             End If
         Next LoopC
-
         If Len(list) > 2 Then list = Left$(list, Len(list) - 2)
         Call WriteLocaleMsg(UserIndex, "1491", e_FontTypeNames.FONTTYPE_INFO, list) ' Msg1491=Usuarios en el mapa: ¬1
     End With
@@ -2073,7 +2061,6 @@ Public Sub HandleNickToIP(ByVal UserIndex As Integer)
                             End If
                         End If
                     Next LoopC
-
                     If LenB(lista) <> 0 Then lista = Left$(lista, Len(lista) - 2)
                     Call WriteLocaleMsg(UserIndex, "1495", e_FontTypeNames.FONTTYPE_INFO, IP & "¬" & lista)   ' Msg1495=Los personajes con ip ¬1 son: ¬2
                 End If
@@ -2123,7 +2110,6 @@ Public Sub HandleIPToNick(ByVal UserIndex As Integer)
                 End If
             End If
         Next LoopC
-
         If LenB(lista) <> 0 Then lista = Left$(lista, Len(lista) - 2)
         Call WriteLocaleMsg(UserIndex, "1496", e_FontTypeNames.FONTTYPE_INFO, IP & "¬" & lista)  ' Msg1496=Los personajes con ip ¬1 son: ¬2
     End With
@@ -2770,11 +2756,9 @@ Public Sub HandleLastIP(ByVal UserIndex As Integer)
             ip_list = Split(ipStr, ";")
             'Msg983= Las últimas ips para el personaje son:
             Call WriteLocaleMsg(UserIndex, "983", e_FontTypeNames.FONTTYPE_INFO)
-
             For LoopC = 0 To (countIps - 1)
                 Call WriteConsoleMsg(UserIndex, ip_list(LoopC), e_FontTypeNames.FONTTYPE_INFO)
             Next LoopC
-
         Else
             'Msg528=Servidor » Comando deshabilitado para tu cargo.
             Call WriteLocaleMsg(UserIndex, "528", e_FontTypeNames.FONTTYPE_INFO)
@@ -3825,7 +3809,6 @@ Public Sub HandleEventoInfo(ByVal UserIndex As Integer)
                     Exit For
                 End If
             Next i
-
         End If
         If encontre Then
             Call WriteLocaleMsg(UserIndex, "1518", e_FontTypeNames.FONTTYPE_New_Eventos, PublicidadEvento & "¬" & HoraProximo)  ' Msg1518=Eventos> El proximo evento ¬1 iniciara a las ¬2:00 horas.
