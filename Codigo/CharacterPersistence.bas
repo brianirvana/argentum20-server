@@ -584,6 +584,7 @@ Public Sub LoadPatronCreditsFromDB(ByVal UserIndex As Integer)
     End With
 End Sub
 
+Public Sub SaveCharacterDB(ByVal UserIndex As Integer)
 On Error GoTo ErrorHandler
 Dim PerformanceTimer As Long
 Call PerformanceTestStart(PerformanceTimer)

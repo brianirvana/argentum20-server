@@ -1383,7 +1383,7 @@ Sub PasarSegundo()
                         Mapa = .flags.PortalM
                         x = .flags.PortalX
                         y = .flags.PortalY
-                        Call SendData(SendTarget.toMap, .flags.PortalM, PrepareMessageParticleFXToFloor(x, y, e_GraphicEffects.HaloGreen, 0))
+                        Call SendData(SendTarget.toMap, .flags.PortalM, PrepareMessageParticleFXToFloor(x, y, e_GraphicEffects.TpVerde, 0))
                         Call SendData(SendTarget.toMap, .flags.PortalM, PrepareMessageLightFXToFloor(x, y, 0, 105))
                         If MapData(Mapa, x, y).TileExit.Map > 0 Then
                             MapData(Mapa, x, y).TileExit.Map = 0

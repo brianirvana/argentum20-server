@@ -806,7 +806,7 @@ Public Enum e_GraphicEffects 'Image sequenced fxs like paralizar PrepareMessageC
     MeditateXXLDarkRed = 152
     Runa = 167
     LogeoLevel1 = 177
-    HaloGreen = 229
+    TpVerde = 229
 End Enum
 
 Public Enum e_ParticleEffects 'particle sequenced fxs like fuerza2 and celeridad2 PrepareMessageParticleFX()
@@ -826,7 +826,7 @@ Public Enum e_ParticleEffects 'particle sequenced fxs like fuerza2 and celeridad
     FireWall = 15
     Intermundia = 16
     HaloGold = 17
-    HaloGreen = 18
+    TpVerde = 18
     'Feo libre = 19
     SmokeGreen = 20
     Resucitar = 22
