@@ -588,7 +588,7 @@ Sub Accion(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal x As Integer,
                 End If
                 If PuntosTotales > 0 Then
                     UserList(UserIndex).flags.pregunta = 5
-                    Call WritePreguntaBox(UserIndex, 1593, PuntosTotales & "¬" & PonerPuntos(OroTotal * 1.2)) 'Msg1593= Tienes un total de ¬1 puntos y ¬2 monedas de oro para reclamar, ñDeseas aceptar?
+                    Call WritePreguntaBox(UserIndex, 1593, PuntosTotales & "¬" & PonerPuntos(OroTotal * 1.2)) 'Msg1593= Tienes un total de ¬1 puntos y ¬2 monedas de oro para reclamar, ¿Deseas aceptar?
                 Else
                     Dim charindexstr As Integer
                     charindexstr = str(NpcList(TempCharIndex).Char.charindex)
