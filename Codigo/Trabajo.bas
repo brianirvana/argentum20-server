@@ -76,6 +76,11 @@ Sub HandleFishingNet(ByVal UserIndex As Integer)
                 Call WriteWorkRequestTarget(UserIndex, 0)
                 Exit Sub
             End If
+            If MapInfo(.pos.Map).zone = "DUNGEON" Then
+                Call WriteLocaleMsg(UserIndex, "596", e_FontTypeNames.FONTTYPE_INFO)
+                Call WriteWorkRequestTarget(UserIndex, 0)
+                Exit Sub
+            End If
             Call DoPescar(UserIndex, True)
         Else
             ' Msg596=Zona de pesca no Autorizada. Busca otro lugar para hacerlo.
@@ -104,6 +109,12 @@ Public Sub Trabajar(ByVal UserIndex As Integer, ByVal Skill As e_Skill)
                                     .pos.Map, .pos.x, .pos.y - 1).Blocked And FLAG_AGUA) <> 0 Then
                                 .flags.PescandoEspecial = False
                                 If UserList(UserIndex).flags.Navegando = 0 Then
+                                    If MapInfo(.pos.Map).zone = "DUNGEON" Then
+                                        Call WriteLocaleMsg(UserIndex, "596", e_FontTypeNames.FONTTYPE_INFO)
+                                        Call WriteMacroTrabajoToggle(UserIndex, False)
+                                    Else
+                                        Call DoPescar(UserIndex, False)
+                                    End If
                                     Call DoPescar(UserIndex, False)
                                 Else
                                     Call WriteLocaleMsg(UserIndex, "1436", e_FontTypeNames.FONTTYPE_INFO)
@@ -484,7 +495,7 @@ Public Sub DoNavega(ByVal UserIndex As Integer, ByRef Barco As t_ObjData, ByVal 
             Call SendData(SendTarget.ToPCAliveArea, UserIndex, PrepareMessageSetInvisible(.Char.charindex, False, UserList(UserIndex).pos.x, UserList(UserIndex).pos.y))
         End If
         Call ChangeUserChar(UserIndex, .Char.body, .Char.head, .Char.Heading, .Char.WeaponAnim, .Char.ShieldAnim, .Char.CascoAnim, .Char.CartAnim, .Char.BackpackAnim)
-        Call SendData(SendTarget.ToPCAliveArea, UserIndex, PrepareMessagePlayWave(e_FXSound.BARCA_SOUND, .pos.x, .pos.y))
+        Call SendData(SendTarget.ToPCAliveArea, UserIndex, PrepareMessagePlayWave(e_SoundEffects.BARCA_SOUND, .pos.x, .pos.y))
     End With
     Exit Sub
 DoNavega_Err:
@@ -1039,7 +1050,7 @@ Public Function PuedeConstruirHerreria(ByVal ItemIndex As Integer) As Boolean
     On Error GoTo PuedeConstruirHerreria_Err
     Dim i As Long
     Select Case ObjData(ItemIndex).OBJType
-        Case e_OBJType.otWeapon
+        Case e_OBJType.otWeapon, e_OBJType.otArrows
             For i = 1 To UBound(ArmasHerrero)
                 If ArmasHerrero(i) = ItemIndex Then
                     PuedeConstruirHerreria = True
