@@ -246,7 +246,7 @@ Public Sub CompletarAccionFin(ByVal UserIndex As Integer)
                         Call UpdateUserInv(False, UserIndex, Slot)
                     Else
                         If UserList(UserIndex).pos.Map <> obj.DesdeMap Then
-                            'Msg1067= Esta runa no puede ser usada desde Aquí.
+                            'Msg1067= Esta runa no puede ser usada desde aquí.
                             Call WriteLocaleMsg(UserIndex, "1067", e_FontTypeNames.FONTTYPE_INFO)
                         Else
                             Call QuitarUserInvItem(UserIndex, Slot, 1)
