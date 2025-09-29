@@ -1449,6 +1449,7 @@ Public Const MAX_INVENTORY_OBJS      As Integer = 10000
 ''
 ' Cantidad de "slots" en el inventario con todos los slots desbloqueados
 Public Const MAX_INVENTORY_SLOTS     As Byte = 42
+Public Const MAX_SKINSINVENTORY_SLOTS As Byte = 50
 ' Cantidad de "slots" en el inventario básico
 Public Const MAX_USERINVENTORY_SLOTS As Byte = 24
 ' Cantidad de "slots" en el inventario por fila
@@ -1876,6 +1877,12 @@ Public Type t_UserOBJ
     ElementalTags As Long
 End Type
 
+Public Type t_UserSkins
+    Equipped                    As Boolean
+    ObjIndex                    As Integer
+    Type                        As Integer
+End Type
+
 Public Type t_Inventario
     Object(1 To MAX_INVENTORY_SLOTS) As t_UserOBJ
     EquippedWeaponObjIndex As Integer
@@ -1901,6 +1908,27 @@ Public Type t_Inventario
     EquippedBackpackObjIndex As Integer
     EquippedBackpackSlot As Byte
     NroItems As Integer
+End Type
+
+Public Type tSkinInventario
+    'Type debe ir en el Storage Manager pero acá no hace falta, ya está en OBJECT.
+    Object(1 To MAX_SKINSINVENTORY_SLOTS) As t_UserSkins
+    ObjIndexArmourEquipped      As Integer
+    ObjIndexHelmetEquipped      As Integer
+    ObjIndexWeaponEquipped      As Integer
+    ObjIndexShieldEquipped      As Integer
+    ObjIndexWindsEquipped       As Integer
+    ObjIndexBoatEquipped        As Integer
+    ObjIndexBackpackEquipped    As Integer 'Mochila
+    SlotArmourEquipped      As Byte
+    SlotHelmetEquipped      As Byte
+    SlotWeaponEquipped      As Byte
+    SlotShieldEquipped      As Byte
+    SlotWindsEquipped       As Byte
+    SlotBoatEquipped        As Byte
+    SlotBackpackEquipped    As Byte 'Mochila
+    'Spells puede haber varios equipados al mismo tiempo, no tiene sentido.
+    count                       As Byte
 End Type
 
 Public Type t_WorldPos
@@ -2879,6 +2907,7 @@ Public Type t_User
     MENSAJEINFORMACION As String
     invent As t_Inventario
     Invent_bk As t_Inventario
+    Invent_Skins As tSkinInventario
     pos As t_WorldPos
     ConnectionDetails As t_ConnectionInfo
     CurrentInventorySlots As Byte
