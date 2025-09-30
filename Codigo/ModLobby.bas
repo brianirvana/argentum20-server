@@ -144,11 +144,9 @@ Private ActiveLobby               As t_IndexHeap
 Public Sub InitializeLobbyList()
     ReDim AvailableLobby.IndexInfo(0 To LobbyCount) As Integer
     ReDim ActiveLobby.IndexInfo(0 To LobbyCount) As Integer
-
     For i = 0 To LobbyCount
         AvailableLobby.IndexInfo(i) = LobbyCount - i
     Next i
-
     AvailableLobby.currentIndex = LobbyCount
     ActiveLobby.currentIndex = -1
     GlobalLobbyIndex = -1
@@ -157,7 +155,6 @@ End Sub
 Public Sub ReleaseLobby(ByVal LobbyIndex As Integer)
     Dim i                As Integer
     Dim FoundActiveLobby As Boolean
-
     For i = 0 To ActiveLobby.currentIndex
         If ActiveLobby.IndexInfo(i) = LobbyIndex Then
             ActiveLobby.IndexInfo(i) = ActiveLobby.IndexInfo(ActiveLobby.currentIndex)
@@ -166,7 +163,6 @@ Public Sub ReleaseLobby(ByVal LobbyIndex As Integer)
             Exit For
         End If
     Next i
-
     If Not FoundActiveLobby Then
         LogError ("Trying to release a lobby twice")
         Exit Sub
@@ -259,11 +255,9 @@ End Sub
 
 Private Sub ClearUserSocket(ByRef instance As t_Lobby, ByVal Index As Integer)
     Dim i As Integer
-
     For i = Index To instance.RegisteredPlayers - 2
         instance.Players(i) = instance.Players(i + 1)
     Next i
-
     instance.Players(i).Connected = False
     instance.Players(i).IsSummoned = False
     instance.Players(i).ReturnOnReconnect = False
@@ -334,7 +328,6 @@ Public Function CanPlayerJoin(ByRef instance As t_Lobby, ByVal UserIndex As Inte
             End If
         End If
         Dim i As Integer
-
         For i = 0 To instance.RegisteredPlayers - 1
             If instance.Players(i).UserId = .Id Then
                 CanPlayerJoin.Success = False
@@ -342,7 +335,6 @@ Public Function CanPlayerJoin(ByRef instance As t_Lobby, ByVal UserIndex As Inte
                 Exit Function
             End If
         Next i
-
         CanPlayerJoin.Success = True
         CanPlayerJoin.Message = 0
     End With
@@ -415,7 +407,6 @@ Public Function AddPlayerOrGroup(ByRef instance As t_Lobby, ByVal UserIndex As I
                 Exit Function
             End If
             Dim i As Integer
-
             For i = 1 To UBound(.Grupo.Miembros)
                 If IsValidUserRef(.Grupo.Miembros(i)) Then
                     AddPlayerOrGroup = CanPlayerJoin(instance, .Grupo.Miembros(i).ArrayIndex)
@@ -426,13 +417,11 @@ Public Function AddPlayerOrGroup(ByRef instance As t_Lobby, ByVal UserIndex As I
                     End If
                 End If
             Next i
-
             For i = 1 To UBound(.Grupo.Miembros)
                 If IsValidUserRef(.Grupo.Miembros(i)) Then
                     AddPlayerOrGroup = AddPlayer(instance, .Grupo.Miembros(i).ArrayIndex, instance.NextTeamId)
                 End If
             Next i
-
             instance.NextTeamId = instance.NextTeamId + 1
         Else
             AddPlayerOrGroup = CanPlayerJoin(instance, UserIndex)
@@ -472,11 +461,9 @@ End Sub
 Public Sub SummonAll(ByRef instance As t_Lobby)
     On Error GoTo ReturnAllPlayer_Err
     Dim i As Integer
-
     For i = 0 To instance.RegisteredPlayers - 1
         Call SummonPlayer(instance, i)
     Next i
-
     Exit Sub
 ReturnAllPlayer_Err:
     Call TraceError(Err.Number, Err.Description, "ModLobby.SummonAll", Erl)
@@ -504,11 +491,9 @@ End Sub
 Public Sub ReturnAllPlayers(ByRef instance As t_Lobby)
     On Error GoTo ReturnAllPlayer_Err
     Dim i As Integer
-
     For i = 0 To instance.RegisteredPlayers - 1
         Call ReturnPlayer(instance, i)
     Next i
-
     Exit Sub
 ReturnAllPlayer_Err:
     Call TraceError(Err.Number, Err.Description, "ModLobby.ReturnAllPlayer", Erl)
@@ -519,11 +504,9 @@ Public Sub CancelLobby(ByRef instance As t_Lobby)
     instance.Canceled = True
     If instance.InscriptionPrice > 0 Then
         Dim i As Integer
-
         For i = 0 To instance.RegisteredPlayers - 1
             Call GiveGoldToPlayer(instance, i, instance.InscriptionPrice)
         Next i
-
     End If
     Call ReturnAllPlayers(instance)
     Call UpdateLobbyState(instance, Closed)
@@ -552,7 +535,6 @@ End Function
 Public Sub ListPlayers(ByRef instance As t_Lobby, ByVal UserIndex As Integer)
     On Error GoTo ListPlayers_Err
     Dim i As Integer
-
     For i = 0 To instance.RegisteredPlayers - 1
         If instance.Players(i).Connected And IsValidUserRef(instance.Players(i).User) Then
             Call WriteConsoleMsg(UserIndex, i & ") " & UserList(instance.Players(i).User.ArrayIndex).name, e_FontTypeNames.FONTTYPE_INFOBOLD)
@@ -560,7 +542,6 @@ Public Sub ListPlayers(ByRef instance As t_Lobby, ByVal UserIndex As Integer)
             Call WriteConsoleMsg(UserIndex, i & ") " & "Disconnected player.", e_FontTypeNames.FONTTYPE_New_Verde_Oscuro)
         End If
     Next i
-
     Exit Sub
 ListPlayers_Err:
     Call TraceError(Err.Number, Err.Description, "ModLobby.ListPlayers", Erl)
@@ -619,7 +600,6 @@ Public Sub UpdateWaitingForPlayers(ByVal frametime As Long, ByRef instance As t_
             If instance.IsGlobal Then
                 Call BroadcastOpenLobby(instance)
             Else
-
                 For i = 0 To instance.RegisteredPlayers - 1
                     If IsValidUserRef(instance.Players(i).User) Then
                         Dim Seconds As Long
@@ -633,7 +613,6 @@ Public Sub UpdateWaitingForPlayers(ByVal frametime As Long, ByRef instance As t_
                                 instance.MaxPlayers & "¬" & instance.MinPlayers, e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1728=En este momento hay ¬1 / ¬2 y se requiere un minimo de ¬3 para que pueda iniciar
                     End If
                 Next i
-
             End If
         End If
     End If
@@ -641,13 +620,11 @@ Public Sub UpdateWaitingForPlayers(ByVal frametime As Long, ByRef instance As t_
         If instance.RegisteredPlayers >= instance.MinPlayers Then
             Call StartLobby(instance, -1)
         Else
-
             For i = 0 To instance.RegisteredPlayers - 1
                 If IsValidUserRef(instance.Players(i).User) Then
                     Call SendData(SendTarget.ToIndex, instance.Players(i).User.ArrayIndex, PrepareMessageLocaleMsg(1729, "", e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1729=Evento cancelado por falta de jugadores
                 End If
             Next i
-
             Call CancelLobby(instance)
         End If
     Else
@@ -693,11 +670,9 @@ End Sub
 
 Public Sub RegisterDisconnectedUser(ByVal DisconnectedUserIndex As Integer)
     Dim i As Integer
-
     For i = 0 To ActiveLobby.currentIndex
         Call RegisterDisconnectedUserOnLobby(LobbyList(i), DisconnectedUserIndex)
     Next i
-
 End Sub
 
 Public Sub RegisterDisconnectedUserOnLobby(ByRef instance As t_Lobby, ByVal DisconnectedUserIndex As Integer)
@@ -706,7 +681,6 @@ Public Sub RegisterDisconnectedUserOnLobby(ByRef instance As t_Lobby, ByVal Disc
         Exit Sub
     End If
     Dim i As Integer
-
     For i = 0 To instance.RegisteredPlayers - 1
         If instance.Players(i).User.ArrayIndex = DisconnectedUserIndex And IsValidUserRef(instance.Players(i).User) Then
             instance.Players(i).Connected = False
@@ -720,7 +694,6 @@ Public Sub RegisterDisconnectedUserOnLobby(ByRef instance As t_Lobby, ByVal Disc
             Exit Sub
         End If
     Next i
-
     Exit Sub
 RegisterDisconnectedUser_Err:
     Call TraceError(Err.Number, Err.Description, "ModLobby.RegisterDisconnectedUser", Erl)
@@ -728,11 +701,9 @@ End Sub
 
 Public Sub RegisterReconnectedUser(ByVal DisconnectedUserIndex As Integer)
     Dim i As Integer
-
     For i = 0 To ActiveLobby.currentIndex
         Call RegisterReconnectedUserOnLobby(LobbyList(i), DisconnectedUserIndex)
     Next i
-
 End Sub
 
 Public Sub RegisterReconnectedUserOnLobby(ByRef instance As t_Lobby, ByVal UserIndex As Integer)
@@ -743,7 +714,6 @@ Public Sub RegisterReconnectedUserOnLobby(ByRef instance As t_Lobby, ByVal UserI
     Dim i      As Integer
     Dim UserId As Long
     UserId = UserList(UserIndex).Id
-
     For i = 0 To instance.RegisteredPlayers - 1
         If instance.Players(i).UserId = UserId Then
             instance.Players(i).Connected = True
@@ -758,7 +728,6 @@ Public Sub RegisterReconnectedUserOnLobby(ByRef instance As t_Lobby, ByVal UserI
             Exit Sub
         End If
     Next i
-
     Exit Sub
 RegisterReconnectedUser_Err:
     Call TraceError(Err.Number, Err.Description, "ModLobby.RegisterReconnectedUser", Erl)
@@ -912,7 +881,6 @@ Private Function GetHigherLvlWithoutTeam(ByRef instance As t_Lobby) As Integer
     Dim currentIndex    As Integer
     currentMaxLevel = 0
     currentIndex = -1
-
     For i = 0 To instance.RegisteredPlayers - 1
         If instance.Players(i).team <= 0 Then
             If IsValidUserRef(instance.Players(i).User) Then
@@ -923,7 +891,6 @@ Private Function GetHigherLvlWithoutTeam(ByRef instance As t_Lobby) As Integer
             End If
         End If
     Next i
-
     GetHigherLvlWithoutTeam = currentIndex
 End Function
 
@@ -942,23 +909,19 @@ Public Sub SortTeams(ByRef instance As t_Lobby)
         MaxPossiblePlayers = MaxPossiblePlayers * TeamCount
     End If
     Dim i As Integer
-
     For i = instance.RegisteredPlayers - 1 To MaxPossiblePlayers Step -1
         If IsValidUserRef(instance.Players(i).User) Then
             Call WriteLocaleMsg(instance.Players(i).User.ArrayIndex, MsgNotEnoughPlayerForTeam, e_FontTypeNames.FONTTYPE_INFO)
         End If
         Call KickPlayer(instance, i)
     Next i
-
     TeamCount = instance.RegisteredPlayers / instance.TeamSize
     currentIndex = GetHigherLvlWithoutTeam(instance)
     Dim CurrentAssignTeam As Integer
     Dim Direction         As Integer
     Direction = 1
     CurrentAssignTeam = 1
-
     While currentIndex >= 0
-
         instance.Players(currentIndex).team = CurrentAssignTeam
         UserList(instance.Players(currentIndex).User.ArrayIndex).flags.CurrentTeam = CurrentAssignTeam
         CurrentAssignTeam = CurrentAssignTeam + Direction
@@ -970,9 +933,7 @@ Public Sub SortTeams(ByRef instance As t_Lobby)
             CurrentAssignTeam = 1
         End If
         currentIndex = GetHigherLvlWithoutTeam(instance)
-
     Wend
-
     instance.TeamSortDone = True
     Exit Sub
 SortTeams_Err:
@@ -993,14 +954,12 @@ Public Function AllPlayersReady(ByRef instance As t_Lobby) As t_response
     Dim Ret As t_response
     Dim i   As Integer
     Ret.Success = True
-
     For i = 0 To instance.RegisteredPlayers - 1
         If Not IsValidUserRef(instance.Players(i).User) Then
             Ret.Success = False
             Ret.Message = MsgDisconnectedPlayers
         End If
     Next i
-
     AllPlayersReady = Ret
     Exit Function
 AllPlayersReady_Err:
@@ -1015,14 +974,12 @@ Public Function GetOpenLobbyList(ByRef IdList() As Integer) As Integer
         Exit Function
     End If
     ReDim IdList(ActiveLobby.currentIndex) As Integer
-
     For i = 0 To ActiveLobby.currentIndex
         If LobbyList(ActiveLobby.IndexInfo(i)).State = AcceptingPlayers And LobbyList(ActiveLobby.IndexInfo(i)).IsPublic Then
             IdList(OpenCount) = ActiveLobby.IndexInfo(i)
             OpenCount = OpenCount + 1
         End If
     Next i
-
     GetOpenLobbyList = OpenCount
 End Function
 

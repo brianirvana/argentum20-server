@@ -130,13 +130,11 @@ Public Property Let TheString(ByRef sThis As String)
         m_iLen = 0
     Else
         If m_iLen < lLen Then
-
             ' Need to expand string to accommodate:
             Do
                 m_sString = m_sString & Space$(m_iChunkSize \ 2)
                 m_iLen = m_iLen + m_iChunkSize
             Loop While m_iLen < lLen
-
         End If
         CopyMemory ByVal StrPtr(m_sString), ByVal StrPtr(sThis), lLen
         m_iPos = lLen
@@ -175,11 +173,9 @@ Public Sub Append(ByRef sThis As String)
     If lLenPlusPos > m_iLen Then
         Dim lTemp As Long
         lTemp = m_iLen
-
         Do While lTemp < lLenPlusPos
             lTemp = lTemp + m_iChunkSize
         Loop
-
         m_sString = m_sString & Space$((lTemp - m_iLen) \ 2)
         m_iLen = lTemp
     End If
@@ -283,11 +279,9 @@ Public Sub HeapMinimize()
     ' are allocated:
     If (m_iLen - m_iPos) > m_iChunkSize Then
         iLen = m_iLen
-
         Do While (iLen - m_iPos) > m_iChunkSize
             iLen = iLen - m_iChunkSize
         Loop
-
         m_sString = Left$(m_sString, iLen \ 2)
         m_iLen = iLen
     End If

@@ -95,12 +95,10 @@ Public Function SumarTiempo(segundos As Integer) As String
     t = "00:00:00" 'Lo inicializamos en 0 horas, 0 minutos, 0 segundos
     a = Format("00:00:01", "hh:mm:ss") 'guardamos en una variable el formato de 1 segundos
     If segundos > 0 Then
-
         For x = 1 To segundos 'hacemos segundo a segundo
             b = Format(t, "hh:mm:ss") 'En B guardamos un formato de hora:minuto:segundo segun lo que tenia T
             t = Format(TimeValue(a) + TimeValue(b), "hh:mm:ss") 'asignamos a T la suma de A + B (osea, sumamos logicamente 1 segundo)
         Next x
-
     End If
     SumarTiempo = t 'a la funcion le damos el valor que hallamos en T
     Exit Function

@@ -56,11 +56,9 @@ Public Sub InitTesoro()
     End If
     ReDim TesoroMapa(1 To CantidadMapas)
     Dim i As Integer
-
     For i = 1 To CantidadMapas
         TesoroMapa(i) = val(Lector.GetValue("Tesoros", "Mapa" & i))
     Next
-
     Dim TiposDeTesoros As Integer
     TiposDeTesoros = val(Lector.GetValue("Tesoros", "TiposDeTesoros"))
     If TiposDeTesoros <= 0 Then
@@ -69,7 +67,6 @@ Public Sub InitTesoro()
     End If
     ReDim TesoroRegalo(1 To TiposDeTesoros)
     Dim Fields() As String, str As String
-
     For i = 1 To TiposDeTesoros
         str = Lector.GetValue("Tesoros", "Tesoro" & i)
         If LenB(str) Then
@@ -82,22 +79,17 @@ Public Sub InitTesoro()
             End If
         End If
     Next
-
     Dim NPCs As Integer
     NPCs = val(Lector.GetValue("Criatura", "NPCs"))
     ReDim TesoroNPC(1 To NPCs)
-
     For i = 1 To NPCs
         TesoroNPC(i) = val(Lector.GetValue("Criatura", "NPC" & i))
     Next
-
     CantidadMapas = val(Lector.GetValue("Criatura", "CantidadMapas"))
     ReDim TesoroNPCMapa(1 To CantidadMapas)
-
     For i = 1 To CantidadMapas
         TesoroNPCMapa(i) = val(Lector.GetValue("Criatura", "Mapa" & i))
     Next
-
     Set Lector = Nothing
     Exit Sub
 InitTesoro_Err:
@@ -117,11 +109,9 @@ Public Sub InitRegalo()
     End If
     ReDim RegaloMapa(1 To CantidadMapas)
     Dim i As Integer
-
     For i = 1 To CantidadMapas
         RegaloMapa(i) = val(Lector.GetValue("Regalos", "Mapa" & i))
     Next
-
     Dim TiposDeRegalos As Integer
     TiposDeRegalos = val(Lector.GetValue("Regalos", "TiposDeRegalos"))
     If TiposDeRegalos <= 0 Then
@@ -130,7 +120,6 @@ Public Sub InitRegalo()
     End If
     ReDim RegaloRegalo(1 To TiposDeRegalos)
     Dim Fields() As String, str As String
-
     For i = 1 To TiposDeRegalos
         str = Lector.GetValue("Regalos", "Regalo" & i)
         If LenB(str) Then
@@ -143,7 +132,6 @@ Public Sub InitRegalo()
             End If
         End If
     Next
-
     Set Lector = Nothing
     Exit Sub
 InitRegalo_Err:
@@ -158,7 +146,6 @@ Public Sub PerderTesoro()
     TesoroY = RandomNumber(20, 80)
     Dim Iterations As Integer
     Iterations = 0
-
     Do While Not EncontreLugar
         Iterations = Iterations + 1
         If (MapData(TesoroNumMapa, TesoroX, TesoroY).Blocked And e_Block.ALL_SIDES) <> e_Block.ALL_SIDES Then
@@ -179,7 +166,6 @@ Public Sub PerderTesoro()
             TesoroNumMapa = TesoroMapa(RandomNumber(1, UBound(TesoroMapa)))
         End If
     Loop
-
     BusquedaTesoroActiva = True
     Call MakeObj(TesoroRegalo(RandomNumber(1, UBound(TesoroRegalo))), TesoroNumMapa, TesoroX, TesoroY, False)
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1567, get_map_name(TesoroNumMapa) & "¬" & TesoroNumMapa, e_FontTypeNames.FONTTYPE_TALK))  'Msg1699=Eventos> Rondan rumores que hay un tesoro enterrado en el mapa: ¬1(¬2) ¿Quien será el afortunado que lo encuentre?
@@ -198,7 +184,6 @@ Public Sub PerderRegalo()
     Dim Iterations As Integer
     Iterations = 0
     If RegaloNumMapa <= 0 Then Exit Sub
-
     Do While Not EncontreLugar
         Iterations = Iterations + 1
         If (MapData(RegaloNumMapa, RegaloX, RegaloY).Blocked And e_Block.ALL_SIDES) <> e_Block.ALL_SIDES Then
@@ -218,7 +203,6 @@ Public Sub PerderRegalo()
             RegaloNumMapa = RegaloMapa(RandomNumber(1, UBound(RegaloMapa)))
         End If
     Loop
-
     BusquedaRegaloActiva = True
     Call MakeObj(RegaloRegalo(RandomNumber(1, UBound(RegaloRegalo))), RegaloNumMapa, RegaloX, RegaloY, False)
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1568, get_map_name(RegaloNumMapa) & "¬" & RegaloNumMapa, e_FontTypeNames.FONTTYPE_TALK))  'Msg1700=Eventos> De repente ha surgido un item maravilloso en el mapa: ¬1(¬2) ¿Quien será el valiente que lo encuentre? ¡MUCHO CUIDADO!

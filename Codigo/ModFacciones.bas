@@ -324,7 +324,6 @@ Private Sub DarRecompensas(ByVal UserIndex As Integer)
         If ultimaRecompensa >= rank Then
             Exit Sub
         End If
-
         ' Esto puede parecer ineficiente, pero DarRecompensas sucede pocas veces en el juego.
         ' Por ahora, iterar por todas las recompensas es mas facil que mantener una estructura mas
         ' complicada (como diccionarios). El total de recompensas se puede aproximar como: `C * R * F * nR`
@@ -346,7 +345,6 @@ Private Sub DarRecompensas(ByVal UserIndex As Integer)
                 End If
             End If
         Next i
-
         ' Guardamos que el usuario recibio las recompensas de su rank.
         If .Faccion.Status = e_Facciones.Armada Or .Faccion.Status = e_Facciones.consejo Then
             .Faccion.RecibioArmaduraReal = rank
@@ -365,7 +363,6 @@ Private Sub PerderItemsFaccionarios(ByVal UserIndex As Integer)
     Dim i         As Byte
     Dim ItemIndex As Integer
     With UserList(UserIndex)
-
         For i = 1 To .CurrentInventorySlots
             ItemIndex = .invent.Object(i).ObjIndex
             If ItemIndex > 0 Then
@@ -375,7 +372,6 @@ Private Sub PerderItemsFaccionarios(ByVal UserIndex As Integer)
                 End If
             End If
         Next i
-
     End With
     Exit Sub
 PerderItemsFaccionarios_Err:

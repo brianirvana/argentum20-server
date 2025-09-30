@@ -73,7 +73,6 @@ Sub UpdateBanUserInv(ByVal UpdateAll As Boolean, ByVal UserIndex As Integer, ByV
             Call SendBanObj(UserIndex, Slot, NullObj)
         End If
     Else
-
         'Actualiza todos los slots
         For LoopC = 1 To MAX_BANCOINVENTORY_SLOTS
             'Actualiza el inventario
@@ -83,7 +82,6 @@ Sub UpdateBanUserInv(ByVal UpdateAll As Boolean, ByVal UserIndex As Integer, ByV
                 Call SendBanObj(UserIndex, LoopC, NullObj)
             End If
         Next LoopC
-
     End If
     Exit Sub
 UpdateBanUserInv_Err:
@@ -136,7 +134,6 @@ Function UserReciveObj(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, By
     If slotvalido = False Then
         '¿Ya tiene un objeto de este tipo?
         Slot = 1
-
         Do Until UserList(UserIndex).invent.Object(Slot).ObjIndex = obji And UserList(UserIndex).invent.Object(Slot).amount + Cantidad <= MAX_INVENTORY_OBJS And UserList( _
                 UserIndex).invent.Object(Slot).ElementalTags = UserList(UserIndex).BancoInvent.Object(ObjIndex).ElementalTags
             Slot = Slot + 1
@@ -144,11 +141,9 @@ Function UserReciveObj(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, By
                 Exit Do
             End If
         Loop
-
         'Sino se fija por un slot vacio
         If Slot > UserList(UserIndex).CurrentInventorySlots Then
             Slot = 1
-
             Do Until UserList(UserIndex).invent.Object(Slot).ObjIndex = 0
                 Slot = Slot + 1
                 If Slot > UserList(UserIndex).CurrentInventorySlots Then
@@ -156,7 +151,6 @@ Function UserReciveObj(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, By
                     Exit Function
                 End If
             Loop
-
             UserList(UserIndex).invent.NroItems = UserList(UserIndex).invent.NroItems + 1
         End If
     End If
@@ -238,7 +232,6 @@ Function UserDejaObj(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVa
     If slotvalido = False Then
         '¿Ya tiene un objeto de este tipo?
         Slot = 1
-
         Do Until UserList(UserIndex).BancoInvent.Object(Slot).ObjIndex = obji And UserList(UserIndex).BancoInvent.Object(Slot).ElementalTags = UserList(UserIndex).invent.Object( _
                 ObjIndex).ElementalTags And UserList(UserIndex).BancoInvent.Object(Slot).amount + Cantidad <= MAX_INVENTORY_OBJS
             Slot = Slot + 1
@@ -246,11 +239,9 @@ Function UserDejaObj(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVa
                 Exit Do
             End If
         Loop
-
         'Sino se fija por un slot vacio antes del slot devuelto
         If Slot > MAX_BANCOINVENTORY_SLOTS Then
             Slot = 1
-
             Do Until UserList(UserIndex).BancoInvent.Object(Slot).ObjIndex = 0
                 Slot = Slot + 1
                 If Slot > MAX_BANCOINVENTORY_SLOTS Then
@@ -258,7 +249,6 @@ Function UserDejaObj(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVa
                     Exit Function
                 End If
             Loop
-
             UserList(UserIndex).BancoInvent.NroItems = UserList(UserIndex).BancoInvent.NroItems + 1
         End If
     End If
@@ -290,14 +280,12 @@ Sub SendUserBovedaTxt(ByVal sendIndex As Integer, ByVal UserIndex As Integer)
     Dim j As Integer
     Call WriteConsoleMsg(sendIndex, UserList(UserIndex).name, e_FontTypeNames.FONTTYPE_INFO)
     Call WriteConsoleMsg(sendIndex, PrepareMessageLocaleMsg(1939, UserList(UserIndex).BancoInvent.NroItems, e_FontTypeNames.FONTTYPE_INFO)) ' Msg1939= Tiene ¬1 objetos.
-
     For j = 1 To MAX_BANCOINVENTORY_SLOTS
         If UserList(UserIndex).BancoInvent.Object(j).ObjIndex > 0 Then
             Call WriteConsoleMsg(sendIndex, PrepareMessageLocaleMsg(1940, j & "¬" & ObjData(UserList(UserIndex).BancoInvent.Object(j).ObjIndex).name & "¬" & UserList( _
                     UserIndex).BancoInvent.Object(j).amount, e_FontTypeNames.FONTTYPE_INFO)) ' Msg1940= Objeto ¬1 ¬2 Cantidad:¬3
         End If
     Next
-
     Exit Sub
 SendUserBovedaTxt_Err:
     Call TraceError(Err.Number, Err.Description, "modBanco.SendUserBovedaTxt", Erl)

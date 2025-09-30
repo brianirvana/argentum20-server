@@ -44,7 +44,6 @@ Private m_coleccion As New Collection
 Public Function MaxPersonajes(sIp As String) As Boolean
     On Error GoTo MaxPersonajes_Err
     Dim i As Long
-
     For i = 1 To m_coleccion.count
         If m_coleccion.Item(i).IP = sIp Then
             m_coleccion.Item(i).PersonajesCreados = m_coleccion.Item(i).PersonajesCreados + 1
@@ -53,7 +52,6 @@ Public Function MaxPersonajes(sIp As String) As Boolean
             Exit Function
         End If
     Next i
-
     MaxPersonajes = False
     Exit Function
     Exit Function
@@ -64,11 +62,9 @@ End Function
 Public Function VaciarColeccion()
     On Error GoTo ErrHandler
     Dim i As Integer
-
     For i = 1 To m_coleccion.count
         Call m_coleccion.Remove(1)
     Next
-
     Exit Function
 ErrHandler:
     Call LogError("Error en RestarConexion " & Err.Description)

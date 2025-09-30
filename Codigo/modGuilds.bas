@@ -87,16 +87,12 @@ Public Sub LoadGuildsDB()
     CANTIDADDECLANES = RS.RecordCount
     i = 0
     If Not RS.RecordCount = 0 Then
-
         While Not RS.EOF
-
             i = i + 1
             Set guilds(i) = New clsClan
             Call guilds(i).InitFromRecord(RS, i)
             RS.MoveNext
-
         Wend
-
     End If
     Exit Sub
 LoadGuildsDB_Err:
@@ -276,11 +272,9 @@ Public Function CrearNuevoClan(ByVal FundadorIndex As Integer, _
         Call guilds(CANTIDADDECLANES).ConectarMiembro(FundadorIndex)
         UserList(FundadorIndex).GuildIndex = CANTIDADDECLANES
         Call RefreshCharStatus(FundadorIndex)
-
         For i = 1 To CANTIDADDECLANES - 1
             Call guilds(i).ProcesarFundacionDeOtroClan
         Next i
-
     Else
         refError = 2022 'No hay más slots para fundar clanes. Consulte a un administrador.
         Exit Function
@@ -535,7 +529,6 @@ Private Function GuildNameValido(ByVal cad As String) As Boolean
     Dim i   As Integer
     'old function by morgo
     cad = LCase$(cad)
-
     For i = 1 To Len(cad)
         car = Asc(mid$(cad, i, 1))
         If (car < 97 Or car > 122) And (car <> 255) And (car <> 32) Then
@@ -543,7 +536,6 @@ Private Function GuildNameValido(ByVal cad As String) As Boolean
             Exit Function
         End If
     Next i
-
     GuildNameValido = True
     Exit Function
 GuildNameValido_Err:
@@ -555,12 +547,10 @@ Public Function YaExiste(ByVal GuildName As String) As Boolean
     Dim i As Integer
     YaExiste = False
     GuildName = UCase$(GuildName)
-
     For i = 1 To CANTIDADDECLANES
         YaExiste = (UCase$(guilds(i).GuildName) = GuildName)
         If YaExiste Then Exit Function
     Next i
-
     Exit Function
 YaExiste_Err:
     Call TraceError(Err.Number, Err.Description, "modGuilds.YaExiste", Erl)
@@ -572,14 +562,12 @@ Public Function GuildIndex(ByRef GuildName As String) As Integer
     Dim i As Integer
     GuildIndex = 0
     GuildName = UCase$(GuildName)
-
     For i = 1 To CANTIDADDECLANES
         If UCase$(guilds(i).GuildName) = GuildName Then
             GuildIndex = i
             Exit Function
         End If
     Next i
-
     Exit Function
 GuildIndex_Err:
     Call TraceError(Err.Number, Err.Description, "modGuilds.GuildIndex", Erl)
@@ -590,17 +578,13 @@ Public Function m_ListaDeMiembrosOnline(ByVal UserIndex As Integer, ByVal GuildI
     Dim i As Integer
     If GuildIndex > 0 And GuildIndex <= CANTIDADDECLANES Then
         i = guilds(GuildIndex).m_Iterador_ProximoUserIndex
-
         While i > 0
-
             'No mostramos dioses y admins
             If i <> UserIndex And ((UserList(i).flags.Privilegios And (e_PlayerType.User Or e_PlayerType.Consejero Or e_PlayerType.SemiDios)) <> 0 Or (UserList( _
                     UserIndex).flags.Privilegios And (e_PlayerType.Dios Or e_PlayerType.Admin) <> 0)) Then m_ListaDeMiembrosOnline = m_ListaDeMiembrosOnline & UserList(i).name & _
                     ","
             i = guilds(GuildIndex).m_Iterador_ProximoUserIndex
-
         Wend
-
     End If
     If Len(m_ListaDeMiembrosOnline) > 0 Then
         m_ListaDeMiembrosOnline = Left$(m_ListaDeMiembrosOnline, Len(m_ListaDeMiembrosOnline) - 1)
@@ -618,11 +602,9 @@ Public Function PrepareGuildsList() As String()
         ReDim tStr(0) As String
     Else
         ReDim tStr(CANTIDADDECLANES - 1) As String
-
         For i = 1 To CANTIDADDECLANES
             tStr(i - 1) = guilds(i).GuildName & "-" & guilds(i).Alineacion
         Next i
-
     End If
     PrepareGuildsList = tStr
     Exit Function
@@ -845,11 +827,9 @@ Public Sub SendDetallesPersonaje(ByVal UserIndex As Integer, ByVal Personaje As 
     HasRequest = guilds(GI).HasGuildRequest(CharId)
     If Not HasRequest Then
         list = guilds(GI).GetMemberList()
-
         For i = 0 To UBound(list())
             If CharId = list(i) Then Exit For
         Next i
-
         If i > UBound(list()) Then
             Call WriteConsoleMsg(UserIndex, PrepareMessageLocaleMsg(1948, vbNullString, e_FontTypeNames.FONTTYPE_GUILDMSG)) ' Msg1948=El personaje no es ni aspirante ni miembro del clan.
             Exit Sub
@@ -897,14 +877,12 @@ Public Function a_NuevoAspirante(ByVal UserIndex As Integer, ByRef clan As Strin
     Dim NuevoGuildAspirantes() As String
     NuevoGuildAspirantes = guilds(NuevoGuildIndex).GetAspirantes()
     Dim i As Long
-
     For i = 0 To UBound(NuevoGuildAspirantes)
         If UserList(UserIndex).name = NuevoGuildAspirantes(i) Then
             refError = 2009 'Ya has enviado una solicitud a este clan.
             Exit Function
         End If
     Next
-
     ViejoSolicitado = GetVar(CharPath & UserList(UserIndex).name & ".chr", "GUILD", "ASPIRANTEA")
     If LenB(ViejoSolicitado) <> 0 Then
         'borramos la vieja solicitud
@@ -1063,18 +1041,14 @@ Sub CheckClanExp(ByVal UserIndex As Integer, ByVal ExpDar As Integer)
         End If
         Dim MemberIndex As Byte
         MemberIndex = modGuilds.m_Iterador_ProximoUserIndex(.GuildIndex)
-
         While MemberIndex > 0
-
             If UserList(MemberIndex).ConnectionDetails.ConnIDValida Then
                 If UserList(MemberIndex).ChatCombate = 1 Then
                     Call SendData(SendTarget.ToIndex, MemberIndex, PrepareMessageLocaleMsg(1789, ExpDar, e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1789=Clan> El clan ha ganado ¬1 puntos de experiencia.
                 End If
             End If
             MemberIndex = modGuilds.m_Iterador_ProximoUserIndex(.GuildIndex)
-
         Wend
-
         ExpActual = ExpActual + ExpDar
         If ExpActual >= ExpNecesaria Then
             'Checkea otra vez, esto sucede si tiene mas EXP y puede saltarse el maximo
@@ -1207,14 +1181,12 @@ Public Function GetGuildMemberList(ByVal GuildName As String) As Long()
     On Error GoTo GetGuildMemberList_Err
     Dim i As Integer
     GuildName = UCase$(GuildName)
-
     For i = LBound(guilds) To UBound(guilds)
         If UCase$(guilds(i).GuildName) = GuildName Then
             GetGuildMemberList = guilds(i).GetMemberList()
             Exit Function
         End If
     Next i
-
     Dim EmptyList(0) As Long
     GetGuildMemberList = EmptyList
     Exit Function

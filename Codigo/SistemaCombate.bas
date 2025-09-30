@@ -382,6 +382,17 @@ Private Sub UserDamageNpc(ByVal UserIndex As Integer, ByVal NpcIndex As Integer,
             Call CalculateElementalTagsModifiers(UserIndex, NpcIndex, Damage)
         End If
         If Damage < 0 Then Damage = 0
+        If IsFeatureEnabled("healers_and_tanks") And .clase = e_Class.Warrior Then
+            Dim Calc As Integer
+            Calc = Damage * WarriorLifeStealOnHitMultiplier
+            .Stats.MinHp = .Stats.MinHp + Calc
+            If .Stats.MinHp > .Stats.MaxHp Then
+                .Stats.MinHp = .Stats.MaxHp
+            End If
+            Call WriteUpdateHP(UserIndex)
+            'no wrapper senddata because of extra params
+            Call modSendData.SendData(ToIndex, UserIndex, PrepareMessageTextOverTile(Calc, .pos.x, .pos.y, vbGreen, 1300, -10, True))
+        End If
         ' Golpe crítico
         If PuedeGolpeCritico(UserIndex) Then
             ' Si acertó - Doble chance contra NPCs
@@ -559,6 +570,7 @@ Public Function NpcAtacaUser(ByVal NpcIndex As Integer, ByVal UserIndex As Integ
     End If
     NpcAtacaUser = True
     Call AllMascotasAtacanNPC(NpcIndex, UserIndex)
+    UserList(UserIndex).Counters.EnCombate = IntervaloEnCombate
     If Not IsValidUserRef(NpcList(NpcIndex).TargetUser) Then
         Call SetUserRef(NpcList(NpcIndex).TargetUser, UserIndex)
     End If
@@ -1563,7 +1575,6 @@ Private Sub CalcularDarExpGrupal(ByVal UserIndex As Integer, ByVal NpcIndex As I
         If Not IsValidUserRef(.Grupo.Lider) Then Exit Sub
         Dim LiderIndex As Integer
         LiderIndex = .Grupo.Lider.ArrayIndex
-
         For i = 1 To UserList(LiderIndex).Grupo.CantidadMiembros
             If IsValidUserRef(UserList(LiderIndex).Grupo.Miembros(i)) Then
                 Index = UserList(LiderIndex).Grupo.Miembros(i).ArrayIndex
@@ -1576,11 +1587,9 @@ Private Sub CalcularDarExpGrupal(ByVal UserIndex As Integer, ByVal NpcIndex As I
                 End If
             End If
         Next
-
         ' Verificar si el líder está en otro mapa
         If UserList(LiderIndex).pos.Map <> .pos.Map Then
             CantidadMiembrosValidos = CantidadMiembrosValidos + 1 ' Se cuenta como un miembro más para dividir la exp
-
             ' Avisamos a los miembros del grupo
             For i = 1 To UserList(LiderIndex).Grupo.CantidadMiembros
                 If IsValidUserRef(UserList(LiderIndex).Grupo.Miembros(i)) Then
@@ -1592,7 +1601,6 @@ Private Sub CalcularDarExpGrupal(ByVal UserIndex As Integer, ByVal NpcIndex As I
                     End If
                 End If
             Next i
-
         End If
         If CantidadMiembrosValidos = 0 Then Exit Sub
         If SvrConfig.GetValue("ExpMult") > 0 Then
@@ -1601,7 +1609,6 @@ Private Sub CalcularDarExpGrupal(ByVal UserIndex As Integer, ByVal NpcIndex As I
         ExpaDar = ExpaDar / CantidadMiembrosValidos
         Dim ExpUser As Long, DeltaLevel As Integer, ExpBonusForUser As Double
         If ExpaDar > 0 Then
-
             For i = 1 To UserList(LiderIndex).Grupo.CantidadMiembros
                 If IsValidUserRef(UserList(LiderIndex).Grupo.Miembros(i)) Then
                     Index = UserList(LiderIndex).Grupo.Miembros(i).ArrayIndex
@@ -1651,7 +1658,6 @@ Private Sub CalcularDarExpGrupal(ByVal UserIndex As Integer, ByVal NpcIndex As I
                     End If
                 End If
             Next i
-
         End If
     End With
     Exit Sub
@@ -1696,7 +1702,6 @@ Private Sub CalcularDarOroGrupal(ByVal UserIndex As Integer, ByVal GiveGold As L
     Dim Lider As Integer
     Lider = UserList(UserIndex).Grupo.Lider.ArrayIndex
     OroDar = OroDar / UserList(UserList(UserIndex).Grupo.Lider.ArrayIndex).Grupo.CantidadMiembros
-
     For i = 1 To UserList(Lider).Grupo.CantidadMiembros
         If IsValidUserRef(UserList(Lider).Grupo.Miembros(i)) Then
             Index = UserList(Lider).Grupo.Miembros(i).ArrayIndex
@@ -1713,7 +1718,6 @@ Private Sub CalcularDarOroGrupal(ByVal UserIndex As Integer, ByVal GiveGold As L
             End If
         End If
     Next i
-
     Exit Sub
 CalcularDarOroGrupal_Err:
     Call TraceError(Err.Number, Err.Description, "SistemaCombate.CalcularDarOroGrupal", Erl)
@@ -1837,7 +1841,6 @@ Sub AllMascotasAtacanUser(ByVal victim As Integer, ByVal Maestro As Integer)
     Dim iCount       As Long
     Dim mascotaIndex As Integer
     With UserList(Maestro)
-
         For iCount = 1 To MAXMASCOTAS
             mascotaIndex = .MascotasIndex(iCount).ArrayIndex
             If mascotaIndex > 0 Then
@@ -1855,7 +1858,6 @@ Sub AllMascotasAtacanUser(ByVal victim As Integer, ByVal Maestro As Integer)
                 End If
             End If
         Next iCount
-
     End With
     Exit Sub
 AllMascotasAtacanUser_Err:
@@ -1874,7 +1876,6 @@ Public Sub AllMascotasAtacanNPC(ByVal NpcIndex As Integer, ByVal UserIndex As In
     Else
         Exit Sub
     End If
-
     For j = 1 To MAXMASCOTAS
         If IsValidNpcRef(UserList(UserIndex).MascotasIndex(j)) Then
             mascotaIdx = UserList(UserIndex).MascotasIndex(j).ArrayIndex
@@ -1891,7 +1892,6 @@ Public Sub AllMascotasAtacanNPC(ByVal NpcIndex As Integer, ByVal UserIndex As In
             End If
         End If
     Next j
-
     Exit Sub
 AllMascotasAtacanNPC_Err:
     Call TraceError(Err.Number, Err.Description, "SistemaCombate.AllMascotasAtacanNPC", Erl)
@@ -1925,7 +1925,7 @@ Private Function PuedeApuñalar(ByVal UserIndex As Integer) As Boolean
     On Error GoTo PuedeApuñalar_Err
     With UserList(UserIndex)
         If .invent.EquippedWeaponObjIndex > 0 Then
-            PuedeApuñalar = (.clase = e_Class.Assasin Or .Stats.UserSkills(e_Skill.Apuñalar) >= MIN_Apuñalar) And ObjData(.invent.EquippedWeaponObjIndex).Apuñala = 1
+            PuedeApuñalar = (.clase = e_Class.Assasin Or .Stats.UserSkills(e_Skill.Apuñalar) >= MIN_APUÑALAR) And ObjData(.invent.EquippedWeaponObjIndex).Apuñala = 1
         End If
     End With
     Exit Function
@@ -2089,7 +2089,6 @@ Public Sub ThrowArrowToTargetDir(ByVal UserIndex As Integer, ByRef Direction As 
     currentPos = UserList(UserIndex).pos
     TargetPos.Map = currentPos.Map
     Dim step As Integer
-
     For step = 1 To Distance
         TargetPoint.x = Direction.x * (step) + UserList(UserIndex).pos.x
         TargetPoint.y = Direction.y * (step) + UserList(UserIndex).pos.y
@@ -2111,7 +2110,6 @@ Public Sub ThrowArrowToTargetDir(ByVal UserIndex As Integer, ByRef Direction As 
         End If
         currentPos = TargetPos
     Next step
-
     Call ConsumeAmunition(UserIndex)
     Call SendData(SendTarget.ToPCAliveArea, UserIndex, PrepareCreateProjectile(UserList(UserIndex).pos.x, UserList(UserIndex).pos.y, TargetPos.x, TargetPos.y, GetProjectileView( _
             UserList(UserIndex))))
@@ -2287,14 +2285,12 @@ Public Sub CalculateElementalTagsModifiers(ByVal UserIndex As Integer, ByVal Npc
         ' No elemental tags to process
         Exit Sub
     End If
-
     ' Loop over each possible attacker element (0 to 31)
     For attackerIndex = 0 To MAX_ELEMENT_TAGS - 1
         ' Create a bitmask for the current attacker element
         attackerBit = ShiftLeft(1, attackerIndex)
         ' Ensure shift is valid and safe (only 0 to 31)
         If attackerBit <> 0 And IsSet(attackerElementMask, attackerBit) Then
-
             ' Loop over each possible defender element
             For defenderIndex = 0 To MAX_ELEMENT_TAGS - 1
                 defenderBit = ShiftLeft(1, defenderIndex)
@@ -2304,8 +2300,6 @@ Public Sub CalculateElementalTagsModifiers(ByVal UserIndex As Integer, ByVal Npc
                     DmgAcumulator = DmgAcumulator * ElementalMatrixForNpcs(attackerIndex + 1, defenderIndex + 1)
                 End If
             Next defenderIndex
-
         End If
     Next attackerIndex
-
 End Sub

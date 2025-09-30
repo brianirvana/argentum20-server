@@ -60,11 +60,9 @@ Private Cola As Collection
 Public Sub Reset()
     On Error GoTo Reset_Err
     Dim i As Integer
-
     For i = 1 To Me.Longitud
         Cola.Remove FRENTE
     Next i
-
     Exit Sub
 Reset_Err:
     Call TraceError(Err.Number, Err.Description, "cCola.Reset", Erl)
@@ -150,7 +148,6 @@ Public Function Existe(ByVal nombre As String) As Boolean
     Dim i                  As Integer
     Dim NombreEnMayusculas As String
     NombreEnMayusculas = UCase$(nombre)
-
     For i = 1 To Me.Longitud
         v = UCase$(ReadField(1, Me.VerElemento(i), Asc("Ø")))
         If v = NombreEnMayusculas Then
@@ -158,7 +155,6 @@ Public Function Existe(ByVal nombre As String) As Boolean
             Exit Function
         End If
     Next
-
     Existe = False
     Exit Function
 Existe_Err:
@@ -171,7 +167,6 @@ Public Sub Quitar(ByVal nombre As String)
     Dim mensajeSinTimestamp       As String
     Dim posicionUltimoDelimitador As Integer
     Dim i                         As Integer
-
     For i = 1 To Me.Longitud
         mensajeEncoladoCompleto = Me.VerElemento(i)
         posicionUltimoDelimitador = InStrRev(mensajeEncoladoCompleto, "Ø")
@@ -181,7 +176,6 @@ Public Sub Quitar(ByVal nombre As String)
             Exit Sub
         End If
     Next i
-
     Exit Sub
 Quitar_Err:
     Call TraceError(Err.Number, Err.Description, "cCola.Quitar", Erl)

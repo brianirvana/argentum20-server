@@ -35,14 +35,12 @@ Public Function TieneQuest(ByVal UserIndex As Integer, ByVal QuestNumber As Inte
     'Last modified: 27/01/2010 by Amraphen
     '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     Dim i As Integer
-
     For i = 1 To MAXUSERQUESTS
         If UserList(UserIndex).QuestStats.Quests(i).QuestIndex = QuestNumber Then
             TieneQuest = i
             Exit Function
         End If
     Next i
-
     TieneQuest = 0
     Exit Function
 TieneQuest_Err:
@@ -56,14 +54,12 @@ Public Function FreeQuestSlot(ByVal UserIndex As Integer) As Byte
     'Last modified: 27/01/2010 by Amraphen
     '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     Dim i As Integer
-
     For i = 1 To MAXUSERQUESTS
         If UserList(UserIndex).QuestStats.Quests(i).QuestIndex = 0 Then
             FreeQuestSlot = i
             Exit Function
         End If
     Next i
-
     FreeQuestSlot = 0
     Exit Function
 FreeQuestSlot_Err:
@@ -80,46 +76,38 @@ Public Sub FinishQuest(ByVal UserIndex As Integer, ByVal QuestIndex As Integer, 
     With QuestList(QuestIndex)
         'Comprobamos que tenga los objetos.
         If .RequiredOBJs > 0 Then
-
             For i = 1 To .RequiredOBJs
                 If TieneObjetos(.RequiredOBJ(i).ObjIndex, .RequiredOBJ(i).amount, UserIndex) = False Then
                     Call WriteLocaleChatOverHead(UserIndex, "1336", "", NpcList(NpcIndex).Char.charindex, vbYellow) ' Msg1336=No has conseguido todos los objetos que te he pedido.
                     Exit Sub
                 End If
             Next i
-
         End If
         'Comprobamos que haya matado todas las criaturas.
         If .RequiredNPCs > 0 Then
-
             For i = 1 To .RequiredNPCs
                 If .RequiredNPC(i).amount > UserList(UserIndex).QuestStats.Quests(QuestSlot).NPCsKilled(i) Then
                     Call WriteLocaleChatOverHead(UserIndex, "1337", "", NpcList(NpcIndex).Char.charindex, vbYellow) ' Msg1337=No has matado todas las criaturas que te he pedido.
                     Exit Sub
                 End If
             Next i
-
         End If
         If .RequiredSpellCount > 0 Then
-
             For i = 1 To .RequiredSpellCount
                 If Not UserHasSpell(UserIndex, .RequiredSpellList(i)) Then
                     Call WriteLocaleChatOverHead(UserIndex, "1338", Hechizos(.RequiredSpellList(i)).nombre, NpcList(NpcIndex).Char.charindex, vbYellow) ' Msg1338=Necesitas aprender el hechizo: {0}.
                     Exit Sub
                 End If
             Next i
-
         End If
         'Comprobamos que haya targeteado todos los npc
         If .RequiredTargetNPCs > 0 Then
-
             For i = 1 To .RequiredTargetNPCs
                 If .RequiredTargetNPC(i).amount > UserList(UserIndex).QuestStats.Quests(QuestSlot).NPCsTarget(i) Then
                     Call WriteLocaleChatOverHead(UserIndex, "1339", "", NpcList(NpcIndex).Char.charindex, vbYellow) ' Msg1339=No has visitado al npc que te pedi.
                     Exit Sub
                 End If
             Next i
-
         End If
         'Check required skill
         If .RequiredSkill.SkillType > 0 Then
@@ -130,12 +118,10 @@ Public Sub FinishQuest(ByVal UserIndex As Integer, ByVal QuestIndex As Integer, 
         End If
         'Comprobamos que el usuario tenga espacio para recibir los items.
         If .RewardOBJs > 0 Then
-
             'Buscamos la cantidad de slots de inventario libres.
             For i = 1 To UserList(UserIndex).CurrentInventorySlots
                 If UserList(UserIndex).invent.Object(i).ObjIndex = 0 Then InvSlotsLibres = InvSlotsLibres + 1
             Next i
-
             'Nos fijamos si entra
             If InvSlotsLibres < .RewardOBJs Then
                 Call WriteLocaleChatOverHead(UserIndex, "1340", "", NpcList(NpcIndex).Char.charindex, vbYellow) ' Msg1340=No tienes suficiente espacio en el inventario para recibir la recompensa. Vuelve cuando hayas hecho mas espacio.
@@ -144,7 +130,6 @@ Public Sub FinishQuest(ByVal UserIndex As Integer, ByVal QuestIndex As Integer, 
         End If
         Dim KnownSkills As Integer
         If .RewardSpellCount > 0 Then
-
             For i = 1 To .RewardSpellCount
                 For j = 1 To UBound(UserList(UserIndex).Stats.UserHechizos)
                     If UserList(UserIndex).Stats.UserHechizos(j) = .RewardSpellList(i) Then
@@ -152,7 +137,6 @@ Public Sub FinishQuest(ByVal UserIndex As Integer, ByVal QuestIndex As Integer, 
                     End If
                 Next j
             Next i
-
             If KnownSkills = .RewardSpellCount Then
                 Call WriteLocaleChatOverHead(UserIndex, MsgSkillAlreadyKnown, vbNullString, NpcList(NpcIndex).Char.charindex, vbYellow)
                 Exit Sub
@@ -162,14 +146,11 @@ Public Sub FinishQuest(ByVal UserIndex As Integer, ByVal QuestIndex As Integer, 
         Call WriteChatOverHead(UserIndex, "QUESTFIN*" & QuestIndex, NpcList(NpcIndex).Char.charindex, vbYellow)
         'Si la quest pedia objetos, se los saca al personaje.
         If .RequiredOBJs Then
-
             For i = 1 To .RequiredOBJs
                 Call QuitarObjetos(.RequiredOBJ(i).ObjIndex, .RequiredOBJ(i).amount, UserIndex)
             Next i
-
         End If
         If .RequiredSpellCount > 0 Then
-
             For i = 1 To .RequiredSpellCount
                 For j = 1 To UBound(UserList(UserIndex).Stats.UserHechizos)
                     If UserList(UserIndex).Stats.UserHechizos(j) = .RequiredSpellList(i) Then
@@ -178,7 +159,6 @@ Public Sub FinishQuest(ByVal UserIndex As Integer, ByVal QuestIndex As Integer, 
                     End If
                 Next j
             Next i
-
             UserList(UserIndex).flags.ModificoHechizos = True
         End If
         'Se entrega la experiencia.
@@ -210,7 +190,6 @@ Public Sub FinishQuest(ByVal UserIndex As Integer, ByVal QuestIndex As Integer, 
         End If
         'Si hay recompensa de objetos, se entregan.
         If .RewardOBJs > 0 Then
-
             For i = 1 To .RewardOBJs
                 If .RewardOBJ(i).amount Then
                     Call MeterItemEnInventario(UserIndex, .RewardOBJ(i))
@@ -219,18 +198,14 @@ Public Sub FinishQuest(ByVal UserIndex As Integer, ByVal QuestIndex As Integer, 
                             QuestIndex).RewardOBJ(i).ObjIndex).name)
                 End If
             Next i
-
         End If
         If .RewardSpellCount > 0 Then
-
             For i = 1 To .RewardSpellCount
                 If Not TieneHechizo(.RewardSpellList(i), UserIndex) Then
-
                     'Buscamos un slot vacio
                     For j = 1 To MAXUSERHECHIZOS
                         If UserList(UserIndex).Stats.UserHechizos(j) = 0 Then Exit For
                     Next j
-
                     If UserList(UserIndex).Stats.UserHechizos(j) <> 0 Then
                         'Msg1317= No tenes espacio para mas hechizos.
                         Call WriteLocaleMsg(UserIndex, "1317", e_FontTypeNames.FONTTYPE_INFO)
@@ -241,7 +216,6 @@ Public Sub FinishQuest(ByVal UserIndex As Integer, ByVal QuestIndex As Integer, 
                     UserList(UserIndex).flags.ModificoHechizos = True
                 End If
             Next i
-
         End If
         'Actualizamos el personaje
         Call UpdateUserInv(True, UserIndex, 0)
@@ -291,14 +265,12 @@ Public Function UserDoneQuest(ByVal UserIndex As Integer, ByVal QuestIndex As In
     End If
     With UserList(UserIndex).QuestStats
         If .NumQuestsDone Then
-
             For i = 1 To .NumQuestsDone
                 If .QuestsDone(i) = QuestIndex Then
                     UserDoneQuest = True
                     Exit Function
                 End If
             Next i
-
         End If
     End With
     UserDoneQuest = False
@@ -317,18 +289,14 @@ Public Sub CleanQuestSlot(ByVal UserIndex As Integer, ByVal QuestSlot As Integer
     With UserList(UserIndex).QuestStats.Quests(QuestSlot)
         If .QuestIndex Then
             If QuestList(.QuestIndex).RequiredNPCs Then
-
                 For i = 1 To QuestList(.QuestIndex).RequiredNPCs
                     .NPCsKilled(i) = 0
                 Next i
-
             End If
             If QuestList(.QuestIndex).RequiredTargetNPCs Then
-
                 For i = 1 To QuestList(.QuestIndex).RequiredTargetNPCs
                     .NPCsTarget(i) = 0
                 Next i
-
             End If
         End If
         .QuestIndex = 0
@@ -346,11 +314,9 @@ Public Sub ResetQuestStats(ByVal UserIndex As Integer)
     'Last modified: 28/01/2010 by Amraphen
     '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     Dim i As Integer
-
     For i = 1 To MAXUSERQUESTS
         Call CleanQuestSlot(UserIndex, i)
     Next i
-
     With UserList(UserIndex).QuestStats
         .NumQuestsDone = 0
         Erase .QuestsDone
@@ -378,7 +344,6 @@ Public Sub LoadQuests()
     'Redimensionamos el array
     NumQuests = reader.GetValue("INIT", "NumQuests")
     ReDim QuestList(1 To NumQuests)
-
     'Cargamos los datos
     For i = 1 To NumQuests
         With QuestList(i)
@@ -396,34 +361,28 @@ Public Sub LoadQuests()
             .TalkTo = val(reader.GetValue("QUEST" & i, "TalkTo"))
             If .RequiredOBJs > 0 Then
                 ReDim .RequiredOBJ(1 To .RequiredOBJs)
-
                 For j = 1 To .RequiredOBJs
                     tmpStr = reader.GetValue("QUEST" & i, "RequiredOBJ" & j)
                     .RequiredOBJ(j).ObjIndex = val(ReadField(1, tmpStr, 45))
                     .RequiredOBJ(j).amount = val(ReadField(2, tmpStr, 45))
                 Next j
-
             End If
             .RequiredSpellCount = val(reader.GetValue("QUEST" & i, "RequiredSpellCount"))
             If .RequiredSpellCount > 0 Then
                 ReDim .RequiredSpellList(1 To .RequiredSpellCount) As Integer
-
                 For j = 1 To .RequiredSpellCount
                     .RequiredSpellList(j) = val(reader.GetValue("QUEST" & i, "RequiredSpell" & j))
                 Next j
-
             End If
             'CARGAMOS NPCS REQUERIDOS
             .RequiredNPCs = val(reader.GetValue("QUEST" & i, "RequiredNPCs"))
             If .RequiredNPCs > 0 Then
                 ReDim .RequiredNPC(1 To .RequiredNPCs)
-
                 For j = 1 To .RequiredNPCs
                     tmpStr = reader.GetValue("QUEST" & i, "RequiredNPC" & j)
                     .RequiredNPC(j).NpcIndex = val(ReadField(1, tmpStr, 45))
                     .RequiredNPC(j).amount = val(ReadField(2, tmpStr, 45))
                 Next j
-
             End If
             .RequiredSkill.SkillType = val(reader.GetValue("QUEST" & i, "RequiredSkill"))
             .RequiredSkill.RequiredValue = val(reader.GetValue("QUEST" & i, "RequiredValue"))
@@ -431,13 +390,11 @@ Public Sub LoadQuests()
             .RequiredTargetNPCs = val(reader.GetValue("QUEST" & i, "RequiredTargetNPCs"))
             If .RequiredTargetNPCs > 0 Then
                 ReDim .RequiredTargetNPC(1 To .RequiredTargetNPCs)
-
                 For j = 1 To .RequiredTargetNPCs
                     tmpStr = reader.GetValue("QUEST" & i, "RequiredTargetNPC" & j)
                     .RequiredTargetNPC(j).NpcIndex = val(ReadField(1, tmpStr, 45))
                     .RequiredTargetNPC(j).amount = 1
                 Next j
-
             End If
             .RewardGLD = val(reader.GetValue("QUEST" & i, "RewardGLD"))
             .RewardEXP = val(reader.GetValue("QUEST" & i, "RewardEXP"))
@@ -446,26 +403,21 @@ Public Sub LoadQuests()
             .RewardOBJs = val(reader.GetValue("QUEST" & i, "RewardOBJs"))
             If .RewardOBJs > 0 Then
                 ReDim .RewardOBJ(1 To .RewardOBJs)
-
                 For j = 1 To .RewardOBJs
                     tmpStr = reader.GetValue("QUEST" & i, "RewardOBJ" & j)
                     .RewardOBJ(j).ObjIndex = val(ReadField(1, tmpStr, 45))
                     .RewardOBJ(j).amount = val(ReadField(2, tmpStr, 45))
                 Next j
-
             End If
             .RewardSpellCount = val(reader.GetValue("QUEST" & i, "RewardSkills"))
             If .RewardSpellCount > 0 Then
                 ReDim .RewardSpellList(1 To .RewardSpellCount)
-
                 For j = 1 To .RewardSpellCount
                     .RewardSpellList(j) = val(reader.GetValue("QUEST" & i, "RewardSkill" & j))
                 Next j
-
             End If
         End With
     Next i
-
     'Eliminamos la clase
     Set reader = Nothing
     Exit Sub
@@ -482,10 +434,8 @@ Public Sub ArrangeUserQuests(ByVal UserIndex As Integer)
     Dim i As Integer
     Dim j As Integer
     With UserList(UserIndex).QuestStats
-
         For i = 1 To MAXUSERQUESTS - 1
             If .Quests(i).QuestIndex = 0 Then
-
                 For j = i + 1 To MAXUSERQUESTS
                     If .Quests(j).QuestIndex Then
                         .Quests(i) = .Quests(j)
@@ -493,10 +443,8 @@ Public Sub ArrangeUserQuests(ByVal UserIndex As Integer)
                         Exit For
                     End If
                 Next j
-
             End If
         Next i
-
     End With
     Exit Sub
 ArrangeUserQuests_Err:
@@ -523,23 +471,19 @@ Public Sub EnviarQuest(ByVal UserIndex As Integer)
     'Hago un for para chequear si alguna de las misiones que da el NPC ya se completo.
     Dim q As Byte
     Dim i As Long, j As Long
-
     For i = 1 To UBound(QuestList)
         If QuestList(i).TalkTo > 0 And QuestList(i).TalkTo = NpcList(NpcIndex).Numero Then
             tmpByte = TieneQuest(UserIndex, i)
             If tmpByte > 0 Then
-
                 For j = 1 To MAXUSERQUESTS
                     If FinishQuestCheck(UserIndex, i, tmpByte) Then
                         Call FinishQuest(UserIndex, i, tmpByte)
                         Exit Sub
                     End If
                 Next j
-
             End If
         End If
     Next i
-
     For q = 1 To NpcList(NpcIndex).NumQuest
         tmpByte = TieneQuest(UserIndex, NpcList(NpcIndex).QuestNumber(q))
         If tmpByte Then
@@ -550,7 +494,6 @@ Public Sub EnviarQuest(ByVal UserIndex As Integer)
             End If
         End If
     Next q
-
     Call WriteNpcQuestListSend(UserIndex, NpcIndex)
     Exit Sub
 EnviarQuest_Err:
@@ -566,36 +509,30 @@ Public Function FinishQuestCheck(ByVal UserIndex As Integer, ByVal QuestIndex As
     With QuestList(QuestIndex)
         'Comprobamos que tenga los objetos.
         If .RequiredOBJs > 0 Then
-
             For i = 1 To .RequiredOBJs
                 If TieneObjetos(.RequiredOBJ(i).ObjIndex, .RequiredOBJ(i).amount, UserIndex) = False Then
                     FinishQuestCheck = False
                     Exit Function
                 End If
             Next i
-
         End If
         'Comprobamos que haya matado todas las criaturas.
         If .RequiredNPCs > 0 Then
-
             For i = 1 To .RequiredNPCs
                 If .RequiredNPC(i).amount > UserList(UserIndex).QuestStats.Quests(QuestSlot).NPCsKilled(i) Then
                     FinishQuestCheck = False
                     Exit Function
                 End If
             Next i
-
         End If
         'Check required spells
         If .RequiredSpellCount > 0 Then
-
             For i = 1 To .RequiredSpellCount
                 If Not UserHasSpell(UserIndex, .RequiredSpellList(i)) Then
                     FinishQuestCheck = False
                     Exit Function
                 End If
             Next i
-
         End If
         'Check required skill
         If .RequiredSkill.SkillType > 0 Then
@@ -606,14 +543,12 @@ Public Function FinishQuestCheck(ByVal UserIndex As Integer, ByVal QuestIndex As
         End If
         'Comprobamos que haya targeteado todas las criaturas.
         If .RequiredTargetNPCs > 0 Then
-
             For i = 1 To .RequiredTargetNPCs
                 If .RequiredTargetNPC(i).amount > UserList(UserIndex).QuestStats.Quests(QuestSlot).NPCsTarget(i) Then
                     FinishQuestCheck = False
                     Exit Function
                 End If
             Next i
-
         End If
     End With
     FinishQuestCheck = True
@@ -628,7 +563,6 @@ Function FaltanItemsQuest(ByVal UserIndex As Integer, ByVal QuestIndex As Intege
         ' Por las dudas...
         If .RequiredOBJs > 0 Then
             Dim i As Integer
-
             For i = 1 To .RequiredOBJs
                 ' Encontramos el objeto
                 If ObjIndex = .RequiredOBJ(i).ObjIndex Then
@@ -637,7 +571,6 @@ Function FaltanItemsQuest(ByVal UserIndex As Integer, ByVal QuestIndex As Intege
                     Exit Function
                 End If
             Next i
-
         End If
     End With
     Exit Function

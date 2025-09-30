@@ -734,7 +734,6 @@ End Function
 Sub CheckIdleUser()
     On Error GoTo CheckIdleUser_Err
     Dim iUserIndex As Long
-
     For iUserIndex = 1 To MaxUsers
         'Conexion activa? y es un usuario loggeado?
         If UserList(iUserIndex).ConnectionDetails.ConnIDValida And UserList(iUserIndex).flags.UserLogged Then
@@ -756,7 +755,6 @@ Sub CheckIdleUser()
             End If
         End If
     Next iUserIndex
-
     Exit Sub
 CheckIdleUser_Err:
     Call TraceError(Err.Number, Err.Description, "frmMain.CheckIdleUser", Erl)
@@ -812,7 +810,6 @@ End Sub
 Private Sub Invasion_Timer()
     On Error GoTo Handler
     Dim i As Integer
-
     ' **********************************
     ' **********  Invasiones  **********
     ' **********************************
@@ -848,7 +845,6 @@ Private Sub Invasion_Timer()
             End If
         End With
     Next
-
     Exit Sub
 Handler:
     Call TraceError(Err.Number, Err.Description, "frmMain.Invasion_Timer")
@@ -859,13 +855,11 @@ Private Sub t_Extraer_Timer()
     Dim i                As Long
     Dim PerformanceTimer As Long
     Call PerformanceTestStart(PerformanceTimer)
-
     For i = 1 To LastUser
         If UserList(i).Counters.Trabajando > 0 Then
             Call Trabajar(i, UserList(i).Trabajo.TargetSkill)
         End If
     Next i
-
     Call PerformTimeLimitCheck(PerformanceTimer, "t_Extraer_Timer", 100)
 End Sub
 
@@ -882,14 +876,12 @@ Private Sub tControlHechizos_Timer()
     'Reseteo control de hechizos
     tHechizosMinutesCounter = tHechizosMinutesCounter + 1
     If tHechizosMinutesCounter = 2 Then
-
         For UserIndex = 1 To LastUser
             With UserList(UserIndex)
                 UserList(UserIndex).Counters.controlHechizos.HechizosTotales = 0
                 UserList(UserIndex).Counters.controlHechizos.HechizosCasteados = 0
             End With
         Next UserIndex
-
         tHechizosMinutesCounter = 0
     End If
 End Sub
@@ -900,7 +892,6 @@ Private Sub TiempoRetos_Timer()
     Dim IntervaloTimerRetosEnSegundos As Integer
     IntervaloTimerRetosEnSegundos = TiempoRetos.Interval * 0.001
     Dim Sala As Integer
-
     For Sala = 1 To Retos.TotalSalas
         With Retos.Salas(Sala)
             If .EnUso Then
@@ -914,7 +905,6 @@ Private Sub TiempoRetos_Timer()
             End If
         End With
     Next
-
     Exit Sub
 Handler:
     Call TraceError(Err.Number, Err.Description, "frmMain.TiempoRetos_Timer")
@@ -935,7 +925,6 @@ End Sub
 Private Function GetPassSlot(ByVal UserIndex As Integer) As Integer
     Dim i As Integer
     With UserList(UserIndex)
-
         For i = 1 To UBound(.invent.Object)
             ' Le saco el item requerido de Forgat a Nix
             ' Es el mismo item que de Nix a Arghal y de Arghal a Forgat
@@ -944,7 +933,6 @@ Private Function GetPassSlot(ByVal UserIndex As Integer) As Integer
                 Exit Function
             End If
         Next
-
     End With
     GetPassSlot = -1
 End Function
@@ -954,7 +942,6 @@ Private Sub MsnEnbarque(ByRef ShipInfo As t_Transport)
     Dim LoopC     As Long
     Dim tempIndex As Integer
     If Not MapaValido(ShipInfo.Map) Then Exit Sub
-
     For LoopC = 1 To ConnGroups(ShipInfo.Map).CountEntrys
         tempIndex = ConnGroups(ShipInfo.Map).UserEntrys(LoopC)
         If UserList(tempIndex).ConnectionDetails.ConnIDValida And UserList(tempIndex).pos.x >= ShipInfo.startX And UserList(tempIndex).pos.x <= ShipInfo.EndX And UserList( _
@@ -966,7 +953,6 @@ Private Sub MsnEnbarque(ByRef ShipInfo As t_Transport)
             End If
         End If
     Next LoopC
-
     Exit Sub
 SendToMap_Err:
     Call TraceError(Err.Number, Err.Description, "modSendData.SendToMap", Erl)
@@ -986,7 +972,6 @@ Private Sub UpdateBarcoForgatNix()
     If MapData(BarcoNavegandoForgatNix.Map, BarcoNavegandoForgatNix.DockX, BarcoNavegandoForgatNix.DockY).NpcIndex = 0 Then
         Exit Sub
     End If
-
     ' Desembarcar: bajamos del barco a los usuarios que llegan a Nix
     ' Para cada tile en el área del barco
     For TileX = BarcoNavegandoForgatNix.startX To BarcoNavegandoForgatNix.EndX
@@ -1000,7 +985,6 @@ Private Sub UpdateBarcoForgatNix()
             End If
         Next TileY
     Next TileX
-
     ' Embarcacar: subimos al barco a los usuarios que salen de Forgat
     ' Para cada tile en el área del muelle de Forgat
     For TileX = ForgatDock.startX To ForgatDock.EndX
@@ -1021,7 +1005,6 @@ Private Sub UpdateBarcoForgatNix()
             End If
         Next TileY
     Next TileX
-
 End Sub
 
 Private Sub UpdateBarcoNixArghal()
@@ -1038,7 +1021,6 @@ Private Sub UpdateBarcoNixArghal()
     If MapData(BarcoNavegandoNixArghal.Map, BarcoNavegandoNixArghal.DockX, BarcoNavegandoNixArghal.DockY).NpcIndex = 0 Then
         Exit Sub
     End If
-
     ' Desembarcar: bajamos del barco a los usuarios que llegan a Arghal
     ' Para cada tile en el área del barco
     For TileX = BarcoNavegandoNixArghal.startX To BarcoNavegandoNixArghal.EndX
@@ -1052,7 +1034,6 @@ Private Sub UpdateBarcoNixArghal()
             End If
         Next TileY
     Next TileX
-
     ' Embarcacar: subimos al barco a los usuarios que salen de Nix
     ' Para cada tile en el área del muelle de Nix
     For TileX = NixDock.startX To NixDock.EndX
@@ -1073,7 +1054,6 @@ Private Sub UpdateBarcoNixArghal()
             End If
         Next TileY
     Next TileX
-
 End Sub
 
 Private Sub UpdateBarcoArghalForgat()
@@ -1090,7 +1070,6 @@ Private Sub UpdateBarcoArghalForgat()
     If MapData(BarcoNavegandoArghalForgat.Map, BarcoNavegandoArghalForgat.DockX, BarcoNavegandoArghalForgat.DockY).NpcIndex = 0 Then
         Exit Sub
     End If
-
     ' Desembarcar: bajamos del barco a los usuarios que llegan a Forgat
     ' Para cada tile en el área del barco
     For TileX = BarcoNavegandoArghalForgat.startX To BarcoNavegandoArghalForgat.EndX
@@ -1104,7 +1083,6 @@ Private Sub UpdateBarcoArghalForgat()
             End If
         Next TileY
     Next TileX
-
     ' Embarcacar: subimos al barco a los usuarios que salen de Arghal
     ' Para cada tile en el área del muelle de Arghal
     For TileX = ArghalDock.startX To ArghalDock.EndX
@@ -1125,7 +1103,6 @@ Private Sub UpdateBarcoArghalForgat()
             End If
         Next TileY
     Next TileX
-
 End Sub
 
 Private Sub TimerGuardarUsuarios_Timer()
@@ -1135,7 +1112,6 @@ Private Sub TimerGuardarUsuarios_Timer()
         Dim UserIndex        As Integer, UserGuardados As Integer
         Dim PerformanceTimer As Long
         Call PerformanceTestStart(PerformanceTimer)
-
         For UserIndex = 1 To LastUser
             With UserList(UserIndex)
                 If .flags.UserLogged Then
@@ -1149,7 +1125,6 @@ Private Sub TimerGuardarUsuarios_Timer()
                 End If
             End With
         Next
-
         Call PerformTimeLimitCheck(PerformanceTimer, "TimerGuardarUsuarios_Timer", 100)
     End If
     Exit Sub
@@ -1201,11 +1176,9 @@ End Sub
 Private Sub CMDDUMP_Click()
     On Error GoTo CMDDUMP_Click_Err
     Dim i As Integer
-
     For i = 1 To MaxUsers
         Call LogCriticEvent(i & ") ConnIDValida: " & UserList(i).ConnectionDetails.ConnIDValida & " Name: " & UserList(i).name & " UserLogged: " & UserList(i).flags.UserLogged)
     Next i
-
     Call LogCriticEvent("Lastuser: " & LastUser & " NextOpenUser: " & NextOpenUser)
     Exit Sub
 CMDDUMP_Click_Err:
@@ -1330,7 +1303,6 @@ Private Sub EstadoTimer_Timer()
     Dim i                As Long
     Dim PerformanceTimer As Long
     Call PerformanceTestStart(PerformanceTimer)
-
     For i = 1 To Baneos.count
         If Baneos(i).FechaLiberacion <= Now Then
             Call SendData(SendTarget.ToAdmins, 0, PrepareMessageLocaleMsg(1787, Baneos(i).name, e_FontTypeNames.FONTTYPE_SERVER)) ' Msg1787=Servidor » Se ha concluido la sentencia de ban para ¬1.
@@ -1339,7 +1311,6 @@ Private Sub EstadoTimer_Timer()
             Call SaveBans
         End If
     Next
-
     Select Case frmMain.lblhora.Caption
         Case "0:00:00"
             HoraEvento = 0
@@ -1556,7 +1527,6 @@ Private Sub GameTimer_Timer()
     Dim iUserIndex       As Long
     Dim PerformanceTimer As Long
     Call PerformanceTestStart(PerformanceTimer)
-
     '<<<<<< Procesa eventos de los usuarios >>>>>>
     For iUserIndex = 1 To LastUser
         With UserList(iUserIndex)
@@ -1581,7 +1551,6 @@ Private Sub GameTimer_Timer()
             End If 'UserLogged
         End With
     Next iUserIndex
-
     Call PerformTimeLimitCheck(PerformanceTimer, "GameTimer_Timer User loop", 400)
     Call CustomScenarios.UpdateAll
     Call PerformTimeLimitCheck(PerformanceTimer, "GameTimer_Timer customScenarios", 100)
@@ -1612,12 +1581,9 @@ Private Sub mnuCerrar_Click()
     On Error GoTo mnuCerrar_Click_Err
     If MsgBox("¡¡Atencion!! Si cierra el servidor puede provocar la perdida de datos. ¿Desea hacerlo de todas maneras?", vbYesNo) = vbYes Then
         Dim f
-
         For Each f In Forms
-
             Unload f
         Next
-
     End If
     Exit Sub
 mnuCerrar_Click_Err:
@@ -1738,7 +1704,6 @@ Private Sub TIMER_AI_Timer()
     Dim PerformanceTimer As Long
     Call PerformanceTestStart(PerformanceTimer)
     If Not haciendoBK And Not EnPausa Then
-
         For NpcIndex = 1 To LastNPC
             With NpcList(NpcIndex)
                 If .pos.Map > 0 Then
@@ -1756,7 +1721,6 @@ Private Sub TIMER_AI_Timer()
                 End If 'If .Pos.Map > 0 Then
             End With
         Next NpcIndex
-
     End If
     Call PerformTimeLimitCheck(PerformanceTimer, "TIMER_AI_Timer", 600)
     Exit Sub
@@ -1851,7 +1815,6 @@ Private Sub TimerRespawn_Timer()
     Dim NpcIndex         As Long
     Dim PerformanceTimer As Long
     Call PerformanceTestStart(PerformanceTimer)
-
     'Update NPCs
     For NpcIndex = 1 To MaxRespawn
         'Debug.Print RespawnList(NpcIndex).name
@@ -1868,7 +1831,6 @@ Private Sub TimerRespawn_Timer()
             End If
         End If
     Next NpcIndex
-
     Call PerformTimeLimitCheck(PerformanceTimer, "TimerRespawn_Timer")
     Exit Sub
 ErrorHandler:
@@ -1887,7 +1849,6 @@ Private Sub tPiqueteC_Timer()
     Call PerformanceTestStart(PerformanceTimer)
     segundos = segundos + 6
     Dim i As Long
-
     For i = 1 To LastUser
         If UserList(i).flags.UserLogged Then
             If MapData(UserList(i).pos.Map, UserList(i).pos.x, UserList(i).pos.y).trigger = e_Trigger.ANTIPIQUETE Then
@@ -1912,7 +1873,6 @@ Private Sub tPiqueteC_Timer()
             End If
         End If
     Next i
-
     Call PerformTimeLimitCheck(PerformanceTimer, "tPiqueteC_Timer", 100)
     If segundos >= 18 Then segundos = 0
     Exit Sub

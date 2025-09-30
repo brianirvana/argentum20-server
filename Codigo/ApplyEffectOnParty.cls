@@ -240,7 +240,6 @@ Public Sub PerformAction()
         If .Grupo.EnGrupo And IsValidUserRef(.Grupo.Lider) Then
             Dim i As Integer
             With UserList(.Grupo.Lider.ArrayIndex).Grupo
-
                 For i = 1 To .CantidadMiembros
                     If IsValidUserRef(.Miembros(i)) Then
                         If UserList(DotInfo.TargetRef.ArrayIndex).pos.Map = UserList(.Miembros(i).ArrayIndex).pos.Map Then
@@ -253,7 +252,6 @@ Public Sub PerformAction()
                         End If
                     End If
                 Next i
-
             End With
         Else
             Call ApplyEffectTo(DotInfo.TargetRef.ArrayIndex, eUser)

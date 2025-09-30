@@ -65,31 +65,26 @@ Public Sub InitAreas()
     On Error GoTo InitAreas_Err
     Dim LoopC As Long
     Dim LoopX As Long
-
     ' Setup areas...
     For LoopC = 0 To 9
         AreasRecive(LoopC) = (2 ^ LoopC) Or IIf(LoopC <> 0, 2 ^ (LoopC - 1), 0) Or IIf(LoopC <> AREA_DIM, 2 ^ (LoopC + 1), 0)
     Next LoopC
-
     For LoopC = 1 To 100
         For LoopX = 1 To 100
             'Usamos 81 IDs de area para saber si pasasamos de area "más rápido"
             AreasInfo(LoopC, LoopX) = (LoopC \ AREA_DIM + 1) * (LoopX \ AREA_DIM + 1)
         Next LoopX
     Next LoopC
-
     'Setup AutoOptimizacion de areas
     CurDay = IIf(Weekday(Date) > 6, 1, 2) 'A ke tipo de dia pertenece?
     CurHour = Fix(Hour(Time) \ 3) 'A ke parte de la hora pertenece
     ReDim ConnGroups(1 To NumMaps) As t_ConnGroup
-
     For LoopC = 1 To NumMaps
         ConnGroups(LoopC).OptValue = val(GetVar(DatPath & "AreasStats.ini", "Mapa" & LoopC, CurDay & "-" & CurHour))
         If ConnGroups(LoopC).OptValue = 0 Then ConnGroups(LoopC).OptValue = 1
         ReDim ConnGroups(LoopC).UserEntrys(1 To ConnGroups(LoopC).OptValue) As Integer
         ReDim ConnGroups(LoopC).NpcForAi(0 To 1) As Integer
     Next LoopC
-
     Exit Sub
 InitAreas_Err:
     Call TraceError(Err.Number, Err.Description, "ModAreas.InitAreas", Erl)
@@ -107,7 +102,6 @@ Public Sub AreasOptimizacion()
     If (CurDay <> IIf(Weekday(Date) > 6, 1, 2)) Or (CurHour <> Fix(Hour(Time) \ 3)) Then
         tCurDay = IIf(Weekday(Date) > 6, 1, 2) 'A ke tipo de dia pertenece?
         tCurHour = Fix(Hour(Time) \ 3) 'A ke parte de la hora pertenece
-
         For LoopC = 1 To NumMaps
             EntryValue = val(GetVar(DatPath & "AreasStats.ini", "Mapa" & LoopC, CurDay & "-" & CurHour))
             Call WriteVar(DatPath & "AreasStats.ini", "Mapa" & LoopC, CurDay & "-" & CurHour, CInt((EntryValue + ConnGroups(LoopC).OptValue) \ 2))
@@ -115,7 +109,6 @@ Public Sub AreasOptimizacion()
             If ConnGroups(LoopC).OptValue = 0 Then ConnGroups(LoopC).OptValue = 1
             If ConnGroups(LoopC).OptValue >= MapInfo(LoopC).NumUsers Then ReDim Preserve ConnGroups(LoopC).UserEntrys(1 To ConnGroups(LoopC).OptValue) As Integer
         Next LoopC
-
         CurDay = tCurDay
         CurHour = tCurHour
     End If
@@ -181,7 +174,6 @@ Public Sub CheckUpdateNeededUser(ByVal UserIndex As Integer, ByVal head As Byte,
             Call WriteAreaChanged(UserList(UserIndex).flags.GMMeSigue.ArrayIndex, UserList(UserIndex).pos.x, UserList(UserIndex).pos.y)
             Call WriteSendFollowingCharindex(UserList(UserIndex).flags.GMMeSigue.ArrayIndex, UserList(UserIndex).Char.charindex)
         End If
-
         'Actualizamos!!!
         For x = MinX To MaxX
             For y = MinY To MaxY
@@ -220,7 +212,6 @@ Public Sub CheckUpdateNeededUser(ByVal UserIndex As Integer, ByVal head As Byte,
                 End If
             Next y
         Next x
-
         'Precalculados :P
         TempInt = .pos.x \ AREA_DIM
         .AreasInfo.AreaReciveX = AreasRecive(TempInt)
@@ -324,13 +315,11 @@ Public Sub CheckUpdateNeededNpc(ByVal NpcIndex As Integer, ByVal head As Byte)
         If MaxX > 100 Then MaxX = 100
         'Actualizamos!!!
         If MapInfo(.pos.Map).NumUsers <> 0 Then
-
             For x = MinX To MaxX
                 For y = MinY To MaxY
                     If MapData(.pos.Map, x, y).UserIndex Then Call MakeNPCChar(False, MapData(.pos.Map, x, y).UserIndex, NpcIndex, .pos.Map, .pos.x, .pos.y)
                 Next y
             Next x
-
         End If
         'Precalculados :P
         TempInt = .pos.x \ AREA_DIM
@@ -350,23 +339,19 @@ Public Sub QuitarUser(ByVal UserIndex As Integer, ByVal Map As Integer)
     On Error GoTo QuitarUser_Err
     Dim TempVal As Long
     Dim LoopC   As Long
-
     'Search for the user
     For LoopC = 1 To ConnGroups(Map).CountEntrys
         If ConnGroups(Map).UserEntrys(LoopC) = UserIndex Then Exit For
     Next LoopC
-
     'Char not found
     If LoopC > ConnGroups(Map).CountEntrys Then Exit Sub
     'Remove from old map
     ConnGroups(Map).CountEntrys = ConnGroups(Map).CountEntrys - 1
     TempVal = ConnGroups(Map).CountEntrys
-
     'Move list back
     For LoopC = LoopC To TempVal
         ConnGroups(Map).UserEntrys(LoopC) = ConnGroups(Map).UserEntrys(LoopC + 1)
     Next LoopC
-
     Exit Sub
 QuitarUser_Err:
     Call TraceError(Err.Number, Err.Description, "ModAreas.QuitarUser", Erl)
@@ -381,7 +366,6 @@ Public Sub AgregarUser(ByVal UserIndex As Integer, ByVal Map As Integer, Optiona
     Dim i       As Long
     If Not MapaValido(Map) Then Exit Sub
     EsNuevo = True
-
     'Prevent adding repeated users
     For i = 1 To ConnGroups(Map).CountEntrys
         If ConnGroups(Map).UserEntrys(i) = UserIndex Then
@@ -389,7 +373,6 @@ Public Sub AgregarUser(ByVal UserIndex As Integer, ByVal Map As Integer, Optiona
             Exit For
         End If
     Next i
-
     If EsNuevo Then
         'Update map and connection groups data
         ConnGroups(Map).CountEntrys = ConnGroups(Map).CountEntrys + 1
@@ -441,7 +424,6 @@ Public Sub RemoveNpc(ByVal NpcIndex As Integer)
     Dim i As Integer
     With NpcList(NpcIndex)
         If IsSet(.flags.BehaviorFlags, e_BehaviorFlags.eConsideredByMapAi) Then
-
             For i = 0 To ConnGroups(.pos.Map).RegisteredNpc
                 If ConnGroups(.pos.Map).NpcForAi(i) = NpcIndex Then
                     ConnGroups(.pos.Map).NpcForAi(i) = ConnGroups(.pos.Map).NpcForAi(ConnGroups(.pos.Map).RegisteredNpc - 1)
@@ -449,7 +431,6 @@ Public Sub RemoveNpc(ByVal NpcIndex As Integer)
                     ConnGroups(.pos.Map).RegisteredNpc = ConnGroups(.pos.Map).RegisteredNpc - 1
                 End If
             Next i
-
         End If
     End With
 End Sub

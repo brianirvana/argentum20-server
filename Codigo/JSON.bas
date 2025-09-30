@@ -109,11 +109,9 @@ Private Sub GenerateStringArray(ByRef str As String)
     Dim i As Long
     m_length = Len(str)
     ReDim m_str(1 To m_length)
-
     For i = 1 To m_length
         m_str(i) = AscW(mid$(str, i, 1))
     Next i
-
     Exit Sub
 GenerateStringArray_Err:
     Call TraceError(Err.Number, Err.Description, "mod_JSON.GenerateStringArray", Erl)
@@ -130,7 +128,6 @@ Private Function parseObject(ByRef str As String, ByRef Index As Long) As Dictio
         Exit Function
     End If
     Index = Index + 1
-
     Do
         Call skipChar(Index)
         charint = m_str(Index)
@@ -153,7 +150,6 @@ Private Function parseObject(ByRef str As String, ByRef Index As Long) As Dictio
             Exit Do
         End If
     Loop
-
     Exit Function
 parseObject_Err:
     Call TraceError(Err.Number, Err.Description, "mod_JSON.parseObject", Erl)
@@ -169,7 +165,6 @@ Private Function parseArray(ByRef str As String, ByRef Index As Long) As Collect
         Exit Function
     End If
     Index = Index + 1
-
     Do
         Call skipChar(Index)
         charint = m_str(Index)
@@ -190,7 +185,6 @@ Private Function parseArray(ByRef str As String, ByRef Index As Long) As Collect
             Exit Do
         End If
     Loop
-
     Exit Function
 parseArray_Err:
     Call TraceError(Err.Number, Err.Description, "mod_JSON.parseArray", Erl)
@@ -232,7 +226,6 @@ Private Function parseString(ByRef str As String, ByRef Index As Long) As String
     Call skipChar(Index)
     quoteint = m_str(Index)
     Index = Index + 1
-
     Do While Index > 0 And Index <= m_length
         charint = m_str(Index)
         Select Case charint
@@ -272,7 +265,6 @@ Private Function parseString(ByRef str As String, ByRef Index As Long) As String
                 Index = Index + 1
         End Select
     Loop
-
     Exit Function
 parseString_Err:
     Call TraceError(Err.Number, Err.Description, "mod_JSON.parseString", Erl)
@@ -283,7 +275,6 @@ Private Function parseNumber(ByRef str As String, ByRef Index As Long)
     Dim value As String
     Dim Char  As String
     Call skipChar(Index)
-
     Do While Index > 0 And Index <= m_length
         Char = mid$(str, Index, 1)
         If InStr("+-0123456789.eE", Char) Then
@@ -301,7 +292,6 @@ Private Function parseNumber(ByRef str As String, ByRef Index As Long)
             Exit Function
         End If
     Loop
-
     Exit Function
 parseNumber_Err:
     Call TraceError(Err.Number, Err.Description, "mod_JSON.parseNumber", Erl)
@@ -344,7 +334,6 @@ Private Function parseKey(ByRef Index As Long) As String
     Dim squote  As Boolean
     Dim charint As Integer
     Call skipChar(Index)
-
     Do While Index > 0 And Index <= m_length
         charint = m_str(Index)
         Select Case charint
@@ -387,7 +376,6 @@ Private Function parseKey(ByRef Index As Long) As String
                 Index = Index + 1
         End Select
     Loop
-
     Exit Function
 parseKey_Err:
     Call TraceError(Err.Number, Err.Description, "mod_JSON.parseKey", Erl)
@@ -398,7 +386,6 @@ Private Sub skipChar(ByRef Index As Long)
     Dim bComment      As Boolean
     Dim bStartComment As Boolean
     Dim bLongComment  As Boolean
-
     Do While Index > 0 And Index <= m_length
         Select Case m_str(Index)
             Case A_VBCR, A_VBLF
@@ -440,7 +427,6 @@ Private Sub skipChar(ByRef Index As Long)
         End Select
         Index = Index + 1
     Loop
-
     Exit Sub
 skipChar_Err:
     Call TraceError(Err.Number, Err.Description, "mod_JSON.skipChar", Erl)
@@ -486,11 +472,9 @@ Private Function Encode(str) As String
     Dim p   As Boolean
     aL1 = Array(&H22, &H5C, &H2F, &H8, &HC, &HA, &HD, &H9)
     aL2 = Array(&H22, &H5C, &H2F, &H62, &H66, &H6E, &H72, &H74)
-
     For i = 1 To LenB(str)
         p = True
         c = mid$(str, i, 1)
-
         For j = 0 To 7
             If c = Chr$(aL1(j)) Then
                 Call SB.Append("\" & Chr$(aL2(j)))
@@ -498,7 +482,6 @@ Private Function Encode(str) As String
                 Exit For
             End If
         Next
-
         If p Then
             Dim a As Integer
             a = AscW(c)
@@ -509,7 +492,6 @@ Private Function Encode(str) As String
             End If
         End If
     Next
-
     Encode = SB.ToString
     Set SB = Nothing
     Exit Function
@@ -533,18 +515,14 @@ Public Function StringToJSON(st As String) As String
         StringToJSON = "null"
     Else
         rows = Split(st, RECORD_SEP)
-
         For lRecCnt = LBound(rows) To UBound(rows)
             sFlds = vbNullString
             fld = Split(rows(lRecCnt), FIELD_SEP)
-
             For lFld = LBound(fld) To UBound(fld) Step 2
                 sFlds = (sFlds & IIf(sFlds <> "", ",", "") & """" & fld(lFld) & """:""" & toUnicode(fld(lFld + 1) & "") & """")
             Next 'fld
-
             Call sRecs.Append(IIf((Trim$(sRecs.ToString) <> ""), "," & vbNewLine, "") & "{" & sFlds & "}")
         Next 'rec
-
         StringToJSON = ("( {""Records"": [" & vbNewLine & sRecs.ToString & vbNewLine & "], " & """RecordCount"":""" & lRecCnt & """ } )")
     End If
     Exit Function
@@ -565,20 +543,15 @@ Public Function RStoJSON(RS As ADODB.Recordset) As String
         If RS.EOF Or RS.BOF Then
             RStoJSON = "null"
         Else
-
             Do While Not RS.EOF And Not RS.BOF
                 lRecCnt = lRecCnt + 1
                 sFlds = vbNullString
-
                 For Each fld In RS.Fields
-
                     sFlds = (sFlds & IIf(sFlds <> "", ",", "") & """" & fld.name & """:""" & toUnicode(fld.value & "") & """")
                 Next 'fld
-
                 Call sRecs.Append(IIf((Trim$(sRecs.ToString) <> ""), "," & vbNewLine, "") & "{" & sFlds & "}")
                 Call RS.MoveNext
             Loop
-
             RStoJSON = ("( {""Records"": [" & vbNewLine & sRecs.ToString & vbNewLine & "], " & """RecordCount"":""" & lRecCnt & """ } )")
         End If
     End If
@@ -591,7 +564,6 @@ Public Function toUnicode(str As String) As String
     Dim x        As Long
     Dim uStr     As New cStringBuilder
     Dim uChrCode As Integer
-
     For x = 1 To LenB(str)
         uChrCode = Asc(mid$(str, x, 1))
         Select Case uChrCode
@@ -619,7 +591,6 @@ Public Function toUnicode(str As String) As String
                 Call uStr.Append(Chr$(uChrCode))
         End Select
     Next
-
     toUnicode = uStr.ToString
     Exit Function
     Exit Function

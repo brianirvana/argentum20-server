@@ -205,15 +205,11 @@ Private Sub ReloadMemberList()
         ReDim MemberList(RS.RecordCount - 1) As Long
         Dim i As Integer
         i = 0
-
         While Not RS.EOF
-
             MemberList(i) = RS!user_id
             i = i + 1
             RS.MoveNext
-
         Wend
-
     End If
     memberCount = UBound(MemberList) + 1
     MemberListLoaded = True
@@ -229,11 +225,9 @@ Public Function GetMemberList() As Long()
         Dim Members() As Long
         ReDim Members(memberCount - 1) As Long
         Dim i As Integer
-
         For i = 0 To memberCount - 1
             Members(i) = MemberList(i)
         Next i
-
         GetMemberList = Members
     Else
         GetMemberList = MemberList
@@ -260,7 +254,6 @@ End Sub
 Public Sub DesConectarMiembro(ByVal UserIndex As Integer)
     On Error GoTo DesConectarMiembro_Err
     Dim i As Integer
-
     For i = 1 To p_OnlineMembers.count
         If p_OnlineMembers.Item(i) = UserIndex Then
             p_OnlineMembers.Remove i
@@ -273,7 +266,6 @@ Public Sub DesConectarMiembro(ByVal UserIndex As Integer)
             Exit Sub
         End If
     Next i
-
     Exit Sub
 DesConectarMiembro_Err:
     Call TraceError(Err.Number, Err.Description, "clsClan.DesConectarMiembro", Erl)
@@ -302,18 +294,15 @@ Public Sub ExpulsarMiembro(ByVal CharId As Long)
     On Error GoTo ExpulsarMiembro_Err
     Call Execute("DELETE FROM guild_members WHERE user_id = ? AND guild_id = ?;", CharId, p_GuildId)
     Dim i As Integer
-
     For i = 0 To UBound(MemberList)
         If MemberList(i) = CharId Then
             MemberList(i) = 0
             Exit For
         End If
     Next i
-
     For i = i To UBound(MemberList) - 1
         MemberList(i) = MemberList(i + 1)
     Next i
-
     memberCount = memberCount - 1
     Call SaveUserGuildMember(CharId, p_GuildName)
     Call SaveUserGuildIndex(CharId, 0)
@@ -334,15 +323,11 @@ Public Function GetAspirantes() As String()
         ReDim list(RS.RecordCount) As String
         Dim i As Integer
         i = 0
-
         While Not RS.EOF
-
             list(i) = GetUserName(RS!user_id)
             i = i + 1
             RS.MoveNext
-
         Wend
-
     Else
         ReDim list(0) As String
     End If
@@ -587,13 +572,11 @@ End Sub
 Public Sub DesconectarGM(ByVal UserIndex As Integer)
     On Error GoTo DesconectarGM_Err
     Dim i As Integer
-
     For i = 1 To p_GMsOnline.count
         If p_GMsOnline.Item(i) = UserIndex Then
             p_GMsOnline.Remove (i)
         End If
     Next i
-
     Exit Sub
 DesconectarGM_Err:
     Call TraceError(Err.Number, Err.Description, "clsClan.DesconectarGM", Erl)

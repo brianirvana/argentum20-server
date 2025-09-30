@@ -134,7 +134,6 @@ Private Sub LoadItemsToSpawn(ScenearioIni As clsIniManager)
     Dim spawInterval As Long
     ItemCount = val(ScenearioIni.GetValue("INIT", "SpawnItems"))
     ReDim ItemsToSpawn(ItemCount) As t_SpawnItems
-
     For i = 0 To ItemCount - 1
         ItemsToSpawn(i).ItemId = val(ScenearioIni.GetValue("SpawnItem" & i + 1, "ItemId"))
         ItemsToSpawn(i).ItemCount = val(ScenearioIni.GetValue("SpawnItem" & i + 1, "ItemCount"))
@@ -143,7 +142,6 @@ Private Sub LoadItemsToSpawn(ScenearioIni As clsIniManager)
         spawInterval = val(ScenearioIni.GetValue("SpawnItem" & i + 1, "SpawnInterval"))
         Call SetTimer(ItemsToSpawn(i).timer, spawInterval * 1000)
     Next i
-
 End Sub
 
 Private Sub LoadForbidenItems(ScenearioIni As clsIniManager)
@@ -151,11 +149,9 @@ Private Sub LoadForbidenItems(ScenearioIni As clsIniManager)
     Dim i                  As Integer
     forbiddenItemCount = val(ScenearioIni.GetValue("FORBIDDEN", "Count"))
     ReDim ForbbidenItemId(forbiddenItemCount) As Integer
-
     For i = 0 To forbiddenItemCount - 1
         ForbbidenItemId(i) = val(ScenearioIni.GetValue("FORBIDDEN", "ItemId" & i + 1))
     Next i
-
 End Sub
 
 Private Sub UpdateFightAreaForPlayerCount()
@@ -170,7 +166,6 @@ End Sub
 Private Sub AddItemToUser(ByVal UserIndex As Integer, ByVal ItemId As Integer, ByVal ItemCount As Integer)
     With UserList(UserIndex)
         Dim Slot As Integer
-
         For Slot = 1 To UBound(.invent.Object)
             If .invent.Object(Slot).ObjIndex = 0 Then
                 .invent.Object(Slot).ObjIndex = ItemId
@@ -178,7 +173,6 @@ Private Sub AddItemToUser(ByVal UserIndex As Integer, ByVal ItemId As Integer, B
                 Exit Sub
             End If
         Next Slot
-
     End With
 End Sub
 
@@ -186,31 +180,25 @@ Private Sub RemoveForbiddenItems(ByVal UserIndex As Integer)
     Dim i As Integer
     Dim j As Integer
     With UserList(UserIndex)
-
         For i = 1 To UBound(.invent.Object)
             If IsForbidden(.invent.Object(i).ObjIndex) Then
                 Call QuitarUserInvItem(UserIndex, i, .invent.Object(i).amount)
             End If
         Next i
-
         If .flags.ModificoInventario Then
             Call UpdateUserInv(True, UserIndex, 0)
         End If
-
         For i = 0 To SpawnedUserList.RegisteredUserCount - 1
             If SpawnedUserList.UserList(i).UserId = .Id Then
                 Exit For
             End If
         Next i
-
         If i < SpawnedUserList.RegisteredUserCount Then
-
             For j = 0 To SpawnedUserList.UserList(i).RemovedItemCount - 1
                 If SpawnedUserList.UserList(i).RemovedItems(j).ItemId > 0 Then
                     Call AddItemToUser(UserIndex, SpawnedUserList.UserList(i).RemovedItems(j).ItemId, SpawnedUserList.UserList(i).RemovedItems(j).ItemCount)
                 End If
             Next j
-
             SpawnedUserList.UserList(i) = SpawnedUserList.UserList(SpawnedUserList.RegisteredUserCount - 1)
             SpawnedUserList.RegisteredUserCount = SpawnedUserList.RegisteredUserCount - 1
             Call UpdateUserInv(True, UserIndex, 0)
@@ -227,7 +215,6 @@ Private Sub LimitFightArea()
     Dim SpawnPos As t_WorldPos
     SpawnPos.Map = MapNumber
     Call UpdateFightAreaForPlayerCount
-
     For x = FightAreaTopLeft.x To FightAreaBottomRight.x
         SpawnPos.x = x
         SpawnPos.y = FightAreaTopLeft.y - 1
@@ -237,9 +224,7 @@ Private Sub LimitFightArea()
         Call BlockAndInform(MapNumber, x, FightAreaTopLeft.y - 1, 1)
         Call BlockAndInform(MapNumber, x, FightAreaBottomRight.y + 1, 1)
     Next x
-
     MiObj.ObjIndex = RingLimiterVItemID
-
     For y = FightAreaTopLeft.y To FightAreaBottomRight.y
         SpawnPos.x = FightAreaTopLeft.x - 1
         SpawnPos.y = y
@@ -249,7 +234,6 @@ Private Sub LimitFightArea()
         Call BlockAndInform(MapNumber, FightAreaTopLeft.x - 1, y, 1)
         Call BlockAndInform(MapNumber, FightAreaBottomRight.x + 1, y, 1)
     Next y
-
     MiObj.ObjIndex = RingLimiterTLItemID
     SpawnPos.x = FightAreaTopLeft.x - 1
     SpawnPos.y = FightAreaTopLeft.y - 1
@@ -294,17 +278,14 @@ Private Sub ClearMap()
     MapInfo(MapNumber).FriendlyFire = FriendlyFireState
     Dim i As Integer
     If FightAreaTopLeft.x < FightAreaBottomRight.x Then
-
         For i = FightAreaTopLeft.x - 1 To FightAreaBottomRight.x + 1
             Call BlockAndInform(MapNumber, i, FightAreaTopLeft.y - 1, 0)
             Call BlockAndInform(MapNumber, i, FightAreaBottomRight.y + 1, 0)
         Next i
-
         For i = FightAreaTopLeft.y To FightAreaBottomRight.y
             Call BlockAndInform(MapNumber, FightAreaTopLeft.x - 1, i, 0)
             Call BlockAndInform(MapNumber, FightAreaBottomRight.x + 1, i, 0)
         Next i
-
     End If
     Exit Sub
 ClearMap_Err:
@@ -317,14 +298,12 @@ Private Function IsForbidden(ByVal ItemId As Integer) As Boolean
         IsForbidden = False
         Exit Function
     End If
-
     For i = 0 To UBound(ForbbidenItemId) - 1
         If ForbbidenItemId(i) = ItemId Then
             IsForbidden = True
             Exit Function
         End If
     Next i
-
     IsForbidden = False
 End Function
 
@@ -370,15 +349,12 @@ Public Sub IBaseScenario_WillSummonPlayer(ByVal UserIndex As Integer)
     Dim UserItemInfo As t_UserItemInfo
     Dim i            As Integer
     With UserList(UserIndex)
-
         For i = 0 To SpawnedUserList.RegisteredUserCount - 1
             If SpawnedUserList.UserList(i).UserId = .Id Then
                 Exit For
             End If
         Next i
-
         If i >= SpawnedUserList.RegisteredUserCount Then
-
             For i = 1 To UBound(.invent.Object)
                 If IsForbidden(.invent.Object(i).ObjIndex) Then
                     UserItemInfo.RemovedItems(UserItemInfo.RemovedItemCount).ItemId = .invent.Object(i).ObjIndex
@@ -389,7 +365,6 @@ Public Sub IBaseScenario_WillSummonPlayer(ByVal UserIndex As Integer)
                     .invent.Object(i).Equipped = 0
                 End If
             Next i
-
             If UserItemInfo.RemovedItemCount > 0 Then
                 SpawnedUserList.UserList(SpawnedUserList.RegisteredUserCount) = UserItemInfo
                 SpawnedUserList.UserList(SpawnedUserList.RegisteredUserCount).UserId = .Id
@@ -500,7 +475,6 @@ Private Sub StartGame()
     ElapsedTime = 0
     Call LimitFightArea
     Dim i As Integer
-
     For i = 0 To LobbyList(LobbyIndex).RegisteredPlayers - 1
         Dim SpawnPos As t_WorldPos
         SpawnPos.Map = MapNumber
@@ -512,18 +486,14 @@ Private Sub StartGame()
             End If
         End If
     Next i
-
     Dim j             As Integer
     Dim InitialStacks As Integer
-
     For i = 0 To UBound(ItemsToSpawn) - 1
         InitialStacks = ItemsToSpawn(i).InitialStacks * LobbyList(LobbyIndex).RegisteredPlayers
-
         For j = 0 To InitialStacks
             Call SpawnItem(ItemsToSpawn(i).ItemId, ItemsToSpawn(i).ItemCount)
         Next j
     Next i
-
     Call ConfigMapEvent
 End Sub
 
@@ -535,7 +505,7 @@ Private Sub Respawn(ByVal player As Integer)
     Call WarpToLegalPos(player, MapNumber, SpawnPos.x, SpawnPos.y, True, True)
     Call RevivirUsuario(player)
     UserList(player).Counters.timeFx = 3
-    Call SendData(SendTarget.ToPCAliveArea, player, PrepareMessageParticleFX(UserList(player).Char.charindex, e_ParticulasIndex.Curar, 100, False, , UserList(player).pos.x, _
+    Call SendData(SendTarget.ToPCAliveArea, player, PrepareMessageParticleFX(UserList(player).Char.charindex, e_ParticleEffects.Corazones, 100, False, , UserList(player).pos.x, _
             UserList(player).pos.y))
     Call SendData(SendTarget.ToPCAliveArea, player, PrepareMessagePlayWave("104", UserList(player).pos.x, UserList(player).pos.y))
 End Sub
@@ -544,13 +514,11 @@ Private Sub MatchCompleted()
     MapInfo(MapNumber).Seguro = 1
     Call SetTimer(CountdownTimer, 1000)
     Dim i As Integer
-
     For i = 0 To LobbyList(LobbyIndex).RegisteredPlayers - 1
         If IsValidUserRef(LobbyList(LobbyIndex).Players(i).User) Then
             Call RemoveForbiddenItems(LobbyList(LobbyIndex).Players(i).User.ArrayIndex)
         End If
     Next i
-
     LobbyList(LobbyIndex).State = Completed
     ElapsedTime = MaxTime
     If Not LobbyList(LobbyIndex).Canceled Then
@@ -587,17 +555,13 @@ Private Sub RespawnPlayers()
     Dim i           As Integer
     currentTime = GetTickCount()
     Keys = PlayerRespawn.Keys
-
     For Each key In Keys
-
         Set RespawnInfo = PlayerRespawn.Item(key)
         If currentTime - RespawnInfo.RespawnTime > PlayerRespawnTime Then
             Call Respawn(key)
-
             For i = 0 To RespawnInfo.EquipedElementCount - 1
                 Call EquiparInvItem(key, RespawnInfo.GetActiveSlot(i))
             Next i
-
             If RespawnInfo.HasPowerUp Then
                 With UserList(key)
                     .Stats.UserAtributos(1) = RespawnInfo.Strength
@@ -609,7 +573,6 @@ Private Sub RespawnPlayers()
             Call PlayerRespawn.Remove(key)
         End If
     Next key
-
 End Sub
 
 Private Sub RespawnItems(ByVal frametime As Long)
@@ -617,18 +580,14 @@ Private Sub RespawnItems(ByVal frametime As Long)
     Dim SpawnCount    As Integer
     Dim StackToCreate As Integer
     StackToCreate = (ItemsToSpawn(i).StackCount * LobbyList(LobbyIndex).RegisteredPlayers) - 1
-
     For i = 0 To UBound(ItemsToSpawn) - 1
         If UpdateTime(ItemsToSpawn(i).timer, frametime) Then
-
             For j = 0 To StackToCreate
                 SpawnCount = ItemsToSpawn(i).ItemCount
                 Call SpawnItem(ItemsToSpawn(i).ItemId, SpawnCount)
             Next j
-
         End If
     Next i
-
 End Sub
 
 Private Sub SpawnItem(ByVal ItemId As Integer, ByVal StackSize As Integer)
@@ -671,13 +630,11 @@ Public Sub IBaseScenario_UserDie(ByVal UserIndex)
     RespawnInfo.RespawnTime = GetTickCount()
     With UserList(UserIndex)
         Dim i As Integer
-
         For i = LBound(.invent.Object) To UBound(.invent.Object)
             If .invent.Object(i).Equipped Then
                 Call RespawnInfo.AddEquipedElement(i)
             End If
         Next i
-
         If .flags.TomoPocion Then
             RespawnInfo.HasPowerUp = True
             RespawnInfo.PowerUpTime = .flags.DuracionEfecto
@@ -712,17 +669,14 @@ Sub GiveRewards()
     If LobbyList(LobbyIndex).TeamSize > 1 Then
         ReDim Teams(0 To LobbyList(LobbyIndex).RegisteredPlayers / LobbyList(LobbyIndex).TeamSize) As String
         Ranking = Board.GetTeamRanking(LobbyList(LobbyIndex))
-
         For i = 0 To LobbyList(LobbyIndex).RegisteredPlayers - 1
             If IsValidUserRef(LobbyList(LobbyIndex).Players(i).User) Then
                 Teams(LobbyList(LobbyIndex).Players(i).team) = Teams(LobbyList(LobbyIndex).Players(i).team) & UserList(LobbyList(LobbyIndex).Players(i).User.ArrayIndex).name & " "
             End If
         Next i
-
         For i = 1 To 3
             If LobbyList(LobbyIndex).AvailableInscriptionMoney > 0 Then
                 Reward = Rewards(i) / LobbyList(LobbyIndex).TeamSize
-
                 For j = 0 To LobbyList(LobbyIndex).RegisteredPlayers - 1
                     If IsValidUserRef(LobbyList(LobbyIndex).Players(j).User) Then
                         If LobbyList(LobbyIndex).Players(j).team = Ranking(i).PlayerIndex Then
@@ -730,19 +684,15 @@ Sub GiveRewards()
                         End If
                     End If
                 Next j
-
                 RewardStr = ", ganaron " & PonerPuntos(Reward) & " Modenas de oro cada uno."
             End If
             Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1744, i & "¬" & Teams(Ranking(i).PlayerIndex) & "¬" & Ranking(i).Score & "¬" & RewardStr, _
                     e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1744=¬1) ¬2: ¬3 puntos¬4
         Next i
-
     Else
         Ranking = Board.GetRanking(3)
-
         For i = 0 To UBound(Ranking) - 1
             If LobbyList(LobbyIndex).AvailableInscriptionMoney > 0 Then
-
                 For j = 0 To LobbyList(LobbyIndex).RegisteredPlayers - 1
                     If IsValidUserRef(LobbyList(LobbyIndex).Players(j).User) Then
                         If LobbyList(LobbyIndex).Players(j).User.ArrayIndex = Ranking(i).PlayerIndex Then
@@ -751,7 +701,6 @@ Sub GiveRewards()
                         End If
                     End If
                 Next j
-
                 RewardStr = ", gano " & PonerPuntos(Rewards(i + 1)) & " Modenas de oro."
             End If
             If Ranking(i).PlayerIndex > 0 Then
@@ -759,7 +708,6 @@ Sub GiveRewards()
                         RewardStr, e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1824=¬1) ¬2: ¬3 puntos¬4
             End If
         Next i
-
     End If
     Exit Sub
 GiveRewards_Err:

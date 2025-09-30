@@ -94,12 +94,10 @@ Private Sub Command1_Click()
     Text2.Text = Text2.Text & "NumUsers: " & NumUsers & vbCrLf
     'Text2.Text = Text2.Text & "" & vbCrLf
     List1.Clear
-
     For LoopC = 1 To MaxUsers
         List1.AddItem Format$(LoopC, "000") & " " & IIf(UserList(LoopC).flags.UserLogged, UserList(LoopC).name, "")
         List1.ItemData(List1.NewIndex) = LoopC
     Next LoopC
-
     Exit Sub
 Command1_Click_Err:
     Call TraceError(Err.Number, Err.Description, "frmUserList.Command1_Click", Erl)
@@ -108,13 +106,11 @@ End Sub
 Private Sub Command2_Click()
     On Error GoTo Command2_Click_Err
     Dim LoopC As Integer
-
     For LoopC = 1 To MaxUsers
         If UserList(LoopC).ConnectionDetails.ConnIDValida And Not UserList(LoopC).flags.UserLogged Then
             Call CloseSocket(LoopC)
         End If
     Next LoopC
-
     Exit Sub
 Command2_Click_Err:
     Call TraceError(Err.Number, Err.Description, "frmUserList.Command2_Click", Erl)

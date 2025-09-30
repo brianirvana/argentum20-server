@@ -71,7 +71,6 @@ End Sub
 
 Private Function is_purchaseable_item(ByRef obj As t_ObjData) As Boolean
     Dim i As Long
-
     For i = 1 To UBound(ObjShop)
         If ObjShop(i).ObjNum = obj.ObjNum Then
             'Si es un item de shop, aparte le agrego el valor (por ref)
@@ -80,7 +79,6 @@ Private Function is_purchaseable_item(ByRef obj As t_ObjData) As Boolean
             Exit Function
         End If
     Next i
-
     is_purchaseable_item = False
 End Function
 

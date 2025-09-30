@@ -11,11 +11,9 @@ Public Sub InitializeInstanceHeap(ByVal Size As Integer, ByVal MapIndexStart As 
     On Error GoTo ErrHandler_InitializeInstanceHeap
     ReDim AvailableInstanceMap.IndexInfo(Size)
     Dim i As Integer
-
     For i = 1 To Size
         AvailableInstanceMap.IndexInfo(i) = Size - (i - 1) + MapIndexStart
     Next i
-
     AvailableInstanceMap.currentIndex = Size
     Exit Sub
 ErrHandler_InitializeInstanceHeap:
@@ -65,21 +63,17 @@ Public Sub CloneMapWithTranslations(ByVal SourceMapIndex As Integer, ByVal DestM
     Dim PerformanceTimer As Long
     Dim i                As Integer
     Call PerformanceTestStart(PerformanceTimer)
-
     For PosY = YMinMapSize To YMaxMapSize
         For PosX = XMinMapSize To XMaxMapSize
             MapData(DestMapIndex, PosX, PosY) = MapData(SourceMapIndex, PosX, PosY)
             If (MapData(DestMapIndex, PosX, PosY).TileExit.Map > 0) Then
-
                 For i = LBound(TranslationMappings) To UBound(TranslationMappings)
                     If MapData(DestMapIndex, PosX, PosY).TileExit.Map = TranslationMappings(i).OriginalTarget Then
                         MapData(DestMapIndex, PosX, PosY).TileExit.Map = TranslationMappings(i).NewTarget
                     End If
                 Next i
-
             End If
         Next PosX
     Next PosY
-
     Call PerformTimeLimitCheck(PerformanceTimer, "CloneMapWithTranslations time", 50)
 End Sub

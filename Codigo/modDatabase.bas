@@ -36,14 +36,12 @@ Public Sub Database_Connect_Async()
         ConnectionID = "DRIVER={SQLite3 ODBC Driver};" & "DATABASE=" & App.Path & "/Database.db"
     End If
     Dim i As Byte
-
     For i = 1 To MAX_ASYNC
         Set Connection_async(i) = New ADODB.Connection
         Connection_async(i).CursorLocation = adUseClient
         Connection_async(i).ConnectionString = ConnectionID
         Call Connection_async(i).Open(, , , adAsyncConnect)
     Next i
-
     Current_async = 1
     Set Builder = New cStringBuilder
     Exit Sub
@@ -87,22 +85,16 @@ Public Function Query(ByVal Text As String, ParamArray Arguments() As Variant) A
     Command.CommandText = Text
     Command.CommandType = adCmdText
     Command.Prepared = True
-
     For Each Argument In Arguments
-
         If (IsArray(Argument)) Then
             Dim Inner As Variant
-
             For Each Inner In Argument
-
                 Command.Parameters.Append CreateParameter(Inner, adParamInput)
             Next Inner
-
         Else
             Command.Parameters.Append CreateParameter(Argument, adParamInput)
         End If
     Next Argument
-
     On Error GoTo Query_Err
     ' Statistics
     If frmMain.chkLogDbPerfomance.value = 1 Then
@@ -126,22 +118,16 @@ Public Function Execute(ByVal Text As String, ParamArray Arguments() As Variant)
     Command.CommandText = Text
     Command.CommandType = adCmdText
     Command.Prepared = True
-
     For Each Argument In Arguments
-
         If (IsArray(Argument)) Then
             Dim Inner As Variant
-
             For Each Inner In Argument
-
                 Command.Parameters.Append CreateParameter(Inner, adParamInput)
             Next Inner
-
         Else
             Command.Parameters.Append CreateParameter(Argument, adParamInput)
         End If
     Next Argument
-
     On Error GoTo Execute_Err
     ' Statistics
     If frmMain.chkLogDbPerfomance.value = 1 Then
@@ -172,22 +158,16 @@ Public Function Invoke(ByVal Procedure As String, ParamArray Arguments() As Vari
     Command.CommandText = Procedure
     Command.CommandType = adCmdStoredProc
     Command.Prepared = True
-
     For Each Argument In Arguments
-
         If (IsArray(Argument)) Then
             Dim Inner As Variant
-
             For Each Inner In Argument
-
                 Command.Parameters.Append CreateParameter(Inner, adParamInput)
             Next Inner
-
         Else
             Command.Parameters.Append CreateParameter(Argument, adParamInput)
         End If
     Next Argument
-
     On Error GoTo Execute_Err
     ' Statistics
     If frmMain.chkLogDbPerfomance.value = 1 Then
@@ -351,7 +331,6 @@ Public Function GetPersonajesCuentaDatabase(ByVal AccountID As Long, Personaje()
     GetPersonajesCuentaDatabase = RS.RecordCount
     Dim i As Integer
     If GetPersonajesCuentaDatabase = 0 Then Exit Function
-
     For i = 1 To GetPersonajesCuentaDatabase
         Personaje(i).nombre = RS!name
         Personaje(i).Cabeza = RS!head_id
@@ -383,7 +362,6 @@ Public Function GetPersonajesCuentaDatabase(ByVal AccountID As Long, Personaje()
         End If
         RS.MoveNext
     Next
-
     Exit Function
 GetPersonajesCuentaDatabase_Err:
     Call TraceError(Err.Number, Err.Description, "modDatabase.GetPersonajesCuentaDatabase", Erl)
@@ -531,14 +509,10 @@ Public Sub SendUserPunishmentsDatabase(ByVal UserIndex As Integer, ByVal usernam
     Set RS = Query("SELECT user_id, number, reason FROM `punishment` INNER JOIN `user` ON punishment.user_id = user.id WHERE UPPER(user.name) = ?;", UCase$(username))
     If RS Is Nothing Then Exit Sub
     If Not RS.RecordCount = 0 Then
-
         While Not RS.EOF
-
             Call WriteConsoleMsg(UserIndex, RS!Number & " - " & RS!Reason, e_FontTypeNames.FONTTYPE_INFO)
             RS.MoveNext
-
         Wend
-
     End If
     Exit Sub
 ErrorHandler:
@@ -564,18 +538,14 @@ Public Function GetUserGuildMemberDatabase(username As String) As String
     If Not RS.RecordCount = 0 Then
         Dim i As Integer
         i = 0
-
         While Not RS.EOF
-
             History = History & SanitizeNullValue(RS!guild_name, "")
             i = i + 1
             If i < RS.RecordCount Then
                 History = History & ", "
             End If
             RS.MoveNext
-
         Wend
-
     End If
     GetUserGuildMemberDatabase = History
     Exit Function
@@ -602,18 +572,14 @@ Public Function GetUserGuildPedidosDatabase(username As String) As String
     If Not RS.RecordCount = 0 Then
         Dim i As Integer
         i = 0
-
         While Not RS.EOF
-
             History = History & SanitizeNullValue(RS!guild_name, "")
             i = i + 1
             If i < RS.RecordCount Then
                 History = History & ", "
             End If
             RS.MoveNext
-
         Wend
-
     End If
     GetUserGuildPedidosDatabase = History
     Exit Function

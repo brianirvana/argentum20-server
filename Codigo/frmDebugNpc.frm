@@ -94,11 +94,9 @@ Option Explicit
 Private Sub Command1_Click()
     On Error GoTo Command1_Click_Err
     Dim i As Integer, K As Integer
-
     For i = 1 To LastNPC
         If NpcList(i).flags.NPCActive Then K = K + 1
     Next i
-
     Label1.Caption = "Npcs Activos:" & K
     Label2.Caption = "Npcs Libres:" & MaxNPCs - K
     Label3.Caption = "LastNpcIndex:" & LastNPC

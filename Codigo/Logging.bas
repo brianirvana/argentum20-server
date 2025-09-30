@@ -87,12 +87,10 @@ Public Function GetLastMessages() As String()
     ReDim errorList(CircularLogBuffer.Size)
     Dim i             As Integer
     Dim circularIndex As Integer
-
     For i = 1 To CircularLogBuffer.Size
         circularIndex = ((CircularLogBuffer.currentIndex + i) Mod CircularLogBuffer.Size)
         errorList(i) = CircularLogBuffer.Messages(circularIndex)
     Next i
-
     GetLastMessages = errorList
 End Function
 

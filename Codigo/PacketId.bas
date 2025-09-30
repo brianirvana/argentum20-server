@@ -209,7 +209,6 @@ Public Enum ServerPacketID
     #If PYMMO = 0 Then
         eAccountCharacterList
     #End If
-    ChangeSkinSlot
     eMaxPacket
     [PacketCount]
 End Enum

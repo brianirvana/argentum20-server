@@ -58,7 +58,6 @@ Public Sub NPC_TIRAR_ITEMS(ByRef Npc As t_Npc)
     If Npc.invent.NroItems > 0 Then
         Dim i     As Byte
         Dim MiObj As t_Obj
-
         For i = 1 To MAX_INVENTORY_SLOTS
             If Npc.invent.Object(i).ObjIndex > 0 Then
                 MiObj.amount = Npc.invent.Object(i).amount
@@ -66,7 +65,6 @@ Public Sub NPC_TIRAR_ITEMS(ByRef Npc As t_Npc)
                 Call TirarItemAlPiso(Npc.pos, MiObj, Npc.flags.AguaValida = 1)
             End If
         Next i
-
     End If
     Exit Sub
 NPC_TIRAR_ITEMS_Err:
@@ -77,14 +75,12 @@ Function QuedanItems(ByVal NpcIndex As Integer, ByVal ObjIndex As Integer) As Bo
     On Error GoTo QuedanItems_Err
     Dim i As Integer
     If NpcList(NpcIndex).invent.NroItems > 0 Then
-
         For i = 1 To MAX_INVENTORY_SLOTS
             If NpcList(NpcIndex).invent.Object(i).ObjIndex = ObjIndex Then
                 QuedanItems = True
                 Exit Function
             End If
         Next
-
     End If
     QuedanItems = False
     Exit Function
@@ -101,7 +97,6 @@ Function EncontrarCant(ByVal NpcIndex As Integer, ByVal ObjIndex As Integer) As 
     '    npcfile = DatPath & "NPCs-HOSTILES.dat"
     'Else
     npcfile = DatPath & "NPCs.dat"
-
     'End If
     For i = 1 To MAX_INVENTORY_SLOTS
         ln = GetVar(npcfile, "NPC" & NpcList(NpcIndex).Numero, "Obj" & i)
@@ -110,7 +105,6 @@ Function EncontrarCant(ByVal NpcIndex As Integer, ByVal ObjIndex As Integer) As 
             Exit Function
         End If
     Next
-
     EncontrarCant = 0
     Exit Function
 EncontrarCant_Err:
@@ -121,12 +115,10 @@ Sub ResetNpcInv(ByVal NpcIndex As Integer)
     On Error GoTo ResetNpcInv_Err
     Dim i As Integer
     NpcList(NpcIndex).invent.NroItems = 0
-
     For i = 1 To MAX_INVENTORY_SLOTS
         NpcList(NpcIndex).invent.Object(i).ObjIndex = 0
         NpcList(NpcIndex).invent.Object(i).amount = 0
     Next i
-
     NpcList(NpcIndex).InvReSpawn = 0
     Exit Sub
 ResetNpcInv_Err:
@@ -186,13 +178,11 @@ Sub CargarInvent(ByVal NpcIndex As Integer)
     'End If
     NpcList(NpcIndex).invent.NroItems = val(GetVar(npcfile, "NPC" & NpcList(NpcIndex).Numero, "NROITEMS"))
     If NpcList(NpcIndex).invent.NroItems > 0 Then
-
         For LoopC = 1 To NpcList(NpcIndex).invent.NroItems
             ln = GetVar(npcfile, "NPC" & NpcList(NpcIndex).Numero, "Obj" & LoopC)
             NpcList(NpcIndex).invent.Object(LoopC).ObjIndex = val(ReadField(1, ln, 45))
             NpcList(NpcIndex).invent.Object(LoopC).amount = val(ReadField(2, ln, 45))
         Next LoopC
-
     End If
     Exit Sub
 CargarInvent_Err:
@@ -222,7 +212,7 @@ Public Sub NpcDropeo(ByRef Npc As t_Npc, ByRef UserIndex As Integer)
     Dropeo.amount = Cantidad 'Cantidad
     Dropeo.ObjIndex = obj 'NUMERO DEL ITEM EN EL OBJ.DAT
     Call TirarItemAlPiso(Npc.pos, Dropeo, Npc.flags.AguaValida = 1)
-    Call SendData(SendTarget.ToIndex, UserIndex, PrepareMessagePlayWave(e_FXSound.Dropeo_Sound, Npc.pos.x, Npc.pos.y))
+    Call SendData(SendTarget.ToIndex, UserIndex, PrepareMessagePlayWave(e_SoundEffects.Dropeo_Sound, Npc.pos.x, Npc.pos.y))
     Exit Sub
 ErrHandler:
     Call LogError("Error al dropear el item " & ObjData(Npc.QuizaDropea(objRandom)).name & ", al usuario " & UserList(UserIndex).name & ". " & Err.Description & ".")
@@ -233,7 +223,6 @@ Public Sub DropFromGlobalDropTable(ByRef Npc As t_Npc, ByVal UserIndex As Intege
     Dim i           As Integer
     Dim DropChance  As Single
     Dim RandomValue As Long
-
     For i = 1 To UBound(GlobalDropTable)
         DropChance = Npc.Stats.MaxHp / GlobalDropTable(i).RequiredHPForMaxChance
         DropChance = Min(max(DropChance, GlobalDropTable(i).MinPercent), GlobalDropTable(i).MaxPercent)
@@ -244,10 +233,9 @@ Public Sub DropFromGlobalDropTable(ByRef Npc As t_Npc, ByVal UserIndex As Intege
             DropInfo.amount = GlobalDropTable(i).amount
             DropInfo.ObjIndex = GlobalDropTable(i).ObjectNumber
             Call TirarItemAlPiso(Npc.pos, DropInfo, Npc.flags.AguaValida = 1)
-            Call SendData(SendTarget.ToIndex, UserIndex, PrepareMessagePlayWave(e_FXSound.Dropeo_Sound, Npc.pos.x, Npc.pos.y))
+            Call SendData(SendTarget.ToIndex, UserIndex, PrepareMessagePlayWave(e_SoundEffects.Dropeo_Sound, Npc.pos.x, Npc.pos.y))
         End If
     Next i
-
     Exit Sub
 ErrHandler:
     Call LogError("Error DropFromGlobalDropTable al dropear el item " & i & ", al usuario " & UserList(UserIndex).name & ". " & Err.Description & ".")
@@ -262,7 +250,6 @@ Public Sub DropObjQuest(ByRef Npc As t_Npc, ByRef UserIndex As Integer)
     Dim Dropeo       As t_Obj
     Dim Probabilidad As Long
     Dim i            As Byte
-
     For i = 1 To Npc.NumDropQuest
         With Npc.DropQuest(i)
             If .QuestIndex > 0 <> 0 Then
@@ -275,17 +262,16 @@ Public Sub DropObjQuest(ByRef Npc As t_Npc, ByRef UserIndex As Integer)
                             Dropeo.amount = .amount
                             Dropeo.ObjIndex = .ObjIndex
                             'Call TirarItemAlPiso(npc.Pos, Dropeo)
-                            'Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave(e_FXSound.Dropeo_Sound, npc.Pos.X, npc.Pos.Y))
+                            'Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave(e_SoundEffects.Dropeo_Sound, npc.Pos.X, npc.Pos.Y))
                             '  Ahora te lo da en el inventario, si hay espacio, y el sonido lo escuchas vos solo
                             Call MeterItemEnInventario(UserIndex, Dropeo)
-                            Call SendData(SendTarget.ToIndex, UserIndex, PrepareMessagePlayWave(e_FXSound.Dropeo_Sound, Npc.pos.x, Npc.pos.y))
+                            Call SendData(ToIndex, UserIndex, PrepareMessagePlayWave(e_SoundEffects.Dropeo_Sound, Npc.pos.x, Npc.pos.y))
                         End If
                     End If
                 End If
             End If
         End With
     Next i
-
     Exit Sub
 ErrHandler:
     Call LogError("Error DropObjQuest al dropear el item " & ObjData(Npc.DropQuest(i).ObjIndex).name & ", al usuario " & UserList(UserIndex).name & ". " & Err.Description & ".")

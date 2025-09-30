@@ -210,7 +210,6 @@ Public Sub CargarSpawnList()
     Dim n As Integer, LoopC As Integer
     n = val(GetVar(DatPath & "npcs.dat", "INIT", "NumNPCs"))
     ReDim SpawnList(n) As t_CriaturasEntrenador
-
     For LoopC = 1 To n
         SpawnList(LoopC).NpcIndex = LoopC
         SpawnList(LoopC).NpcName = GetVar(DatPath & "npcs.dat", "NPC" & LoopC, "Name")
@@ -219,7 +218,6 @@ Public Sub CargarSpawnList()
             SpawnList(LoopC).NpcName = "Nada"
         End If
     Next LoopC
-
     Exit Sub
 CargarSpawnList_Err:
     Call TraceError(Err.Number, Err.Description, "ES.CargarSpawnList", Erl)
@@ -337,7 +335,6 @@ Public Sub loadAdministrativeUsers()
     Call ServerIni.Initialize(IniPath & "Server.ini")
     ' Admines
     buf = val(ServerIni.GetValue("INIT", "Admines"))
-
     For i = 1 To buf
         name = UCase$(ServerIni.GetValue("Admines", "Admin" & i))
         TempName = Split(name, "|", , vbTextCompare)
@@ -349,10 +346,8 @@ Public Sub loadAdministrativeUsers()
             Call Administradores.ChangeValue("Admin", TempName(0), "1")
         End If
     Next i
-
     ' Dioses
     buf = val(ServerIni.GetValue("INIT", "Dioses"))
-
     For i = 1 To buf
         name = UCase$(ServerIni.GetValue("Dioses", "Dios" & i))
         TempName = Split(name, "|", , vbTextCompare)
@@ -364,10 +359,8 @@ Public Sub loadAdministrativeUsers()
             Call Administradores.ChangeValue("Dios", TempName(0), "1")
         End If
     Next i
-
     ' SemiDioses
     buf = val(ServerIni.GetValue("INIT", "SemiDioses"))
-
     For i = 1 To buf
         name = UCase$(ServerIni.GetValue("SemiDioses", "SemiDios" & i))
         TempName = Split(name, "|", , vbTextCompare)
@@ -379,10 +372,8 @@ Public Sub loadAdministrativeUsers()
             Call Administradores.ChangeValue("SemiDios", TempName(0), "1")
         End If
     Next i
-
     ' Consejeros
     buf = val(ServerIni.GetValue("INIT", "Consejeros"))
-
     For i = 1 To buf
         name = UCase$(ServerIni.GetValue("Consejeros", "Consejero" & i))
         TempName = Split(name, "|", , vbTextCompare)
@@ -394,10 +385,8 @@ Public Sub loadAdministrativeUsers()
             Call Administradores.ChangeValue("Consejero", TempName(0), "1")
         End If
     Next i
-
     ' RolesMasters
     buf = val(ServerIni.GetValue("INIT", "RolesMasters"))
-
     For i = 1 To buf
         name = UCase$(ServerIni.GetValue("RolesMasters", "RM" & i))
         TempName = Split(name, "|", , vbTextCompare)
@@ -409,7 +398,6 @@ Public Sub loadAdministrativeUsers()
             Call Administradores.ChangeValue("RM", TempName(0), "1")
         End If
     Next i
-
     Set ServerIni = Nothing
     'If frmMain.Visible Then frmMain.txtStatus.Text = Date & " " & Time & " - Los Administradores/Dioses/Gms se han cargado correctamente."
     Exit Sub
@@ -421,15 +409,18 @@ Public Function TxtDimension(ByVal name As String) As Long
     On Error GoTo TxtDimension_Err
     Dim n As Integer, cad As String, Tam As Long
     n = FreeFile(1)
+    If FileExist(name, vbArchive) Then
     Open name For Input As #n
     Tam = 0
-
     Do While Not EOF(n)
         Tam = Tam + 1
         Line Input #n, cad
     Loop
-
     Close n
+    Else
+        Debug.print "No existe el archivo " & name
+    End If
+
     TxtDimension = Tam
     Exit Function
 TxtDimension_Err:
@@ -448,12 +439,10 @@ Public Sub CargarForbidenWords()
     Dim n As Integer, i As Integer
     n = FreeFile(1)
     Open DatPath & "NombresInvalidos.txt" For Input As #n
-
     For i = 1 To UBound(ForbidenNames)
         Line Input #n, ForbidenNames(i)
         ForbidenNames(i) = LCase$(ForbidenNames(i))
     Next i
-
     Close n
     Exit Sub
 CargarForbidenWords_Err:
@@ -472,12 +461,10 @@ Public Sub LoadBlockedWordsDescription()
     Dim n As Integer, i As Integer
     n = FreeFile(1)
     Open DatPath & "BlockedWordsDescription.txt" For Input As #n
-
     For i = LBound(BlockedWordsDescription) To UBound(BlockedWordsDescription)
         Line Input #n, BlockedWordsDescription(i)
         BlockedWordsDescription(i) = LCase$(BlockedWordsDescription(i))
     Next i
-
     Close n
     Exit Sub
 LoadBlockedWordsDescription_Err:
@@ -509,7 +496,6 @@ Public Sub CargarHechizos()
     frmCargando.cargar.Min = 0
     frmCargando.cargar.max = NumeroHechizos
     frmCargando.cargar.value = 0
-
     'Llena la lista
     For Hechizo = 1 To NumeroHechizos
         Hechizos(Hechizo).velocidad = val(Leer.GetValue("Hechizo" & Hechizo, "Velocidad"))
@@ -592,6 +578,7 @@ Public Sub CargarHechizos()
         If val(Leer.GetValue("Hechizo" & Hechizo, "Ceguera")) > 0 Then Call SetMask(Hechizos(Hechizo).Effects, e_SpellEffects.Blindness)
         If val(Leer.GetValue("Hechizo" & Hechizo, "Estupidez")) > 0 Then Call SetMask(Hechizos(Hechizo).Effects, e_SpellEffects.Dumb)
         If val(Leer.GetValue("Hechizo" & Hechizo, "ToggleCleave")) > 0 Then Call SetMask(Hechizos(Hechizo).Effects, e_SpellEffects.ToggleCleave)
+        If val(Leer.GetValue("Hechizo" & Hechizo, "ToggleDivineBlood")) > 0 Then Call SetMask(Hechizos(Hechizo).Effects, e_SpellEffects.ToggleDivineBlood)
         If val(Leer.GetValue("Hechizo" & Hechizo, "AdjustStatsWithCaster")) > 0 Then Call SetMask(Hechizos(Hechizo).Effects, e_SpellEffects.AdjustStatsWithCaster)
         If val(Leer.GetValue("Hechizo" & Hechizo, "CancelActiveEffect")) > 0 Then Call SetMask(Hechizos(Hechizo).Effects, e_SpellEffects.CancelActiveEffect)
         Hechizos(Hechizo).Invoca = val(Leer.GetValue("Hechizo" & Hechizo, "Invoca"))
@@ -632,7 +619,6 @@ Public Sub CargarHechizos()
         If SubeHP = 1 Then Call SetMask(Hechizos(Hechizo).Effects, e_SpellEffects.eDoHeal)
         If SubeHP = 2 Then Call SetMask(Hechizos(Hechizo).Effects, e_SpellEffects.eDoDamage)
     Next Hechizo
-
     Set Leer = Nothing
     Exit Sub
 ErrHandler:
@@ -652,7 +638,6 @@ Public Sub LoadEffectOverTime()
     frmCargando.cargar.Min = 0
     frmCargando.cargar.max = EffectCount
     frmCargando.cargar.value = 0
-
     For i = 1 To EffectCount
         EffectOverTime(i).Type = val(Leer.GetValue("EOT" & i, "Type"))
         EffectOverTime(i).SubType = val(Leer.GetValue("EOT" & i, "SubType"))
@@ -738,7 +723,6 @@ Public Sub LoadEffectOverTime()
         If val(Leer.GetValue("EOT" & i, "RequireGunpowder")) > 0 Then Call SetIntMask(EffectOverTime(i).RequireWeaponType, ShiftLeft(1, eGunPowder))
         EffectOverTime(i).SecondaryTargetModifier = val(Leer.GetValue("EOT" & i, "SecondaryTargetModifier"))
     Next i
-
     Call InitializePools
     Exit Sub
 ErrHandler:
@@ -750,12 +734,10 @@ Sub LoadMotd()
     Dim i As Integer
     MaxLines = val(GetVar(DatPath & "Motd.ini", "INIT", "NumLines"))
     ReDim MOTD(1 To MaxLines)
-
     For i = 1 To MaxLines
         MOTD(i).texto = GetVar(DatPath & "Motd.ini", "Motd", "Line" & i)
         MOTD(i).Formato = vbNullString
     Next i
-
     Exit Sub
 LoadMotd_Err:
     Call TraceError(Err.Number, Err.Description, "ES.LoadMotd", Erl)
@@ -783,11 +765,9 @@ Sub LoadArmasHerreria()
         Exit Sub
     End If
     ReDim Preserve ArmasHerrero(1 To n) As Integer
-
     For lc = 1 To n
         ArmasHerrero(lc) = val(GetVar(DatPath & "ArmasHerrero.dat", "Arma" & lc, "Index"))
     Next lc
-
     Exit Sub
 LoadArmasHerreria_Err:
     Call TraceError(Err.Number, Err.Description, "ES.LoadArmasHerreria", Erl)
@@ -802,11 +782,9 @@ Sub LoadArmadurasHerreria()
         Exit Sub
     End If
     ReDim Preserve ArmadurasHerrero(1 To n) As Integer
-
     For lc = 1 To n
         ArmadurasHerrero(lc) = val(GetVar(DatPath & "ArmadurasHerrero.dat", "Armadura" & lc, "Index"))
     Next lc
-
     Exit Sub
 LoadArmadurasHerreria_Err:
     Call TraceError(Err.Number, Err.Description, "ES.LoadArmadurasHerreria", Erl)
@@ -821,11 +799,9 @@ Sub LoadBlackSmithElementalRunes()
         Exit Sub
     End If
     ReDim Preserve BlackSmithElementalRunes(1 To n) As Integer
-
     For lc = 1 To n
         BlackSmithElementalRunes(lc) = val(GetVar(DatPath & "BlackSmithElementalRunes.dat", "Runa" & lc, "Index"))
     Next lc
-
     Exit Sub
 LoadRunasHerreria_Err:
     Call TraceError(Err.Number, Err.Description, "ES.LoadBlackSmithElementalRunes", Erl)
@@ -838,7 +814,6 @@ Sub LoadBalance()
     BalanceIni.Initialize DatPath & "Balance.dat"
     Dim i, j As Long
     Dim SearchVar As String
-
     'Modificadores de Clase
     For i = 1 To NUMCLASES
         SearchVar = Replace$(Tilde(ListaClases(i)), " ", vbNullString)
@@ -861,14 +836,11 @@ Sub LoadBalance()
             .HitPost36 = val(BalanceIni.GetValue("GOLPE_POST_36", SearchVar))
             .ResistenciaMagica = val(BalanceIni.GetValue("MODRESISTENCIAMAGICA", SearchVar))
             .LevelSkillPoints = val(BalanceIni.GetValue("MODSKILLPOINTS", SearchVar))
-
             For j = 1 To eWeaponTypeCount - 1
                 .WeaponHitBonus(j) = val(BalanceIni.GetValue(SearchVar, WeaponTypeNames(j)))
             Next j
-
         End With
     Next i
-
     'Modificadores de Raza
     For i = 1 To NUMRAZAS
         SearchVar = Replace$(Tilde(ListaRazas(i)), " ", vbNullString)
@@ -880,7 +852,6 @@ Sub LoadBalance()
             .Constitucion = val(BalanceIni.GetValue("MODRAZA", SearchVar + "Constitucion"))
         End With
     Next i
-
     'Extra
     PorcentajeRecuperoMana = val(BalanceIni.GetValue("EXTRA", "PorcentajeRecuperoMana"))
     RecoveryMana = val(BalanceIni.GetValue("EXTRA", "RecoveryMana"))
@@ -908,29 +879,27 @@ Sub LoadBalance()
     FactionReKillTime = val(BalanceIni.GetValue("EXTRA", "FactionReKillTime"))
     AirHitReductParalisisTime = val(BalanceIni.GetValue("EXTRA", "AirHitReductParalisisTime"))
     PorcentajePescaSegura = val(BalanceIni.GetValue("EXTRA", "PorcentajePescaSegura"))
+    DivineBloodHealingMultiplierBonus = val(BalanceIni.GetValue("EXTRA", "DivineBloodHealingMultiplierBonus"))
+    DivineBloodManaCostMultiplier = val(BalanceIni.GetValue("EXTRA", "DivineBloodManaCostMultiplier"))
+    WarriorLifeStealOnHitMultiplier = val(BalanceIni.GetValue("EXTRA", "WarriorLifeStealOnHitMultiplier"))
     'stun
     PlayerStunTime = val(BalanceIni.GetValue("STUN", "PlayerStunTime"))
     NpcStunTime = val(BalanceIni.GetValue("STUN", "NpcStunTime"))
     PlayerInmuneTime = val(BalanceIni.GetValue("STUN", "PlayerInmuneTime"))
-
     ' Exp
     For i = 1 To STAT_MAXELV
         ExpLevelUp(i) = val(BalanceIni.GetValue("EXP", i))
     Next
-
     'ElementalMatrixForNpcs
     Dim vals() As String
     Dim row    As String
-
     For i = 0 To MAX_ELEMENT_TAGS - 1
         row = (CStr(BalanceIni.GetValue("ElementalMatrixForNpcs", "Row" & i + 1, "1")))
         vals = Split(row, " ")
-
         For j = 0 To MAX_ELEMENT_TAGS - 1
             ElementalMatrixForNpcs(i + 1, j + 1) = val(vals(j))
         Next j
     Next i
-
     '--------------------
     Set BalanceIni = Nothing
     AgregarAConsola "Se cargó el balance (Balance.dat)"
@@ -948,11 +917,9 @@ Sub LoadObjCarpintero()
         Exit Sub
     End If
     ReDim Preserve ObjCarpintero(1 To n) As Integer
-
     For lc = 1 To n
         ObjCarpintero(lc) = val(GetVar(DatPath & "ObjCarpintero.dat", "Obj" & lc, "Index"))
     Next lc
-
     Exit Sub
 LoadObjCarpintero_Err:
     Call TraceError(Err.Number, Err.Description, "ES.LoadObjCarpintero", Erl)
@@ -967,11 +934,9 @@ Sub LoadObjAlquimista()
         Exit Sub
     End If
     ReDim Preserve ObjAlquimista(1 To n) As Integer
-
     For lc = 1 To n
         ObjAlquimista(lc) = val(GetVar(DatPath & "ObjAlquimista.dat", "Obj" & lc, "Index"))
     Next lc
-
     Exit Sub
 LoadObjAlquimista_Err:
     Call TraceError(Err.Number, Err.Description, "ES.LoadObjAlquimista", Erl)
@@ -986,11 +951,9 @@ Sub LoadObjSastre()
         Exit Sub
     End If
     ReDim Preserve ObjSastre(1 To n) As Integer
-
     For lc = 1 To n
         ObjSastre(lc) = val(GetVar(DatPath & "ObjSastre.dat", "Obj" & lc, "Index"))
     Next lc
-
     Exit Sub
 LoadObjSastre_Err:
     Call TraceError(Err.Number, Err.Description, "ES.LoadObjSastre", Erl)
@@ -1010,17 +973,13 @@ Sub LoadOBJData()
     'Alejo
     '
     '###################################################
-    Dim ObjKey  As String
-    Dim str     As String, Field()      As String
-    Dim Crafteo As clsCrafteo
-    Dim NFT     As Boolean
-    Dim Object  As Integer
-    Dim Leer    As clsIniManager
     On Error GoTo ErrHandler
     If frmMain.Visible Then frmMain.txStatus.Caption = "Cargando base de datos de los objetos."
     '*****************************************************************
     'Carga la lista de objetos
     '*****************************************************************
+    Dim Object As Integer
+    Dim Leer   As clsIniManager
     Set Leer = New clsIniManager
     Call Leer.Initialize(DatPath & "Obj.dat")
     'obtiene el numero de obj
@@ -1032,7 +991,10 @@ Sub LoadOBJData()
     End With
     ReDim Preserve ObjData(1 To NumObjDatas) As t_ObjData
     ReDim ObjShop(1 To 1) As t_ObjData
-
+    Dim ObjKey  As String
+    Dim str     As String, Field() As String
+    Dim Crafteo As clsCrafteo
+    Dim NFT     As Boolean
     'Llena la lista
     For Object = 1 To NumObjDatas
         With ObjData(Object)
@@ -1086,32 +1048,34 @@ Sub LoadOBJData()
                 Case e_OBJType.otWorkingTools
                     .WeaponAnim = val(Leer.GetValue(ObjKey, "Anim"))
                     .Power = val(Leer.GetValue(ObjKey, "Power"))
-                Case e_OBJType.otArmor, e_OBJType.otSkinsArmours
+                Case e_OBJType.otArmor
                     .Real = val(Leer.GetValue(ObjKey, "Real"))
                     .Caos = val(Leer.GetValue(ObjKey, "Caos"))
                     .LeadersOnly = val(Leer.GetValue(ObjKey, "LeadersOnly")) <> 0
                     .ResistenciaMagica = val(Leer.GetValue(ObjKey, "ResistenciaMagica"))
                     .Invernal = val(Leer.GetValue(ObjKey, "Invernal")) > 0
                     .Camouflage = val(Leer.GetValue(ObjKey, "Camouflage")) > 0
-                    .SkinOrigin = val(Leer.GetValue(ObjKey, "SkinOrigin"))
-                Case e_OBJType.otShield, e_OBJType.otSkinsShields
+                    If val(Leer.GetValue(ObjKey, "velocidad")) = 0 Then
+                        .velocidad = 1
+                    Else
+                        .velocidad = val(Leer.GetValue(ObjKey, "velocidad"))
+                    End If
+                Case e_OBJType.otShield
                     .ShieldAnim = val(Leer.GetValue(ObjKey, "Anim"))
                     .Real = val(Leer.GetValue(ObjKey, "Real"))
                     .Caos = val(Leer.GetValue(ObjKey, "Caos"))
                     .LeadersOnly = val(Leer.GetValue(ObjKey, "LeadersOnly")) <> 0
                     .ResistenciaMagica = val(Leer.GetValue(ObjKey, "ResistenciaMagica"))
                     .Porcentaje = val(Leer.GetValue(ObjKey, "Porcentaje"))
-                    .SkinOrigin = val(Leer.GetValue(ObjKey, "SkinOrigin"))
-                Case e_OBJType.otHelmet, e_OBJType.otSkinsHelmets
+                Case e_OBJType.otHelmet
                     .CascoAnim = val(Leer.GetValue(ObjKey, "Anim"))
                     .Real = val(Leer.GetValue(ObjKey, "Real"))
                     .Caos = val(Leer.GetValue(ObjKey, "Caos"))
                     .LeadersOnly = val(Leer.GetValue(ObjKey, "LeadersOnly")) <> 0
                     .ResistenciaMagica = val(Leer.GetValue(ObjKey, "ResistenciaMagica"))
-                    .SkinOrigin = val(Leer.GetValue(ObjKey, "SkinOrigin"))
                 Case e_OBJType.otBackpack
                     '.BackpackAnim = val(Leer.GetValue(ObjKey, "Anim"))
-                Case e_OBJType.otWeapon, e_OBJType.otSkinsWeapons
+                Case e_OBJType.otWeapon
                     .WeaponAnim = val(Leer.GetValue(ObjKey, "Anim"))
                     .Apuñala = val(Leer.GetValue(ObjKey, "Apuñala"))
                     .Envenena = val(Leer.GetValue(ObjKey, "Envenena"))
@@ -1133,7 +1097,6 @@ Sub LoadOBJData()
                     .DosManos = val(Leer.GetValue(ObjKey, "DosManos"))
                     .Porcentaje = val(Leer.GetValue(ObjKey, "Porcentaje"))
                     .WeaponType = val(Leer.GetValue(ObjKey, "WeaponType"))
-                    .SkinOrigin = val(Leer.GetValue(ObjKey, "SkinOrigin"))
                 Case e_OBJType.otMusicalInstruments
                     'Pablo (ToxicWaste)
                     .Real = val(Leer.GetValue(ObjKey, "Real"))
@@ -1172,11 +1135,10 @@ Sub LoadOBJData()
                     .Pimiento = val(Leer.GetValue(ObjKey, "Pimiento"))
                     .SkPociones = val(Leer.GetValue(ObjKey, "SkPociones"))
                     .Porcentaje = val(Leer.GetValue(ObjKey, "Porcentaje"))
-                Case e_OBJType.otShips, e_OBJType.otSkinsBoats
+                Case e_OBJType.otShips
                     .MaxHit = val(Leer.GetValue(ObjKey, "MaxHIT"))
                     .MinHIT = val(Leer.GetValue(ObjKey, "MinHIT"))
                     .velocidad = val(Leer.GetValue(ObjKey, "Velocidad"))
-                    .SkinOrigin = val(Leer.GetValue(ObjKey, "SkinOrigin"))
                 Case e_OBJType.otSaddles
                     .MaxHit = val(Leer.GetValue(ObjKey, "MaxHIT"))
                     .MinHIT = val(Leer.GetValue(ObjKey, "MinHIT"))
@@ -1231,30 +1193,24 @@ Sub LoadOBJData()
                     Select Case .Subtipo
                         Case 1
                             ReDim .Item(1 To .CantItem)
-
                             For i = 1 To .CantItem
                                 .Item(i).ObjIndex = val(Leer.GetValue(ObjKey, "Item" & i))
                                 .Item(i).amount = val(Leer.GetValue(ObjKey, "Cantidad" & i))
                             Next i
-
                         Case 2
                             ReDim .Item(1 To .CantItem)
                             .CantEntrega = val(Leer.GetValue(ObjKey, "CantEntrega"))
-
                             For i = 1 To .CantItem
                                 .Item(i).ObjIndex = val(Leer.GetValue(ObjKey, "Item" & i))
                                 .Item(i).amount = val(Leer.GetValue(ObjKey, "Cantidad" & i))
                             Next i
-
                         Case 3
                             ReDim .Item(1 To .CantItem)
-
                             For i = 1 To .CantItem
                                 .Item(i).ObjIndex = val(Leer.GetValue(ObjKey, "Item" & i))
                                 .Item(i).amount = val(Leer.GetValue(ObjKey, "Cantidad" & i))
                                 .Item(i).data = 101 - val(Leer.GetValue(ObjKey, "Drop" & i))
                             Next i
-
                     End Select
                 Case e_OBJType.otOreDeposit
                     .MineralIndex = val(Leer.GetValue(ObjKey, "MineralIndex"))
@@ -1262,14 +1218,12 @@ Sub LoadOBJData()
                     .CantItem = val(Leer.GetValue(ObjKey, "Gemas"))
                     If .CantItem > 0 Then
                         ReDim .Item(1 To .CantItem)
-
                         For i = 1 To .CantItem
                             str = Leer.GetValue(ObjKey, "Gema" & i)
                             Field = Split(str, "-")
                             .Item(i).ObjIndex = val(Field(0))    ' ObjIndex
-                            .Item(i).amount = val(Field(1))    ' Probabilidad de drop (1 en X)
+                            .Item(i).amount = val(Field(1))      ' Probabilidad de drop (1 en X)
                         Next i
-
                     End If
                 Case e_OBJType.otUsableOntarget
                     .MaxHit = val(Leer.GetValue(ObjKey, "MaxHIT"))
@@ -1299,6 +1253,7 @@ Sub LoadOBJData()
             .Snd3 = val(Leer.GetValue(ObjKey, "SND3"))
             'DELETE
             .SndAura = val(Leer.GetValue(ObjKey, "SndAura"))
+            '
             .NoSeLimpia = val(Leer.GetValue(ObjKey, "NoSeLimpia"))
             .Subastable = val(Leer.GetValue(ObjKey, "Subastable"))
             .ParticulaGolpe = val(Leer.GetValue(ObjKey, "ParticulaGolpe"))
@@ -1369,39 +1324,30 @@ Sub LoadOBJData()
             'CHECK: !!! Esto es provisorio hasta que los de Dateo cambien los valores de string a numerico  -  Nunca más papu
             Dim n As Integer
             Dim s As String
-
             For i = 1 To NUMCLASES
                 s = UCase$(Leer.GetValue(ObjKey, "CP" & i))
                 n = 1
-
                 Do While LenB(s) > 0 And Tilde(ListaClases(n)) <> Trim$(s)
                     n = n + 1
                 Loop
-
                 .ClaseProhibida(i) = IIf(LenB(s) > 0, n, 0)
             Next i
-
             For i = 1 To NUMRAZAS
                 s = UCase$(Leer.GetValue(ObjKey, "RP" & i))
                 n = 1
-
                 Do While LenB(s) > 0 And Tilde(ListaRazas(n)) <> Trim$(s)
                     n = n + 1
                 Loop
-
                 .RazaProhibida(i) = IIf(LenB(s) > 0, n, 0)
             Next i
-
             ' Skill requerido
             str = Leer.GetValue(ObjKey, "SkillRequerido")
             If Len(str) > 0 Then
                 Field = Split(str, "-")
                 n = 1
-
                 Do While LenB(Field(0)) > 0 And Tilde(SkillsNames(n)) <> Tilde(Field(0))
                     n = n + 1
                 Loop
-
                 .SkillIndex = IIf(LenB(Field(0)) > 0, n, 0)
                 .SkillRequerido = val(Field(1))
             End If
@@ -1421,12 +1367,10 @@ Sub LoadOBJData()
                     Field = Split(str, "-", MAX_SLOTS_CRAFTEO)
                     Dim Items() As Integer
                     ReDim Items(1 To UBound(Field) + 1)
-
                     For i = 0 To UBound(Field)
                         Items(i + 1) = val(Field(i))
                         If Items(i + 1) > UBound(ObjData) Then Items(i + 1) = 0
                     Next
-
                     Call SortIntegerArray(Items, 1, UBound(Items))
                     Set Crafteo = New clsCrafteo
                     Call Crafteo.SetItems(Items)
@@ -1463,7 +1407,6 @@ Sub LoadOBJData()
         '  Cada 10 objetos revivo la interfaz
         If Object Mod 10 = 0 Then DoEvents
     Next Object
-
     ReDim Preserve ObjShop(1 To (UBound(ObjShop) - 1)) As t_ObjData
     Set Leer = Nothing
     Call InitTesoro
@@ -1506,14 +1449,12 @@ Sub CargarBackUp()
     frmCargando.ToMapLbl.Visible = True
     ReDim MapData(1 To (NumMaps + InstanceMapCount), XMinMapSize To XMaxMapSize, YMinMapSize To YMaxMapSize) As t_MapBlock
     ReDim MapInfo(1 To (NumMaps + InstanceMapCount)) As t_MapInfo
-
     For Map = 1 To NumMaps
         frmCargando.ToMapLbl = Map & "/" & NumMaps
         Call CargarMapaFormatoCSM(Map, App.Path & "\WorldBackUp\Mapa" & Map & ".csm")
         frmCargando.cargar.value = frmCargando.cargar.value + 1
         DoEvents
     Next Map
-
     'Call generateMatrix(MATRIX_INITIAL_MAP)
     frmCargando.ToMapLbl.Visible = False
     Exit Sub
@@ -1534,7 +1475,7 @@ Sub LoadMapData()
     #Else
         If RunningInVB() Then
             'VB runs out of memory when debugging
-            NumMaps = 430
+            NumMaps = 300
         Else
             NumMaps = CountFiles(MapPath, "*.csm") - 1
         End If
@@ -1548,14 +1489,12 @@ Sub LoadMapData()
     frmCargando.ToMapLbl.Visible = True
     ReDim MapData(1 To NumMaps, XMinMapSize To XMaxMapSize, YMinMapSize To YMaxMapSize) As t_MapBlock
     ReDim MapInfo(1 To NumMaps) As t_MapInfo
-
     For Map = 1 To NormalMapsCount
         frmCargando.ToMapLbl = Map & "/" & NormalMapsCount
         Call CargarMapaFormatoCSM(Map, MapPath & "Mapa" & Map & ".csm")
         frmCargando.cargar.value = frmCargando.cargar.value + 1
         DoEvents
     Next Map
-
     frmCargando.ToMapLbl.Visible = False
     Call InstanceManager.InitializeInstanceHeap(InstanceMapCount, NormalMapsCount + 1)
     Exit Sub
@@ -1610,17 +1549,14 @@ Public Sub CargarMapaFormatoCSM(ByVal Map As Long, ByVal MAPFl As String)
         If .NumeroBloqueados > 0 Then
             ReDim Blqs(1 To .NumeroBloqueados)
             Get #fh, , Blqs
-
             For i = 1 To .NumeroBloqueados
                 MapData(Map, Blqs(i).x, Blqs(i).y).Blocked = Blqs(i).Lados
             Next i
-
         End If
         'Cargamos Layer 1
         If .NumeroLayers(1) > 0 Then
             ReDim L1(1 To .NumeroLayers(1))
             Get #fh, , L1
-
             For i = 1 To .NumeroLayers(1)
                 x = L1(i).x
                 y = L1(i).y
@@ -1631,25 +1567,21 @@ Public Sub CargarMapaFormatoCSM(ByVal Map As Long, ByVal MAPFl As String)
                     SailingTiles = SailingTiles + 1
                 End If
             Next i
-
         End If
         'Cargamos Layer 2
         If .NumeroLayers(2) > 0 Then
             ReDim L2(1 To .NumeroLayers(2))
             Get #fh, , L2
-
             For i = 1 To .NumeroLayers(2)
                 x = L2(i).x
                 y = L2(i).y
                 MapData(Map, x, y).Graphic(2) = L2(i).GrhIndex
                 MapData(Map, x, y).Blocked = MapData(Map, x, y).Blocked And Not FLAG_AGUA
             Next i
-
         End If
         If .NumeroLayers(3) > 0 Then
             ReDim L3(1 To .NumeroLayers(3))
             Get #fh, , L3
-
             For i = 1 To .NumeroLayers(3)
                 x = L3(i).x
                 y = L3(i).y
@@ -1658,21 +1590,17 @@ Public Sub CargarMapaFormatoCSM(ByVal Map As Long, ByVal MAPFl As String)
                     MapData(Map, x, y).Blocked = MapData(Map, x, y).Blocked Or FLAG_ARBOL
                 End If
             Next i
-
         End If
         If .NumeroLayers(4) > 0 Then
             ReDim L4(1 To .NumeroLayers(4))
             Get #fh, , L4
-
             For i = 1 To .NumeroLayers(4)
                 MapData(Map, L4(i).x, L4(i).y).Graphic(4) = L4(i).GrhIndex
             Next i
-
         End If
         If .NumeroTriggers > 0 Then
             ReDim Triggers(1 To .NumeroTriggers)
             Get #fh, , Triggers
-
             For i = 1 To .NumeroTriggers
                 x = Triggers(i).x
                 y = Triggers(i).y
@@ -1687,34 +1615,28 @@ Public Sub CargarMapaFormatoCSM(ByVal Map As Long, ByVal MAPFl As String)
                     MapData(Map, x, y).Blocked = MapData(Map, x, y).Blocked Or FLAG_AGUA
                 End If
             Next i
-
         End If
         If .NumeroParticulas > 0 Then
             ReDim Particulas(1 To .NumeroParticulas)
             Get #fh, , Particulas
-
             For i = 1 To .NumeroParticulas
                 MapData(Map, Particulas(i).x, Particulas(i).y).ParticulaIndex = Particulas(i).Particula
                 MapData(Map, Particulas(i).x, Particulas(i).y).ParticulaIndex = 0
             Next i
-
         End If
         If .NumeroLuces > 0 Then
             ReDim Luces(1 To .NumeroLuces)
             Get #fh, , Luces
-
             For i = 1 To .NumeroLuces
                 MapData(Map, Luces(i).x, Luces(i).y).Luz.Color = Luces(i).Color
                 MapData(Map, Luces(i).x, Luces(i).y).Luz.Rango = Luces(i).Rango
                 MapData(Map, Luces(i).x, Luces(i).y).Luz.Color = 0
                 MapData(Map, Luces(i).x, Luces(i).y).Luz.Rango = 0
             Next i
-
         End If
         If .NumeroOBJs > 0 Then
             ReDim Objetos(1 To .NumeroOBJs)
             Get #fh, , Objetos
-
             For i = 1 To .NumeroOBJs
                 MapData(Map, Objetos(i).x, Objetos(i).y).ObjInfo.ObjIndex = Objetos(i).ObjIndex
                 With ObjData(Objetos(i).ObjIndex)
@@ -1731,13 +1653,11 @@ Public Sub CargarMapaFormatoCSM(ByVal Map As Long, ByVal MAPFl As String)
                     End If
                 End With
             Next i
-
         End If
         If .NumeroNPCs > 0 Then
             ReDim NPCs(1 To .NumeroNPCs)
             Get #fh, , NPCs
             Dim NumNpc As Integer, NpcIndex As Integer
-
             For i = 1 To .NumeroNPCs
                 NumNpc = NPCs(i).NpcIndex
                 If NumNpc > 0 Then
@@ -1761,18 +1681,15 @@ Public Sub CargarMapaFormatoCSM(ByVal Map As Long, ByVal MAPFl As String)
                     End If
                 End If
             Next i
-
         End If
         If .NumeroTE > 0 Then
             ReDim TEs(1 To .NumeroTE)
             Get #fh, , TEs
-
             For i = 1 To .NumeroTE
                 MapData(Map, TEs(i).x, TEs(i).y).TileExit.Map = TEs(i).DestM
                 MapData(Map, TEs(i).x, TEs(i).y).TileExit.x = TEs(i).DestX
                 MapData(Map, TEs(i).x, TEs(i).y).TileExit.y = TEs(i).DestY
             Next i
-
         End If
     End With
     Close fh
@@ -1830,12 +1747,10 @@ Public Sub CargarMapaFormatoCSM(ByVal Map As Long, ByVal MAPFl As String)
     End If
     If randomTeleportCount > 0 Then
         ReDim MapInfo(Map).TransportNetwork(randomTeleportCount - 1) As t_TransportNetworkExit
-
         For i = 0 To randomTeleportCount - 1
             MapInfo(Map).TransportNetwork(i).TileX = Objetos(RandomTeleports(i)).x
             MapInfo(Map).TransportNetwork(i).TileY = Objetos(RandomTeleports(i)).y
         Next i
-
     End If
     Exit Sub
 ErrorHandler:
@@ -1845,21 +1760,17 @@ End Sub
 
 Sub AddFishingPoolsToMap(ByVal Map As Integer)
     Dim i As Integer
-
     For i = 1 To SvrConfig.GetValue("FISHING_TILES_ON_MAP")
         Call CreateFishingPool(Map)
     Next i
-
 End Sub
 
 Public Sub CreateFishingPool(ByVal Map As Integer)
     Dim x, y As Integer
-
     Do
         x = RandomNumber(12, 88)
         y = RandomNumber(12, 88)
     Loop While MapData(Map, x, y).ObjInfo.ObjIndex <> 0 Or Not HayAgua(Map, x, y)
-
     MapData(Map, x, y).ObjInfo.ObjIndex = SvrConfig.GetValue("FISHING_POOL_ID")
     MapData(Map, x, y).ObjInfo.amount = ObjData(SvrConfig.GetValue("FISHING_POOL_ID")).VidaUtil
     MapData(Map, x, y).ObjInfo.data = &H7FFFFFFF ' Ultimo uso = Max Long
@@ -1963,7 +1874,6 @@ Sub LoadGlobalDropTable()
         Exit Sub
     End If
     ReDim GlobalDropTable(1 To DropCount) As t_GlobalDrop
-
     For i = 1 To DropCount
         GlobalDropTable(i).MaxPercent = val(Lector.GetValue("DROP" & i, "MAXPERCENT"))
         GlobalDropTable(i).MinPercent = val(Lector.GetValue("DROP" & i, "MINPERCENT"))
@@ -1971,7 +1881,6 @@ Sub LoadGlobalDropTable()
         GlobalDropTable(i).RequiredHPForMaxChance = val(Lector.GetValue("DROP" & i, "HPFORMAXCHANCE"))
         GlobalDropTable(i).amount = val(Lector.GetValue("DROP" & i, "AMOUNT"))
     Next i
-
     Set Lector = Nothing
 End Sub
 
@@ -1994,13 +1903,11 @@ Sub LoadFeatureToggles()
     Dim i     As Integer
     Dim key   As String
     Dim value As Boolean
-
     For i = 1 To TOGGLECOUNT
         key = Lector.GetValue("TOGGLE" & i, "name")
         value = val(Lector.GetValue("TOGGLE" & i, "value")) > 0
         Call SetFeatureToggle(key, value)
     Next i
-
     Set Lector = Nothing
     Exit Sub
 LoadFeatureToggles_Err:
@@ -2015,14 +1922,12 @@ Sub LoadPacketRatePolicy()
     If frmMain.Visible Then frmMain.txStatus.Caption = "Cargando PacketRatePolicy."
     Set Lector = New clsIniManager
     Call Lector.Initialize(IniPath & "PacketRatePolicy.ini")
-
     For i = 1 To MAX_PACKET_COUNTERS
         Dim PacketName As String
         PacketName = PacketIdToString(i)
         MacroIterations(i) = val(Lector.GetValue(PacketName, "Iterations"))
         PacketTimerThreshold(i) = val(Lector.GetValue(PacketName, "Limit"))
     Next i
-
     Set Lector = Nothing
     Exit Sub
 LoadPacketRatePolicy_Err:
@@ -2492,11 +2397,9 @@ Sub BackUPnPc(NpcIndex As Integer)
     'Inventario
     Call WriteVar(npcfile, "NPC" & NpcNumero, "NroItems", val(NpcList(NpcIndex).invent.NroItems))
     If NpcList(NpcIndex).invent.NroItems > 0 Then
-
         For LoopC = 1 To MAX_INVENTORY_SLOTS
             Call WriteVar(npcfile, "NPC" & NpcNumero, "Obj" & LoopC, NpcList(NpcIndex).invent.Object(LoopC).ObjIndex & "-" & NpcList(NpcIndex).invent.Object(LoopC).amount)
         Next
-
     End If
     Exit Sub
 BackUPnPc_Err:
@@ -2538,20 +2441,16 @@ Sub CargarNpcBackUp(NpcIndex As Integer, ByVal NpcNumber As Integer)
     Dim ln    As String
     NpcList(NpcIndex).invent.NroItems = val(GetVar(npcfile, "NPC" & NpcNumber, "NROITEMS"))
     If NpcList(NpcIndex).invent.NroItems > 0 Then
-
         For LoopC = 1 To MAX_INVENTORY_SLOTS
             ln = GetVar(npcfile, "NPC" & NpcNumber, "Obj" & LoopC)
             NpcList(NpcIndex).invent.Object(LoopC).ObjIndex = val(ReadField(1, ln, 45))
             NpcList(NpcIndex).invent.Object(LoopC).amount = val(ReadField(2, ln, 45))
         Next LoopC
-
     Else
-
         For LoopC = 1 To MAX_INVENTORY_SLOTS
             NpcList(NpcIndex).invent.Object(LoopC).ObjIndex = 0
             NpcList(NpcIndex).invent.Object(LoopC).amount = 0
         Next LoopC
-
     End If
     NpcList(NpcIndex).flags.NPCActive = True
     NpcList(NpcIndex).flags.Respawn = val(GetVar(npcfile, "NPC" & NpcNumber, "ReSpawn"))
@@ -2620,14 +2519,12 @@ Public Sub LoadRecursosEspeciales()
     count = val(IniFile.GetValue("Tala", "Items"))
     If count > 0 Then
         ReDim EspecialesTala(1 To count) As t_Obj
-
         For i = 1 To count
             str = IniFile.GetValue("Tala", "Item" & i)
             Field = Split(str, "-")
             EspecialesTala(i).ObjIndex = val(Field(0))
             EspecialesTala(i).data = val(Field(1))      ' Probabilidad
         Next
-
     Else
         ReDim EspecialesTala(0) As t_Obj
     End If
@@ -2635,14 +2532,12 @@ Public Sub LoadRecursosEspeciales()
     count = val(IniFile.GetValue("Pesca", "Items"))
     If count > 0 Then
         ReDim EspecialesPesca(1 To count) As t_Obj
-
         For i = 1 To count
             str = IniFile.GetValue("Pesca", "Item" & i)
             Field = Split(str, "-")
             EspecialesPesca(i).ObjIndex = val(Field(0))
             EspecialesPesca(i).data = val(Field(1))     ' Probabilidad
         Next
-
     Else
         ReDim EspecialesPesca(0) As t_Obj
     End If
@@ -2670,14 +2565,11 @@ Public Sub LoadPesca()
     CountEspecial = 1
     ReDim PesoPeces(0 To MaxLvlCania) As Long
     ReDim PoderCanas(0 To MaxLvlCania) As Integer
-
     For i = 1 To MaxLvlCania
         PoderCanas(i) = val(IniFile.GetValue("POWERCANAS", "Power" & i))
     Next i
-
     If count > 0 Then
         ReDim Peces(1 To count) As t_Obj
-
         ' Cargo todos los peces
         For i = 1 To count
             str = IniFile.GetValue("PECES", "Pez" & i)
@@ -2698,19 +2590,15 @@ Public Sub LoadPesca()
             If (nivel > MaxLvlCania) Then nivel = MaxLvlCania
             Peces(i).amount = nivel
         Next
-
         ' Los ordeno segun nivel de caña (quick sort)
         Call QuickSortPeces(1, count)
-
         ' Sumo los pesos
         For i = 1 To count
             For j = Peces(i).amount To MaxLvlCania
                 PesoPeces(j) = PesoPeces(j) + Peces(i).data
             Next j
-
             Peces(i).data = PesoPeces(Peces(i).amount)
         Next i
-
     Else
         ReDim Peces(0) As t_Obj
     End If
@@ -2729,21 +2617,13 @@ Private Sub QuickSortPeces(ByVal First As Long, ByVal Last As Long)
     Low = First
     High = Last
     MidValue = Peces((First + Last) \ 2).amount
-
     Do
-
         While Peces(Low).amount < MidValue
-
             Low = Low + 1
-
         Wend
-
         While Peces(High).amount > MidValue
-
             High = High - 1
-
         Wend
-
         If Low <= High Then
             aux = Peces(Low)
             Peces(Low) = Peces(High)
@@ -2752,7 +2632,6 @@ Private Sub QuickSortPeces(ByVal First As Long, ByVal Last As Long)
             High = High - 1
         End If
     Loop While Low <= High
-
     If First < High Then QuickSortPeces First, High
     If Low < Last Then QuickSortPeces Low, Last
     Exit Sub
@@ -2769,7 +2648,6 @@ Public Function BinarySearchPeces(ByVal value As Long) As Long
     High = UBound(Peces)
     Dim i              As Long
     Dim valor_anterior As Long
-
     Do While Low <= High
         i = (Low + High) \ 2
         If i > 1 Then
@@ -2786,7 +2664,6 @@ Public Function BinarySearchPeces(ByVal value As Long) As Long
             Low = (i + 1)
         End If
     Loop
-
     Exit Function
 BinarySearchPeces_Err:
     Call TraceError(Err.Number, Err.Description, "ES.BinarySearchPeces", Erl)
@@ -2807,7 +2684,6 @@ Public Sub LoadRangosFaccion()
         ' Los rangos de la Armada se guardan en los indices impar, y los del caos en indices pares.
         ' Luego, para acceder es tan facil como usar el Rango directamente para la Armada, y multiplicar por 2 para el Caos.
         ReDim RangosFaccion(1 To MaxRangoFaccion * 2) As t_RangoFaccion
-
         For i = 1 To MaxRangoFaccion
             '<N>Rango=<NivelRequerido>-<AsesinatosRequeridos>-<Título>
             rankData = Split(IniFile.GetValue("ArmadaReal", i & "Rango"), "-", , vbTextCompare)
@@ -2821,7 +2697,6 @@ Public Sub LoadRangosFaccion()
             RangosFaccion(2 * i).NivelRequerido = val(rankData(0))
             RangosFaccion(2 * i).RequiredScore = val(rankData(1))
         Next i
-
     End If
     Set IniFile = Nothing
     Exit Sub
@@ -2842,13 +2717,11 @@ Public Sub LoadRecompensasFaccion()
     cantidadRecompensas = val(IniFile.GetValue("INIT", "NumRecompensas"))
     If cantidadRecompensas > 0 Then
         ReDim RecompensasFaccion(1 To cantidadRecompensas) As t_RecompensaFaccion
-
         For i = 1 To cantidadRecompensas
             rank_and_objindex = Split(IniFile.GetValue("Recompensas", "Recompensa" & i), "-", , vbTextCompare)
             RecompensasFaccion(i).rank = val(rank_and_objindex(0))
             RecompensasFaccion(i).ObjIndex = val(rank_and_objindex(1))
         Next i
-
     End If
     Set IniFile = Nothing
     Exit Sub
@@ -2894,12 +2767,10 @@ Function CountFiles(strFolder As String, strPattern As String) As Integer
     On Error GoTo CountFiles_Err
     Dim strFile As String
     strFile = dir$(strFolder & "\" & strPattern)
-
     Do Until Len(strFile) = 0
         CountFiles = CountFiles + 1
         strFile = dir$()
     Loop
-
     If CountFiles <> 0 Then CountFiles = CountFiles + 1
     Exit Function
 CountFiles_Err:
@@ -2937,11 +2808,9 @@ Public Sub CargarDonadores()
     ReDim lstUsuariosDonadores(0 To cantidadDonadores)
     If cantidadDonadores > 0 Then
         Dim i As Integer
-
         For i = 1 To cantidadDonadores
             lstUsuariosDonadores(i) = IniFile.GetValue("DONADOR", "Donador" & i)
         Next i
-
     End If
 End Sub
 
@@ -2965,14 +2834,11 @@ Public Function GetActiveToggles(ByRef ActiveCount As Integer) As String()
     Dim ActiveKeys() As String
     ReDim ActiveKeys(FeatureToggles.count) As String
     ActiveCount = 0
-
     For Each key In FeatureToggles.Keys
-
         If FeatureToggles.Item(key) Then
             ActiveKeys(ActiveCount) = key
             ActiveCount = ActiveCount + 1
         End If
     Next key
-
     GetActiveToggles = ActiveKeys
 End Function

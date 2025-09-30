@@ -35,21 +35,13 @@ Public Sub SortIntegerArray(data() As Integer, ByVal First As Integer, ByVal Las
     Low = First
     High = Last
     MidValue = data((First + Last) \ 2)
-
     Do
-
         While data(Low) < MidValue
-
             Low = Low + 1
-
         Wend
-
         While data(High) > MidValue
-
             High = High - 1
-
         Wend
-
         If Low <= High Then
             Temp = data(Low)
             data(Low) = data(High)
@@ -58,7 +50,6 @@ Public Sub SortIntegerArray(data() As Integer, ByVal First As Integer, ByVal Las
             High = High - 1
         End If
     Loop While Low <= High
-
     If First < High Then Call SortIntegerArray(data, First, High)
     If Low < Last Then Call SortIntegerArray(data, Low, Last)
     Exit Sub
@@ -69,11 +60,9 @@ End Sub
 Public Function GetRecipeKey(data() As Integer) As String
     On Error GoTo GetRecipeKey_Err:
     Dim i As Integer
-
     For i = LBound(data) To UBound(data)
         GetRecipeKey = GetRecipeKey & data(i) & ":"
     Next
-
     Exit Function
 GetRecipeKey_Err:
     Call TraceError(Err.Number, Err.Description, "modCrafteos.GetRecipeKey", Erl)
@@ -83,7 +72,6 @@ Public Sub ReturnCraftingItems(ByVal UserIndex As Integer)
     On Error GoTo ReturnCraftingItems_Err:
     Dim i As Integer, TmpObj As t_Obj
     With UserList(UserIndex)
-
         For i = 1 To UBound(.CraftInventory)
             If .CraftInventory(i) <> 0 Then
                 TmpObj.ObjIndex = .CraftInventory(i)
@@ -94,7 +82,6 @@ Public Sub ReturnCraftingItems(ByVal UserIndex As Integer)
                 .CraftInventory(i) = 0
             End If
         Next
-
         If .CraftCatalyst.amount > 0 Then
             If Not MeterItemEnInventario(UserIndex, .CraftCatalyst) Then
                 Call TirarItemAlPiso(.pos, .CraftCatalyst)
@@ -158,12 +145,10 @@ Public Sub DoCraftItem(ByVal UserIndex As Integer)
             .Stats.GLD = .Stats.GLD - .CraftResult.precio
             Call WriteUpdateGold(UserIndex)
             Dim i As Integer
-
             For i = 1 To UBound(.CraftInventory)
                 .CraftInventory(i) = 0
                 Call WriteCraftingItem(UserIndex, i, 0)
             Next
-
             .CraftCatalyst.amount = .CraftCatalyst.amount - 1
             If .CraftCatalyst.amount <= 0 Then .CraftCatalyst.ObjIndex = 0
             Call WriteCraftingCatalyst(UserIndex, .CraftCatalyst.ObjIndex, .CraftCatalyst.amount, 0)

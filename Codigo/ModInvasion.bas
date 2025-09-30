@@ -91,7 +91,6 @@ Sub CargarInfoEventos()
     End If
     ReDim Invasiones(1 To CantInvasiones)
     Dim i As Integer, j As Integer, nombre As String, tmpStr As String, Fields() As String
-
     For i = 1 To CantInvasiones
         nombre = File.GetValue("Invasiones", "Invasion" & i)
         With Invasiones(i)
@@ -114,11 +113,9 @@ Sub CargarInfoEventos()
             If LenB(tmpStr) > 0 Then
                 Fields = Split(tmpStr, "-")
                 ReDim .NumNPCsSpawn(1 To UBound(Fields) + 1)
-
                 For j = 1 To UBound(.NumNPCsSpawn)
                     .NumNPCsSpawn(j) = val(Fields(j - 1))
                 Next
-
             Else
                 ReDim .NumNPCsSpawn(0)
             End If
@@ -126,7 +123,6 @@ Sub CargarInfoEventos()
             SpawnBoxes = val(File.GetValue(nombre, "SpawnBoxes"))
             If SpawnBoxes <= 0 Then Exit Sub
             ReDim .SpawnBoxes(1 To SpawnBoxes)
-
             For j = 1 To SpawnBoxes
                 tmpStr = File.GetValue(nombre, "SpawnBox" & j)
                 If LenB(tmpStr) > 0 Then
@@ -160,10 +156,8 @@ Sub CargarInfoEventos()
                     End If
                 End If
             Next
-
         End With
     Next
-
     frmMain.Invasion.Enabled = True
     Set File = Nothing
 End Sub
@@ -201,7 +195,6 @@ Sub FinalizarInvasion(ByVal Index As Integer)
         .TimerSpawn = 0
         ' Matamos los NPCs que quedaron
         Dim i As Integer
-
         For i = 1 To UBound(.NPCsVivos)
             If .NPCsVivos(i) Then
                 Call QuitarNPC(.NPCsVivos(i), eClearInvasion)
@@ -210,12 +203,10 @@ Sub FinalizarInvasion(ByVal Index As Integer)
                 If .CantNPCs <= 0 Then Exit For
             End If
         Next
-
         ' Entregamos premios y limpiamos el top
         Dim tUser As t_UserReference, OroGanado As Long, PremioStr As String
         OroGanado = 50000 * SvrConfig.GetValue("GoldMult")
         PremioStr = "¡La ciudad te entrega " & PonerPuntos(OroGanado) & " monedas de oro por tu ayuda durante la invasión!"
-
         For i = 1 To UBound(.Top10Users)
             With .Top10Users(i)
                 If LenB(.username) Then
@@ -234,18 +225,14 @@ Sub FinalizarInvasion(ByVal Index As Integer)
                 End If
             End With
         Next
-
         ' Sacamos el cartel de la pantalla de todos
         Dim Mapa As Integer, j As Integer
-
         For i = 1 To UBound(.SpawnBoxes)
             Mapa = .SpawnBoxes(i).TopLeft.Map
-
             For j = 1 To ModAreas.ConnGroups(Mapa).CountEntrys
                 Call WriteInvasionInfo(ModAreas.ConnGroups(Mapa).UserEntrys(j), 0, 0, 0)
             Next
         Next
-
     End With
 End Sub
 
@@ -271,11 +258,9 @@ Sub InvasionSpawnNPC(ByVal Index As Integer)
         End With
         ' Buscamos un índice vacío en el array de NPCs
         Dim i As Integer
-
         For i = 1 To UBound(.NPCsVivos)
             If .NPCsVivos(i) = 0 Then Exit For
         Next
-
         ' Spawneamos el NPC
         .NPCsVivos(i) = SpawnNpc(NpcNumber, SpawnPos, True, False)
         Debug.Assert .NPCsVivos(i) <> 0
@@ -314,15 +299,12 @@ Public Sub EnviarInfoInvasion(ByVal Index As Integer)
         PorcentajeVida = (.VidaMuralla / .MaxVidaMuralla) * 100
         PorcentajeTiempo = (GetTickCount - .TiempoDeInicio) / (.Duracion * 600)
         Dim i As Integer, Mapa As Integer, j As Integer
-
         For i = 1 To UBound(.SpawnBoxes)
             Mapa = .SpawnBoxes(i).TopLeft.Map
-
             For j = 1 To ModAreas.ConnGroups(Mapa).CountEntrys
                 Call WriteInvasionInfo(ModAreas.ConnGroups(Mapa).UserEntrys(j), Index, PorcentajeVida, PorcentajeTiempo)
             Next
         Next
-
     End With
 End Sub
 
@@ -339,7 +321,6 @@ Public Sub SumarScoreInvasion(ByVal Index As Integer, ByVal UserIndex As Integer
     With Invasiones(Index)
         Dim i       As Integer
         Dim tmpUser As t_TopInvasion
-
         ' Buscamos si estamos en el top
         For i = 1 To UBound(.Top10Users)
             If LenB(.Top10Users(i).username) = 0 Then
@@ -350,7 +331,6 @@ Public Sub SumarScoreInvasion(ByVal Index As Integer, ByVal UserIndex As Integer
                 .Top10Users(i).Score = .Top10Users(i).Score + Score
                 ' Revisamos si subió en el top
                 Dim j As Integer
-
                 For j = i - 1 To 1 Step -1
                     ' Si el que está arriba tiene un puntaje menor, los cambiamos
                     If .Top10Users(j).Score < .Top10Users(j + 1).Score Then
@@ -362,12 +342,10 @@ Public Sub SumarScoreInvasion(ByVal Index As Integer, ByVal UserIndex As Integer
                         Exit For
                     End If
                 Next
-
                 ' Salimos, no hace falta agregarlo
                 Exit Sub
             End If
         Next
-
         ' Si llegamos acá, entonces hay que meterlo al top
         For i = UBound(.Top10Users) To 1 Step -1
             ' Buscamos el lugar indicado
@@ -375,15 +353,12 @@ Public Sub SumarScoreInvasion(ByVal Index As Integer, ByVal UserIndex As Integer
                 Exit For
             End If
         Next
-
         ' Si entró en el top
         If i < UBound(.Top10Users) Then
-
             ' Movemos a los que le siguen
             For j = UBound(.Top10Users) To i + 2
                 .Top10Users(j) = .Top10Users(j - 1)
             Next
-
             ' Lo colocamos en la posición que le corresponde
             With .Top10Users(i + 1)
                 .username = UserList(UserIndex).name

@@ -133,9 +133,7 @@ Public Sub close_not_logged_sockets_if_timeout()
     Dim key   As Variant
     Dim Ticks As Long, Delta As Long
     Ticks = GetTickCount
-
     For Each key In PendingConnections.Keys
-
         With Mapping(key)
             Dim ConnectionID As Long
             ConnectionID = key
@@ -149,7 +147,6 @@ Public Sub close_not_logged_sockets_if_timeout()
             End If
         End With
     Next key
-
     Exit Sub
 close_not_logged_sockets_if_timeout_ErrHandler:
     Call TraceError(Err.Number, Err.Description, "modNetwork.Kick", Erl)
@@ -286,7 +283,6 @@ Public Sub CheckDisconnectedUsers()
     Dim currentTime As Long
     Dim iUserIndex  As Integer
     currentTime = GetTickCount()
-
     For iUserIndex = 1 To MaxUsers
         With UserList(iUserIndex)
             'Conexion activa? y es un usuario loggeado?
@@ -309,7 +305,6 @@ Public Sub CheckDisconnectedUsers()
             End If
         End With
     Next iUserIndex
-
     Exit Sub
 CheckDisconnectedUsers_Err:
     Call TraceError(Err.Number, Err.Description, "modNetwork.CheckDisconnectedUsers", Erl)

@@ -69,7 +69,6 @@ Dim LobbyIndex         As Integer
 Friend Sub RegisterNpc(ByVal Tag, ByVal sectionSize, ByRef registry As Dictionary, ByRef File As clsIniManager)
     Dim i        As Integer
     Dim npcEntry As EventNpcDefinition
-
     For i = 1 To sectionSize
         Set npcEntry = New EventNpcDefinition
         npcEntry.NpcId = val(File.GetValue(Tag & i, "NPCID"))
@@ -79,7 +78,6 @@ Friend Sub RegisterNpc(ByVal Tag, ByVal sectionSize, ByRef registry As Dictionar
             Call registry.Add(npcEntry.NpcId, npcEntry)
         End If
     Next i
-
 End Sub
 
 Private Sub ConfigMapLobby()
@@ -175,14 +173,12 @@ Private Function IBaseScenario_ValidateUser(ByVal UserIndex As Integer) As Integ
     On Error GoTo ValidateUser_Err:
     Dim i As Integer
     With UserList(UserIndex)
-
         For i = 1 To UBound(.invent.Object)
             If .invent.Object(i).ObjIndex = RequiredWeaponId Then
                 IBaseScenario_ValidateUser = 0
                 Exit Function
             End If
         Next i
-
         IBaseScenario_ValidateUser = RequireItemMessage
     End With
     Exit Function
@@ -214,7 +210,6 @@ End Sub
 Private Sub StartGame()
     Dim key As Variant
     Dim i   As Integer
-
     For i = 0 To LobbyList(LobbyIndex).RegisteredPlayers - 1
         Dim SpawnPos As t_WorldPos
         SpawnPos.Map = MapNumber
@@ -226,14 +221,11 @@ Private Sub StartGame()
             End If
         End If
     Next i
-
     For Each key In MatchNpc.Keys
-
         For i = 1 To MatchNpc(key).SpawnCount
             SpawnNpc (MatchNpc(key).NpcId)
         Next i
     Next key
-
     LastFrameTime = GetTickCount()
     BroadCastInterval = 60000
     Call SendData(SendTarget.toMap, MapNumber, PrepareMessageLocaleMsg(1730, "", e_FontTypeNames.FONTTYPE_GUILD)) 'Msg1730=Â¡Que inicie la cacerÃ­a!
@@ -327,12 +319,9 @@ Private Sub MatchComplete()
     Call CustomScenarios.ClearMap(MapNumber)
     ElapsedTime = MaxTime
     Dim key As Variant
-
     For Each key In SpawnedCreaturesId.Keys
-
         Call QuitarNPC(key, eClearHunt)
     Next key
-
     Exit Sub
 MatchComplete_Err:
     Call TraceError(Err.Number, Err.Description, "ScenarioHunt.MatchComplete ", Erl)
@@ -400,13 +389,11 @@ Public Sub IBaseScenario_UserDie(ByVal UserIndex)
     RespawnInfo.RespawnTime = GetTickCount()
     With UserList(UserIndex)
         Dim i As Integer
-
         For i = LBound(.invent.Object) To UBound(.invent.Object)
             If .invent.Object(i).Equipped Then
                 Call RespawnInfo.AddEquipedElement(i)
             End If
         Next i
-
         If .flags.TomoPocion Then
             RespawnInfo.HasPowerUp = True
             RespawnInfo.PowerUpTime = .flags.DuracionEfecto
@@ -425,7 +412,7 @@ Private Sub Respawn(ByVal player As Integer)
     Call WarpToLegalPos(player, MapNumber, SpawnPos.x, SpawnPos.y, True, True)
     Call RevivirUsuario(player)
     UserList(player).Counters.timeFx = 3
-    Call SendData(SendTarget.ToPCAliveArea, player, PrepareMessageParticleFX(UserList(player).Char.charindex, e_ParticulasIndex.Curar, 100, False, , UserList(player).pos.x, _
+    Call SendData(SendTarget.ToPCAliveArea, player, PrepareMessageParticleFX(UserList(player).Char.charindex, e_ParticleEffects.Corazones, 100, False, , UserList(player).pos.x, _
             UserList(player).pos.y))
     Call SendData(SendTarget.ToPCAliveArea, player, PrepareMessagePlayWave("104", UserList(player).pos.x, UserList(player).pos.y))
 End Sub
@@ -438,17 +425,13 @@ Private Sub RespawnPlayers()
     Dim i           As Integer
     currentTime = GetTickCount()
     Keys = PlayerRespawn.Keys
-
     For Each key In Keys
-
         Set RespawnInfo = PlayerRespawn.Item(key)
         If currentTime - RespawnInfo.RespawnTime > PlayerRespawnTime Then
             Call Respawn(key)
-
             For i = 0 To RespawnInfo.EquipedElementCount - 1
                 Call EquiparInvItem(key, RespawnInfo.GetActiveSlot(i))
             Next i
-
             If RespawnInfo.HasPowerUp Then
                 With UserList(key)
                     .Stats.UserAtributos(1) = RespawnInfo.Strength
@@ -460,7 +443,6 @@ Private Sub RespawnPlayers()
             Call PlayerRespawn.Remove(key)
         End If
     Next key
-
 End Sub
 
 Sub GiveRewards()
@@ -487,17 +469,14 @@ Sub GiveRewards()
     If LobbyList(LobbyIndex).TeamSize > 1 Then
         ReDim Teams(0 To LobbyList(LobbyIndex).RegisteredPlayers / LobbyList(LobbyIndex).TeamSize) As String
         Ranking = Board.GetTeamRanking(LobbyList(LobbyIndex))
-
         For i = 0 To LobbyList(LobbyIndex).RegisteredPlayers - 1
             If IsValidUserRef(LobbyList(LobbyIndex).Players(i).User) Then
                 Teams(LobbyList(LobbyIndex).Players(i).team) = Teams(LobbyList(LobbyIndex).Players(i).team) & UserList(LobbyList(LobbyIndex).Players(i).User.ArrayIndex).name & " "
             End If
         Next i
-
         For i = 1 To 3
             If LobbyList(LobbyIndex).AvailableInscriptionMoney > 0 Then
                 Reward = Rewards(i) / LobbyList(LobbyIndex).TeamSize
-
                 For j = 0 To LobbyList(LobbyIndex).RegisteredPlayers - 1
                     If IsValidUserRef(LobbyList(LobbyIndex).Players(j).User) Then
                         If LobbyList(LobbyIndex).Players(j).team = Ranking(i).PlayerIndex Then
@@ -505,19 +484,15 @@ Sub GiveRewards()
                         End If
                     End If
                 Next j
-
                 RewardStr = ", ganaron " & PonerPuntos(Reward) & " Modenas de oro cada uno."
             End If
             Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1823, i & "Â¬" & Teams(Ranking(i).PlayerIndex) & "Â¬" & Ranking(i).Score & "Â¬" & RewardStr, _
                     e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1823=Â¬1) Â¬2: Â¬3 puntosÂ¬4
         Next i
-
     Else
         Ranking = Board.GetRanking(3)
-
         For i = 0 To UBound(Ranking) - 1
             If LobbyList(LobbyIndex).AvailableInscriptionMoney > 0 Then
-
                 For j = 0 To LobbyList(LobbyIndex).RegisteredPlayers - 1
                     If IsValidUserRef(LobbyList(LobbyIndex).Players(j).User) Then
                         If LobbyList(LobbyIndex).Players(j).User.ArrayIndex = Ranking(i).PlayerIndex Then
@@ -526,13 +501,11 @@ Sub GiveRewards()
                         End If
                     End If
                 Next j
-
                 RewardStr = ", gano " & PonerPuntos(Rewards(i + 1)) & " Modenas de oro."
             End If
             Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1824, (i + 1) & "Â¬" & UserList(Ranking(i).PlayerIndex).name & "Â¬" & Ranking(i).Score & "Â¬" & RewardStr, _
                     e_FontTypeNames.FONTTYPE_GUILD)) ' Msg1824=Â¬1) Â¬2: Â¬3 puntosÂ¬4
         Next i
-
     End If
     Exit Sub
 GiveRewards_Err:

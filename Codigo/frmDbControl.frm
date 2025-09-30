@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{6B7E6392-850A-101B-AFC0-4210102A8DA7}#1.3#0"; "COMCTL32.OCX"
+Object = "{6B7E6392-850A-101B-AFC0-4210102A8DA7}#1.3#0"; "comctl32.ocx"
 Object = "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}#1.0#0"; "MSDATGRD.OCX"
 Begin VB.Form frmDbControl 
    BorderStyle     =   3  'Fixed Dialog
@@ -243,7 +243,6 @@ Private Sub cmdActualizarObjetos_Click()
         Dim ObjKey As String
         Set RS = Query("delete from object")
         pbarDb.max = NumObjDatas
-
         'Llena la lista
         For Object = 1 To NumObjDatas
             ObjKey = "OBJ" & Object
@@ -251,7 +250,6 @@ Private Sub cmdActualizarObjetos_Click()
             Debug.Print Object
             pbarDb.value = Object
         Next Object
-
         Set Leer = Nothing
         Command3.Enabled = True
         Command3.Caption = "Actualizar objetos DB"

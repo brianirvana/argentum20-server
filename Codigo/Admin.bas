@@ -113,36 +113,38 @@ Public CapVidaMin                    As Single
 Public ExpLevelUp(1 To STAT_MAXELV)  As Long
 Public InfluenciaPromedioVidas       As Single
 Public ModDañoGolpeCritico          As Single
-Public MinutosWs                     As Long
-Public PlayerStunTime                As Long
-Public NpcStunTime                   As Long
-Public PlayerInmuneTime              As Long
-Public MultiShotReduction            As Single
-Public HomeTimer                     As Integer
-Public MagicSkillBonusDamageModifier As Single
-Public MRSkillProtectionModifier     As Single
-Public MRSkillNpcProtectionModifier  As Single
-Public AssistDamageValidTime         As Long 'valid time for damage to count as assit
-Public AssistHelpValidTime           As Long 'valid time for helpful spell to count as assist
-Public HideAfterHitTime              As Long 'required time to hide again after a hit remove us from this state
-Public FactionReKillTime             As Long 'required time between killing the same user to get factions points
-Public AirHitReductParalisisTime     As Integer 'you can hit to the air to reduce inmo/paralisis time
-Public PorcentajePescaSegura         As Integer 'Porcentaje de reducción a la pesca en zona segura
-Public Puerto                        As Long
-Public ListenIp                      As String
-Public MAXPASOS                      As Long
-Public BootDelBackUp                 As Byte
-Public Lloviendo                     As Boolean
-Public Nebando                       As Boolean
-Public Nieblando                     As Boolean
-Public IpList                        As New Collection
-Public Baneos                        As New Collection
+Public MinutosWs                         As Long
+Public PlayerStunTime                    As Long
+Public NpcStunTime                       As Long
+Public PlayerInmuneTime                  As Long
+Public MultiShotReduction                As Single
+Public HomeTimer                         As Integer
+Public MagicSkillBonusDamageModifier     As Single
+Public MRSkillProtectionModifier         As Single
+Public MRSkillNpcProtectionModifier      As Single
+Public AssistDamageValidTime             As Long 'valid time for damage to count as assit
+Public AssistHelpValidTime               As Long 'valid time for helpful spell to count as assist
+Public HideAfterHitTime                  As Long 'required time to hide again after a hit remove us from this state
+Public FactionReKillTime                 As Long 'required time between killing the same user to get factions points
+Public AirHitReductParalisisTime         As Integer 'you can hit to the air to reduce inmo/paralisis time
+Public PorcentajePescaSegura             As Integer 'Porcentaje de reducción a la pesca en zona segura
+Public DivineBloodHealingMultiplierBonus As Single
+Public DivineBloodManaCostMultiplier     As Single
+Public WarriorLifeStealOnHitMultiplier   As Single
+Public Puerto                            As Long
+Public ListenIp                          As String
+Public MAXPASOS                          As Long
+Public BootDelBackUp                     As Byte
+Public Lloviendo                         As Boolean
+Public Nebando                           As Boolean
+Public Nieblando                         As Boolean
+Public IpList                            As New Collection
+Public Baneos                            As New Collection
 
 Sub ReSpawnOrigPosNpcs()
     On Error GoTo Handler
     Dim i     As Integer
     Dim MiNPC As t_Npc
-
     For i = 1 To LastNPC
         'OJO
         If NpcList(i).flags.NPCActive Then
@@ -153,7 +155,6 @@ Sub ReSpawnOrigPosNpcs()
             End If
         End If
     Next i
-
     Exit Sub
 Handler:
     Call TraceError(Err.Number, Err.Description, "Admin.ReSpawnOrigPosNpcs", Erl)
@@ -166,22 +167,18 @@ Sub WorldSave()
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg("1732", vbNullString, e_FontTypeNames.FONTTYPE_SERVER)) 'Msg1732=Servidor » Iniciando WorldSave
     Call ReSpawnOrigPosNpcs 'respawn de los guardias en las pos originales
     Dim j As Integer, K As Integer
-
     For j = 1 To NumMaps
         If MapInfo(j).backup_mode = 1 Then K = K + 1
     Next j
-
     FrmStat.ProgressBar1.Min = 0
     FrmStat.ProgressBar1.max = K
     FrmStat.ProgressBar1.value = 0
-
     For LoopX = 1 To NumMaps
         'DoEvents
         If MapInfo(LoopX).backup_mode = 1 Then
             FrmStat.ProgressBar1.value = FrmStat.ProgressBar1.value + 1
         End If
     Next LoopX
-
     FrmStat.Visible = False
     Call SendData(SendTarget.ToAll, 0, PrepareMessageLocaleMsg(1733, vbNullString, e_FontTypeNames.FONTTYPE_SERVER))
     Exit Sub
@@ -192,7 +189,6 @@ End Sub
 Public Sub PurgarPenas()
     On Error GoTo PurgarPenas_Err
     Dim i As Long
-
     For i = 1 To LastUser
         If UserList(i).flags.UserLogged Then
             If UserList(i).Counters.Pena > 0 Then
@@ -206,7 +202,6 @@ Public Sub PurgarPenas()
             End If
         End If
     Next i
-
     Exit Sub
 PurgarPenas_Err:
     Call TraceError(Err.Number, Err.Description, "Admin.PurgarPenas", Erl)
@@ -302,14 +297,12 @@ Sub SaveBans()
     On Error GoTo SaveBans_Err
     Dim num As Integer
     Call WriteVar(DatPath & "baneos.dat", "INIT", "NumeroBans", Baneos.count)
-
     For num = 1 To Baneos.count
         Call WriteVar(DatPath & "baneos.dat", "BANEO" & num, "USER", Baneos(num).name)
         Call WriteVar(DatPath & "baneos.dat", "BANEO" & num, "FECHA", Baneos(num).FechaLiberacion)
         Call WriteVar(DatPath & "baneos.dat", "BANEO" & num, "BANEADOR", Baneos(num).Baneador)
         Call WriteVar(DatPath & "baneos.dat", "BANEO" & num, "CAUSA", Baneos(num).Causa)
     Next
-
     Exit Sub
 SaveBans_Err:
     Call TraceError(Err.Number, Err.Description, "Admin.SaveBans", Erl)
@@ -335,7 +328,6 @@ Sub LoadBans()
     If Not FileExist(DatPath & "baneos.dat", vbNormal) Then Exit Sub
     BaneosTemporales = val(GetVar(DatPath & "baneos.dat", "INIT", "NumeroBans"))
     If BaneosTemporales > 0 Then
-
         For i = 1 To BaneosTemporales
             Set tBan = New tBaneo
             With tBan
@@ -346,7 +338,6 @@ Sub LoadBans()
                 Call Baneos.Add(tBan)
             End With
         Next
-
     End If
     Exit Sub
 LoadBans_Err:

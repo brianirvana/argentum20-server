@@ -81,7 +81,6 @@ Public Sub EnviarObjetoTransaccion(ByVal AQuien As Integer, ByVal UserIndex As I
         End If
     Else
         Dim j As Long
-
         'me fijo si tiene esas cantidades para que no duplique items
         For j = 1 To UBound(UserList(UserIndex).ComUsu.itemsAenviar)
             If UserList(UserIndex).ComUsu.itemsAenviar(j).ObjIndex = ObjAEnviar.ObjIndex And UserList(UserIndex).ComUsu.itemsAenviar(j).ElementalTags = ObjAEnviar.ElementalTags _
@@ -89,7 +88,6 @@ Public Sub EnviarObjetoTransaccion(ByVal AQuien As Integer, ByVal UserIndex As I
                 cantidadTotalItem = cantidadTotalItem + UserList(UserIndex).ComUsu.itemsAenviar(j).amount
             End If
         Next j
-
         cantidadTotalItem = cantidadTotalItem + ObjAEnviar.amount
         If Not TieneObjetos(ObjAEnviar.ObjIndex, cantidadTotalItem, UserIndex, ObjAEnviar.ElementalTags) Then
             Call WriteConsoleMsg(UserIndex, PrepareMessageLocaleMsg(1997, vbNullString, e_FontTypeNames.FONTTYPE_INFO)) ' Msg1997=No tienes esa cantidad disponible para agregar.
@@ -97,7 +95,6 @@ Public Sub EnviarObjetoTransaccion(ByVal AQuien As Integer, ByVal UserIndex As I
         End If
         'Si es un item recorro todo el array para ver si ese elemento ya está agregado y de paso me guardo la primer posición vacía
         Dim i As Long
-
         For i = 1 To UBound(UserList(UserIndex).ComUsu.itemsAenviar)
             'Si encuentro el item y tiene lugar pongo Found en la posición que lo encontré
             If UserList(UserIndex).ComUsu.itemsAenviar(i).ObjIndex = ObjAEnviar.ObjIndex And UserList(UserIndex).ComUsu.itemsAenviar(i).ElementalTags = ObjAEnviar.ElementalTags _
@@ -117,7 +114,6 @@ Public Sub EnviarObjetoTransaccion(ByVal AQuien As Integer, ByVal UserIndex As I
                 FirstEmptyPos = i
             End If
         Next i
-
         With UserList(UserIndex).ComUsu
             'Si tengo una posición encontrada con un item y a su ves 1 slot vacío para agregar los restantes de ese item
             If FoundPos > 0 And FirstEmptyPos > 0 Then
@@ -206,7 +202,6 @@ Public Sub AceptarComercioUsu(ByVal UserIndex As Integer)
     End If
     ' Verificamos que si tiene los objetos JUSTO ANTES de intercambiarlos
     Dim i As Long
-
     For i = 1 To UBound(UserList(OtroUserIndex).ComUsu.itemsAenviar)
         objOfrecido = UserList(OtroUserIndex).ComUsu.itemsAenviar(i)
         If objOfrecido.ObjIndex > 0 And Not TieneObjetos(objOfrecido.ObjIndex, objOfrecido.amount, OtroUserIndex, objOfrecido.ElementalTags) Then
@@ -219,7 +214,6 @@ Public Sub AceptarComercioUsu(ByVal UserIndex As Integer)
             GoTo FinalizarComercio
         End If
     Next i
-
     'Por si las moscas...
     If TerminarAhora Then GoTo FinalizarComercio
     'pone el oro directamente en la billetera
@@ -235,7 +229,6 @@ Public Sub AceptarComercioUsu(ByVal UserIndex As Integer)
         UserList(OtroUserIndex).Stats.GLD = UserList(OtroUserIndex).Stats.GLD + UserList(UserIndex).ComUsu.Oro
         Call WriteUpdateUserStats(OtroUserIndex)
     End If
-
     ' Confirmamos que SI tienen los objetos a comerciar, procedemos con el cambio.
     For i = 1 To UBound(UserList(OtroUserIndex).ComUsu.itemsAenviar)
         If Not MeterItemEnInventario(UserIndex, UserList(OtroUserIndex).ComUsu.itemsAenviar(i)) Then
@@ -244,9 +237,7 @@ Public Sub AceptarComercioUsu(ByVal UserIndex As Integer)
         Call QuitarObjetos(UserList(OtroUserIndex).ComUsu.itemsAenviar(i).ObjIndex, UserList(OtroUserIndex).ComUsu.itemsAenviar(i).amount, OtroUserIndex, UserList( _
                 OtroUserIndex).ComUsu.itemsAenviar(i).ElementalTags)
     Next i
-
     Dim j As Long
-
     For j = 1 To UBound(UserList(UserIndex).ComUsu.itemsAenviar)
         If MeterItemEnInventario(OtroUserIndex, UserList(UserIndex).ComUsu.itemsAenviar(j)) = False Then
             Call TirarItemAlPiso(UserList(OtroUserIndex).pos, UserList(UserIndex).ComUsu.itemsAenviar(j))
@@ -254,7 +245,6 @@ Public Sub AceptarComercioUsu(ByVal UserIndex As Integer)
         Call QuitarObjetos(UserList(UserIndex).ComUsu.itemsAenviar(j).ObjIndex, UserList(UserIndex).ComUsu.itemsAenviar(j).amount, UserIndex, UserList( _
                 UserIndex).ComUsu.itemsAenviar(j).ElementalTags)
     Next j
-
     Call UpdateUserInv(True, UserIndex, 0)
     Call UpdateUserInv(True, OtroUserIndex, 0)
 FinalizarComercio:
