@@ -193,7 +193,7 @@ Private Function CreateParameter(ByVal value As Variant, ByVal Direction As ADOD
     Select Case VarType(value)
         Case VbVarType.vbString
             CreateParameter.Type = adBSTR
-            CreateParameter.Size = Len(value)
+            CreateParameter.size = Len(value)
             CreateParameter.value = CStr(value)
         Case VbVarType.vbDecimal
             CreateParameter.Type = adInteger
@@ -235,8 +235,21 @@ ErrorHandler:
 End Function
 
 Public Function GetUserValue(CharName As String, Columna As String) As Variant
+
+Dim tUser                       As t_UserReference
+
     On Error GoTo GetUserValue_Err
+
+    tUser = NameIndex(CharName)
+    If IsValidUserRef(tUser) Then
+        If UserList(tUser.ArrayIndex).Id > 0 Then
+            GetUserValue = GetDBValue("user", Columna, "id", UserList(tUser.ArrayIndex).Id)
+            Exit Function
+        End If
+    End If
+        
     GetUserValue = GetDBValue("user", Columna, "name", CharName)
+
     Exit Function
 GetUserValue_Err:
     Call TraceError(Err.Number, Err.Description, "modDatabase.GetUserValue", Erl)
@@ -562,15 +575,27 @@ ErrorHandler:
 End Function
 
 Public Function GetUserGuildPedidosDatabase(username As String) As String
+
+Dim i                           As Integer
+Dim user_id                     As Long
+Dim History                     As String
+Dim RS                          As ADODB.Recordset
+Dim tUser As t_UserReference
+    
     On Error GoTo ErrorHandler
-    Dim user_id As Long
-    user_id = GetCharacterIdWithName(username)
-    Dim RS      As ADODB.Recordset
-    Dim History As String
+    
+    tUser = NameIndex(username)
+    If IsValidUserRef(tUser) Then
+        If UserList(tUser.ArrayIndex).Id > 0 Then
+            user_id = UserList(tUser.ArrayIndex).Id
+        Else
+            user_id = GetCharacterIdWithName(username)
+        End If
+    End If
+
     Set RS = Query("SELECT DISTINCT guild_name FROM guild_request_history where user_id = ? order by request_time DESC", user_id)
     If RS Is Nothing Then Exit Function
     If Not RS.RecordCount = 0 Then
-        Dim i As Integer
         i = 0
         While Not RS.EOF
             History = History & SanitizeNullValue(RS!guild_name, "")
@@ -581,6 +606,7 @@ Public Function GetUserGuildPedidosDatabase(username As String) As String
             RS.MoveNext
         Wend
     End If
+
     GetUserGuildPedidosDatabase = History
     Exit Function
 ErrorHandler:
